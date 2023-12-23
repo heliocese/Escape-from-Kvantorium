@@ -3,7 +3,7 @@ from settings import *
 from functions import *
 # from button import Button
 
-pygame.init()  # инициализация pygame
+pygame.init()  # инициализация
 
 pygame.display.set_caption('Проект')  # изменяем название окна
 screen = pygame.display.set_mode((width, height))  # устанавливаем размеры экрана

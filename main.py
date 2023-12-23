@@ -1,6 +1,9 @@
 import pygame
+import sys
+import os
+from button import Button
 from settings import *
-from functions import *
+from functions import load_image
 # from button import Button
 
 pygame.init()  # инициализация
@@ -11,25 +14,6 @@ icon = load_image('gogol.png')  # добавляем иконку окна
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
-
-
-class Button:
-    def __init__(self, x, y, image, scale=2):
-        # super().__init__(all_sprites)
-        image_width = image.get_width()
-        image_height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(image_width * scale), int(image_height * scale)))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-
-    def draw(self):
-        pos = pygame.mouse.get_pos()
-
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1:
-                print('clicked')
-
-        screen.blit(self.image, (self.rect.x, self.rect.y))
 
 
 def terminate():
@@ -57,11 +41,12 @@ def main_menu():  # главное меню
     settings_img = load_image('settings_btn.png')
     exit_img = load_image('exit_btn.png')
 
-    play_btn = Button(100, 100, play_img)
-    char_sel_btn = Button(100, 175, char_sel_img)
-    statistics_btn = Button(100, 225, statistics_img)
-    settings_btn = Button(100, 300, settings_img)
-    exit_btn = Button(100, 375, exit_img)
+    play_btn = Button(100, 100, play_img, 2.5)
+    char_sel_btn = Button(100, 200, char_sel_img, 2.5)
+    statistics_btn = Button(100, 300, statistics_img, 2.5)
+    settings_btn = Button(100, 400, settings_img, 2.5)
+    exit_btn = Button(100, 500, exit_img, 2.5)
+    buttons = [play_btn, char_sel_btn, statistics_btn, settings_btn, exit_btn]
 
     # buttons_sprites = pygame.sprite.Group()
 
@@ -69,11 +54,17 @@ def main_menu():  # главное меню
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-        play_btn.draw()
-        char_sel_btn.draw()
-        statistics_btn.draw()
-        settings_btn.draw()
-        exit_btn.draw()
+        if play_btn.draw(screen):
+            print('Играй')
+        if char_sel_btn.draw(screen):
+            print('Выбери персонажа')
+        if statistics_btn.draw(screen):
+            print('Смотри статистику')
+        if settings_btn.draw(screen):
+            print('Настрой себя')
+        if exit_btn.draw(screen):
+            terminate()
+
         pygame.display.flip()
         clock.tick(fps)
 

@@ -55,6 +55,7 @@ def main_menu():  # главное меню
             if event.type == pygame.QUIT:
                 terminate()
         if play_btn.draw(screen):
+            levels()
             print('Играй')
         if char_sel_btn.draw(screen):
             print('Выбери персонажа')
@@ -64,6 +65,41 @@ def main_menu():  # главное меню
             print('Настрой себя')
         if exit_btn.draw(screen):
             terminate()
+
+        pygame.display.flip()
+        clock.tick(fps)
+
+
+def levels():
+    text = 'Выберите уровень'
+
+    fon = pygame.transform.scale(load_image('bg.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 64)
+
+    string_rendered = font.render(text, 1, (28, 28, 28))
+    intro_rect = string_rendered.get_rect()
+    text_coord = 10
+    intro_rect.top = text_coord
+    intro_rect.x = 40
+    screen.blit(string_rendered, intro_rect)
+
+    img_1 = load_image('1.png')
+    return_img = load_image('return_btn.png')
+
+    btn_1 = Button(100, 100, img_1, 2.5)
+    return_btn = Button(50, 50, return_img, 1)
+
+    # buttons_sprites = pygame.sprite.Group()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        if return_btn.draw(screen):
+            main_menu()
+        if btn_1.draw(screen):
+            print('level1')
 
         pygame.display.flip()
         clock.tick(fps)

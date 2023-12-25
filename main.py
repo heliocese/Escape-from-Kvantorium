@@ -14,22 +14,23 @@ pygame.display.set_icon(icon)  # ставим нашу иконку вместо
 
 clock = pygame.time.Clock()
 
-bg_image = load_image('pattern5.png')
+bg_image = load_image('pattern4.png')
+bg_image1 = load_image('pattern5.png')
 
 
-def get_background():
+def get_background(image):
     tiles = []
-    width, height = bg_image.get_width(), bg_image.get_height()
+    width, height = image.get_width(), image.get_height()
     for i in range(WIDTH // width + 2):
         for j in range(HEIGHT // height + 2):
             tiles.append((i * width, j * height))
     return tiles
 
 
-def draw_backgound(tiles, offset):
+def draw_backgound(tiles, offset, image):
     print(offset)
     for tile in tiles:
-        screen.blit(bg_image, (tile[0] - offset, tile[1] - offset))
+        screen.blit(image, (tile[0] - offset, tile[1] - offset))
 
 
 def terminate():
@@ -65,7 +66,7 @@ def main_menu():  # главное меню
     buttons = [play_btn, char_sel_btn, statistics_btn, settings_btn, exit_btn]
 
     # buttons_sprites = pygame.sprite.Group()
-    tiles = get_background()
+    tiles = get_background(bg_image)
     count = 0
 
     while True:
@@ -74,7 +75,7 @@ def main_menu():  # главное меню
         if ticks % fps:
             count += 0.5
 
-        draw_backgound(tiles, int(count % 32))
+        draw_backgound(tiles, int(count % 32), bg_image)
         screen.blit(string_rendered, intro_rect)
 
         for event in pygame.event.get():
@@ -119,7 +120,17 @@ def levels():
 
     # buttons_sprites = pygame.sprite.Group()
 
+    tiles = get_background(bg_image1)
+    print('ok')
+    count = 0
+
     while True:
+
+        ticks = pygame.time.get_ticks()
+        if ticks % fps:
+            count += 0.5
+
+        draw_backgound(tiles, int(count % 32), bg_image1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()

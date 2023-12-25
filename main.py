@@ -4,16 +4,32 @@ import os
 from button import Button
 from settings import *
 from functions import load_image
-# from button import Button
 
 pygame.init()  # инициализация
 
 pygame.display.set_caption('Проект')  # изменяем название окна
-screen = pygame.display.set_mode((width, height))  # устанавливаем размеры экрана
+screen = pygame.display.set_mode((WIDTH, HEIGHT))  # устанавливаем размеры экрана
 icon = load_image('gogol.png')  # добавляем иконку окна
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
+
+bg_image = load_image('pattern5.png')
+
+
+def get_background():
+    tiles = []
+    width, height = bg_image.get_width(), bg_image.get_height()
+    for i in range(WIDTH // width + 2):
+        for j in range(HEIGHT // height + 2):
+            tiles.append((i * width, j * height))
+    return tiles
+
+
+def draw_backgound(tiles, offset):
+    print(offset)
+    for tile in tiles:
+        screen.blit(bg_image, (tile[0] - offset, tile[1] - offset))
 
 
 def terminate():
@@ -24,7 +40,7 @@ def terminate():
 def main_menu():  # главное меню
     text = 'Escape from Kvantorium'
 
-    fon = pygame.transform.scale(load_image('bg1.jpg'), (width, height))
+    fon = pygame.transform.scale(load_image('bg1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 64)
 
@@ -49,14 +65,25 @@ def main_menu():  # главное меню
     buttons = [play_btn, char_sel_btn, statistics_btn, settings_btn, exit_btn]
 
     # buttons_sprites = pygame.sprite.Group()
+    tiles = get_background()
+    count = 0
 
     while True:
+
+        ticks = pygame.time.get_ticks()
+        if ticks % fps:
+            count += 0.5
+
+        draw_backgound(tiles, int(count % 32))
+        screen.blit(string_rendered, intro_rect)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
         if play_btn.draw(screen):
-            levels()
             print('Играй')
+            levels()
+            break
         if char_sel_btn.draw(screen):
             print('Выбери персонажа')
         if statistics_btn.draw(screen):
@@ -73,7 +100,7 @@ def main_menu():  # главное меню
 def levels():
     text = 'Выберите уровень'
 
-    fon = pygame.transform.scale(load_image('bg.jpg'), (width, height))
+    fon = pygame.transform.scale(load_image('bg.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 64)
 
@@ -87,8 +114,8 @@ def levels():
     img_1 = load_image('1.png')
     return_img = load_image('return_btn.png')
 
-    btn_1 = Button(100, 100, img_1, 2.5)
-    return_btn = Button(50, 50, return_img, 1)
+    btn_1 = Button(150, 150, img_1, 2)
+    return_btn = Button(25, 25, return_img, 1)
 
     # buttons_sprites = pygame.sprite.Group()
 
@@ -98,6 +125,7 @@ def levels():
                 terminate()
         if return_btn.draw(screen):
             main_menu()
+            break
         if btn_1.draw(screen):
             print('level1')
 

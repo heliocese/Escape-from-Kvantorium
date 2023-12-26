@@ -17,6 +17,8 @@ clock = pygame.time.Clock()
 bg_image = load_image('pattern4.png')
 bg_image1 = load_image('pattern5.png')
 
+button_image = load_image('button1.png')
+
 
 def get_background(image):
     tiles = []
@@ -60,11 +62,16 @@ def main_menu():  # главное меню
     settings_img = load_image('settings_btn.png')
     exit_img = load_image('exit_btn.png')
 
-    play_btn = Button(100, 100, play_img, 2.5)
+    """play_btn = Button(100, 100, play_img, 2.5)
     char_sel_btn = Button(100, 200, char_sel_img, 2.5)
     statistics_btn = Button(100, 300, statistics_img, 2.5)
     settings_btn = Button(100, 400, settings_img, 2.5)
-    exit_btn = Button(100, 500, exit_img, 2.5)
+    exit_btn = Button(100, 500, exit_img, 2.5)"""
+    play_btn = Button(WIDTH // 2, 125, button_image, 'Играть', 4)
+    char_sel_btn = Button(WIDTH // 2, 225, button_image, 'Выбор персонажа', 4)
+    statistics_btn = Button(WIDTH // 2, 325, button_image, 'Статистика', 4)
+    settings_btn = Button(WIDTH // 2, 425, button_image, 'Настройки', 4)
+    exit_btn = Button(WIDTH // 2, 525, button_image, 'Выход', 4)
     buttons = [play_btn, char_sel_btn, statistics_btn, settings_btn, exit_btn]
 
     # buttons_sprites = pygame.sprite.Group()
@@ -83,7 +90,22 @@ def main_menu():  # главное меню
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-        if play_btn.draw(screen):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_btn.click_check(event.pos):
+                    print('Играй')
+                    levels()
+                if char_sel_btn.click_check(event.pos):
+                    print('Выбери персонажа')
+                if statistics_btn.click_check(event.pos):
+                    print('Смотри статистику')
+                if settings_btn.click_check(event.pos):
+                    print('Настрой себя')
+                if exit_btn.click_check(event.pos):
+                    terminate()
+
+        for button in buttons:
+            button.update(screen)
+        """if play_btn.draw(screen):
             print('Играй')
             levels()
             break
@@ -94,7 +116,7 @@ def main_menu():  # главное меню
         if settings_btn.draw(screen):
             print('Настрой себя')
         if exit_btn.draw(screen):
-            terminate()
+            terminate()"""
 
         pygame.display.flip()
         clock.tick(fps)
@@ -113,7 +135,7 @@ def levels():
     intro_rect = string_rendered.get_rect()
     text_coord = 10
     intro_rect.top = text_coord
-    intro_rect.x = 40
+    intro_rect.x = 100
     screen.blit(string_rendered, intro_rect)
 
     img_1 = load_image('1.png')
@@ -131,16 +153,16 @@ def levels():
         level_btns.append(Button(100 + WIDTH))"""
     return_img = load_image('return_btn.png')
 
-    btn_1 = Button(100, 150, img_1, 2)
-    btn_2 = Button(200, 150, img_2, 2)
-    btn_3 = Button(300, 150, img_3, 2)
-    btn_4 = Button(400, 150, img_4, 2)
-    btn_5 = Button(500, 150, img_5, 2)
-    btn_6 = Button(100, 250, img_6, 2)
-    btn_7 = Button(200, 250, img_7, 2)
-    btn_8 = Button(300, 250, img_8, 2)
-    btn_9 = Button(400, 250, img_9, 2)
-    return_btn = Button(25, 25, return_img, 1)
+    btn_1 = Button(100, 150, img_1)
+    btn_2 = Button(200, 150, img_2)
+    btn_3 = Button(300, 150, img_3)
+    btn_4 = Button(400, 150, img_4)
+    btn_5 = Button(500, 150, img_5)
+    btn_6 = Button(100, 250, img_6)
+    btn_7 = Button(200, 250, img_7)
+    btn_8 = Button(300, 250, img_8)
+    btn_9 = Button(400, 250, img_9)
+    return_btn = Button(50, 50, return_img)
 
     level_btns = [btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9]
 
@@ -157,15 +179,26 @@ def levels():
             count += 0.5
 
         draw_backgound(tiles, int(count % 32), bg_image1)
+        screen.blit(string_rendered, intro_rect)
+        return_btn.update(screen)
+        for button in level_btns:
+            button.update(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-        if return_btn.draw(screen):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if return_btn.click_check(event.pos):
+                    main_menu()
+                for button in level_btns:
+                    if button.click_check(event.pos):
+                        print('level' + str(level_btns.index(button) + 1))
+
+        """if return_btn.draw(screen):
             main_menu()
             break
         for button in level_btns:
             if button.draw(screen):
-                print('level' + str(level_btns.index(button) + 1))
+                print('level' + str(level_btns.index(button) + 1))"""
 
         pygame.display.flip()
         clock.tick(fps)

@@ -2,16 +2,37 @@ import pygame
 
 
 class Button:
-    def __init__(self, x, y, image, scale=2):
+    def __init__(self, x, y, image, text=None, scale=2):
         # super().__init__(all_sprites)
         image_width = image.get_width()
         image_height = image.get_height()
         self.image = pygame.transform.scale(image, (int(image_width * scale), int(image_height * scale)))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect = self.image.get_rect(center=(x, y))
+        #self.rect.topleft = (x, y)
+        self.is_text = False
+        if text:
+            self.is_text = True
+            self.text = text
+            font = pygame.font.Font(None, 36)
+            self.text = font.render(self.text, True, (0, 0, 15))
+            self.text_rect = self.text.get_rect(center=(x, y))
         self.clicked = False
 
-    def draw(self, surface):
+    """def draw_text(self, screen):
+        font = pygame.font.Font(None, 100)
+        text = font.render(self.text, True, (0, 0, 0))
+        screen.blit(text, self.rect)"""
+
+    def update(self, screen):
+        screen.blit(self.image, self.rect)
+        if self.is_text:
+            screen.blit(self.text, self.text_rect)
+
+    def click_check(self, pos):
+        if self.rect.collidepoint(pos):
+            return True
+
+    """def draw(self, screen):
         action = False
         pos = pygame.mouse.get_pos()
 
@@ -23,6 +44,7 @@ class Button:
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
-        surface.blit(self.image, (self.rect.x, self.rect.y))
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+        #self.draw_text(screen)
 
-        return action
+        return action"""

@@ -28,7 +28,7 @@ def get_background(image):
 
 
 def draw_backgound(tiles, offset, image):
-    print(offset)
+    #print(offset)
     for tile in tiles:
         screen.blit(image, (tile[0] - offset, tile[1] - offset))
 
@@ -39,6 +39,8 @@ def terminate():
 
 
 def main_menu():  # главное меню
+    pygame.display.set_caption('Escape from Kvantorium')
+
     text = 'Escape from Kvantorium'
 
     fon = pygame.transform.scale(load_image('bg1.jpg'), (WIDTH, HEIGHT))
@@ -99,6 +101,8 @@ def main_menu():  # главное меню
 
 
 def levels():
+    pygame.display.set_caption('Escape from Kvantorium - Выбор уровня')
+
     text = 'Выберите уровень'
 
     fon = pygame.transform.scale(load_image('bg.jpg'), (WIDTH, HEIGHT))
@@ -113,15 +117,37 @@ def levels():
     screen.blit(string_rendered, intro_rect)
 
     img_1 = load_image('1.png')
+    img_2 = load_image('2.png')
+    img_3 = load_image('3.png')
+    img_4 = load_image('4.png')
+    img_5 = load_image('5.png')
+    img_6 = load_image('6.png')
+    img_7 = load_image('7.png')
+    img_8 = load_image('8.png')
+    img_9 = load_image('9.png')
+    img_0 = load_image('0.png')
+
+    """for i in range(1, 11):
+        level_btns.append(Button(100 + WIDTH))"""
     return_img = load_image('return_btn.png')
 
-    btn_1 = Button(150, 150, img_1, 2)
+    btn_1 = Button(100, 150, img_1, 2)
+    btn_2 = Button(200, 150, img_2, 2)
+    btn_3 = Button(300, 150, img_3, 2)
+    btn_4 = Button(400, 150, img_4, 2)
+    btn_5 = Button(500, 150, img_5, 2)
+    btn_6 = Button(100, 250, img_6, 2)
+    btn_7 = Button(200, 250, img_7, 2)
+    btn_8 = Button(300, 250, img_8, 2)
+    btn_9 = Button(400, 250, img_9, 2)
     return_btn = Button(25, 25, return_img, 1)
+
+    level_btns = [btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9]
 
     # buttons_sprites = pygame.sprite.Group()
 
     tiles = get_background(bg_image1)
-    print('ok')
+    #print('ok')
     count = 0
 
     while True:
@@ -137,8 +163,9 @@ def levels():
         if return_btn.draw(screen):
             main_menu()
             break
-        if btn_1.draw(screen):
-            print('level1')
+        for button in level_btns:
+            if button.draw(screen):
+                print('level' + str(level_btns.index(button) + 1))
 
         pygame.display.flip()
         clock.tick(fps)

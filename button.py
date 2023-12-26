@@ -32,6 +32,13 @@ class Button:
         if self.rect.collidepoint(pos):
             return True
 
+    def change_colour(self, pos):
+        pass
+        """if self.rect.collidepoint(pos):
+            self.image =
+        else:"""
+
+
     """def draw(self, screen):
         action = False
         pos = pygame.mouse.get_pos()

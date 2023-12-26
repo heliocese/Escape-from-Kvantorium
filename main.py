@@ -4,6 +4,8 @@ import os
 from button import Button
 from settings import *
 from functions import load_image
+from level_generation import Labirint
+from hero import Hero
 
 pygame.init()  # инициализация pygame
 
@@ -192,6 +194,8 @@ def levels():
                 for button in level_btns:
                     if button.click_check(event.pos):
                         print('level' + str(level_btns.index(button) + 1))
+                        if level_btns.index(button) + 1 == 1:
+                            level1()
 
         """if return_btn.draw(screen):
             main_menu()
@@ -200,6 +204,18 @@ def levels():
             if button.draw(screen):
                 print('level' + str(level_btns.index(button) + 1))"""
 
+        pygame.display.flip()
+        clock.tick(fps)
+
+
+def level1():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        hero = Hero((0, 0))
+        labirint = Labirint('безымянный.tmx', [0, 4], 4)
+        labirint.render(screen)
         pygame.display.flip()
         clock.tick(fps)
 

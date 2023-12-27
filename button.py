@@ -2,13 +2,19 @@ import pygame
 
 
 class Button:
-    def __init__(self, x, y, image, text=None, scale=2):
+    def __init__(self, x, y, image, second_image, text=None, scale=2):
         # super().__init__(all_sprites)
-        image_width = image.get_width()
-        image_height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(image_width * scale), int(image_height * scale)))
+        # основное изображение
+        self.image = pygame.transform.scale(image,
+                                            (int(image.get_width() * scale),
+                                             int(image.get_height() * scale)))
+        # избражение используещееся при наведении на кнопку
+        self.second_image = pygame.transform.scale(second_image,
+                                                   (int(image.get_width() * scale),
+                                                    int(image.get_height() * scale)))
         self.rect = self.image.get_rect(center=(x, y))
-        #self.rect.topleft = (x, y)
+        self.cur_image = self.image
+        # self.rect.topleft = (x, y)
         self.is_text = False
         if text:
             self.is_text = True
@@ -16,7 +22,6 @@ class Button:
             font = pygame.font.Font(None, 36)
             self.text = font.render(self.text, True, (0, 0, 15))
             self.text_rect = self.text.get_rect(center=(x, y))
-        self.clicked = False
 
     """def draw_text(self, screen):
         font = pygame.font.Font(None, 100)
@@ -24,7 +29,7 @@ class Button:
         screen.blit(text, self.rect)"""
 
     def update(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.cur_image, self.rect)
         if self.is_text:
             screen.blit(self.text, self.text_rect)
 
@@ -33,11 +38,10 @@ class Button:
             return True
 
     def change_colour(self, pos):
-        pass
-        """if self.rect.collidepoint(pos):
-            self.image =
-        else:"""
-
+        if self.rect.collidepoint(pos):
+            self.cur_image = self.second_image
+        else:
+            self.cur_image = self.image
 
     """def draw(self, screen):
         action = False

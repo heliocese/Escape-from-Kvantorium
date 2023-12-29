@@ -225,12 +225,12 @@ def levels():
 
 
 def level1():
+    # hero = Hero((0, 0))
+    labirint = Labirint('безымянный.tmx', [0, 4], 4)
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-        hero = Hero((0, 0))
-        labirint = Labirint('безымянный.tmx', [0, 4], 4)
+            left = right = False
+
         labirint.render(screen)
         pygame.display.flip()
         clock.tick(fps)

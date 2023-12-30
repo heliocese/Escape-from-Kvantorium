@@ -1,6 +1,6 @@
 import pytmx
 
-maps = 'data'
+maps = 'data/levels'
 
 
 class Labirint:

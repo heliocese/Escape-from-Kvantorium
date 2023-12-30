@@ -124,7 +124,10 @@ def main_menu():  # главное меню
 
     coords_x = [i for i in range(-100, -50)] + [j for j in range(WIDTH + 50, WIDTH + 100)]
     coords_y = [i for i in range(-100, -50)] + [j for j in range(HEIGHT + 50, HEIGHT + 100)]
-    objects = [file if file[-3:] != 'jpg' else 'cooler.png' for file in os.listdir('data/levels/decorative_objects')]
+    objects = [file if file[-3:] != 'jpg' and file != 'sign exit.png' else 'cooler.png'
+               for file in os.listdir('data/levels/decorative_objects')]
+    for _ in range(5):
+        objects.remove('cooler.png')
 
     for _ in range(10):
         Object(load_image(f'levels/decorative_objects/{random.choice(objects)}'),

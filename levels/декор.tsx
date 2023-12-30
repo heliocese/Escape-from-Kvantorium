@@ -60,7 +60,7 @@
   <image width="62" height="40" source="шкаф.png"/>
  </tile>
  <tile id="27">
-  <image width="32" height="32" source="кварц норм.jpg"/>
+  <image width="32" height="32" source="окно 2.jpg"/>
  </tile>
  <tile id="28">
   <image width="32" height="32" source="окно.jpg"/>

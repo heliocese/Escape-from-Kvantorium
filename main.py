@@ -49,7 +49,7 @@ def intro_maker(message, colour=(255, 255, 255)):  # пока убого раб�
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
-    skip_text = font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
+    skip_text = font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, colour)
     skip_text.set_alpha(alpha)
     while True:
         screen.fill((0, 0, 0))
@@ -77,7 +77,7 @@ def intro_maker(message, colour=(255, 255, 255)):  # пока убого раб�
 
         skip_text.set_alpha(alpha)
 
-        screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
+        screen.blit(skip_text, skip_text.get_rect(bottomright=(WIDTH * 0.8, HEIGHT * 0.8)))
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -223,15 +223,7 @@ def levels():
                         if level_btns.index(button) + 1 == 1:
                             intro_maker('Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                         'но вы не успели. Бегите!', (255, 255, 255))  # не очень работает
-                        elif level_btns.index(button) + 1 == 2:
-                            intro_maker('Спаси своего друга Ярика', (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 5:
-                            intro_maker('Спаси своего друга Сашу', (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 7:
-                            intro_maker('Спаси своего друга Влада', (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 10:
-                            intro_maker('БЕГИ! БЕГИ! БЕГИ!', (255, 0, 0))
-                        level_displayer(Labirint(f'level{level_btns.index(button) + 1}.tmx', [0, 4], 4), Hero(0, 0))
+                            level_displayer(Labirint('level1.tmx', [0, 4], 4), Hero(0, 0))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return

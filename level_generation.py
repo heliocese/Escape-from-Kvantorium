@@ -5,7 +5,7 @@ maps = 'data/levels'
 
 class Labirint:
     # a - айди клеток по которым можно ходить
-    # b - айди клеток по которым нельзя ходить
+    # b - айди клетки выхода
     def __init__(self, filename, a, b):
         self.map = pytmx.load_pygame(f'{maps}/{filename}')
         self.height = self.map.height

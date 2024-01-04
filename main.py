@@ -251,7 +251,7 @@ def levels():
                 for button in level_btns:
                     if button.click_check(event.pos):
                         print('level' + str(level_btns.index(button) + 1))
-                        if level_btns.index(button) + 1 == 1:
+                        if level_btns.index(button) + 1 == 1:  #  проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                         'но вы не успели.', 'Бегите!'], (255, 255, 255))
                             level_displayer(1, Labirint('level1.tmx', [*range(1, 31)], 19), Hero(40, 40))
@@ -259,6 +259,8 @@ def levels():
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 5:
                             intro_maker(['Спаси своего друга Сашу'], (255, 255, 255))
+                        elif level_btns.index(button) + 1 == 9:
+                            intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 7:
                             intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:

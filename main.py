@@ -233,6 +233,7 @@ def levels():
 
 
 def level_displayer(labirint, hero):
+    left = right = up = False
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -240,9 +241,26 @@ def level_displayer(labirint, hero):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-            left = right = False
-
-        labirint.render(screen)
+                if event.type == pygame.KEYDOWN:
+                    if pygame.key.get_pressed()[pygame.K_a]:
+                        left = True
+                    if pygame.key.get_pressed()[pygame.K_d]:
+                        right = True
+                    if pygame.key.get_pressed()[pygame.K_SPACE]:
+                        up = True
+                if event.type == pygame.KEYUP:
+                    if not (pygame.key.get_pressed()[pygame.K_a]):
+                        left = False
+                    if not (pygame.key.get_pressed()[pygame.K_d]):
+                        right = False
+                    if not (pygame.key.get_pressed()[pygame.K_SPACE]):
+                        up = False
+            # if labirint.is_free(hero.get_position()):
+            #    hero.onGround = True
+            # else:
+            #    hero.onGround = False          hero.move(left, right, up)
+            labirint.render(screen)
+            hero.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
 

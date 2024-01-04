@@ -248,13 +248,14 @@ def level_displayer(labirint, hero):
                 if pygame.key.get_pressed()[pygame.K_SPACE]:
                     up = True
             if event.type == pygame.KEYUP:
-                print(pygame.key.get_pressed()[pygame.K_a])
                 if not(pygame.key.get_pressed()[pygame.K_a]):
                     left = False
                 if not(pygame.key.get_pressed()[pygame.K_d]):
                     right = False
                 if not(pygame.key.get_pressed()[pygame.K_SPACE]):
                     up = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print(labirint.is_free(event.pos))
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False

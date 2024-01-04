@@ -18,7 +18,8 @@ class Labirint:
         for y in range(self.height):
             for x in range(self.width):
                 image = self.map.get_tile_image(x, y, 0)
-                screen.blit(image, (x * self.tile_size, y * self.tile_size))
+                if image:
+                    screen.blit(image, (x * self.tile_size, y * self.tile_size))
                 image = self.map.get_tile_image(x, y, 1)
                 if image:
                     screen.blit(image, (x * self.tile_size, y * self.tile_size))

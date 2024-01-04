@@ -255,12 +255,14 @@ def level_displayer(labirint, hero):
                         right = False
                     if not (pygame.key.get_pressed()[pygame.K_SPACE]):
                         up = False
-            # if labirint.is_free(hero.get_position()):
-            #    hero.onGround = True
-            # else:
-            #    hero.onGround = False          hero.move(left, right, up)
-            labirint.render(screen)
-            hero.draw(screen)
+
+        # if labirint.is_free(hero.get_position()):
+        #    hero.onGround = True
+        # else:
+        #    hero.onGround = False
+        hero.move(left, right, up)
+        labirint.render(screen)
+        hero.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
 

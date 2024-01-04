@@ -11,6 +11,7 @@ class Labirint:
         self.height = self.map.height
         self.width = self.map.width
         self.tile_size = self.map.tilewidth
+        del a[17]
         self.free_tiles = a
         self.finish_tile = b
 
@@ -24,10 +25,8 @@ class Labirint:
                 if image:
                     screen.blit(image, (x * self.tile_size, y * self.tile_size))
 
-    def get_tile_id(self, pos):  # получение айди клетки
-        print()
-        print(self.map.tiledgidmap[self.map.get_tile_gid(pos[0], pos[1], 0)])
-        return self.map.tiledgidmap[self.map.get_tile_gid(pos[0], pos[1], 0)]
+    def get_tile_id(self, pos):
+        return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size, 0)]
 
     def is_free(self, pos):
         return self.get_tile_id(pos) in self.free_tiles

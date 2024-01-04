@@ -38,10 +38,9 @@ class Hero(pygame.sprite.Sprite):
                 self.yvel = -JUMP_POWER
         if not self.onGround:
             self.yvel += GRAVITY
-        self.onGround = False  # Мы не знаем, когда мы на земле((
-        self.rect.y += self.yvel
+            self.rect.y += self.yvel
 
         self.rect.x += self.xvel  # переносим свои положение на xvel
 
     def get_position(self):
-        return self.rect.x, self.rect.y
+        return self.rect.left, self.rect.top

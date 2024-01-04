@@ -223,7 +223,7 @@ def levels():
                         if level_btns.index(button) + 1 == 1:
                             intro_maker('Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                         'но вы не успели. Бегите!', (255, 255, 255))  # не очень работает
-                            level_displayer(Labirint('level1.tmx', [0, 4], 4), Hero(0, 0))
+                            level_displayer(Labirint('level1.tmx', [*range(1, 31)], 19), Hero(40, 40))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -241,25 +241,25 @@ def level_displayer(labirint, hero):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                if event.type == pygame.KEYDOWN:
-                    if pygame.key.get_pressed()[pygame.K_a]:
-                        left = True
-                    if pygame.key.get_pressed()[pygame.K_d]:
-                        right = True
-                    if pygame.key.get_pressed()[pygame.K_SPACE]:
-                        up = True
-                if event.type == pygame.KEYUP:
-                    if not (pygame.key.get_pressed()[pygame.K_a]):
-                        left = False
-                    if not (pygame.key.get_pressed()[pygame.K_d]):
-                        right = False
-                    if not (pygame.key.get_pressed()[pygame.K_SPACE]):
-                        up = False
+                if pygame.key.get_pressed()[pygame.K_a]:
+                    left = True
+                if pygame.key.get_pressed()[pygame.K_d]:
+                    right = True
+                if pygame.key.get_pressed()[pygame.K_SPACE]:
+                    up = True
+            if event.type == pygame.KEYUP:
+                print(pygame.key.get_pressed()[pygame.K_a])
+                if not(pygame.key.get_pressed()[pygame.K_a]):
+                    left = False
+                if not(pygame.key.get_pressed()[pygame.K_d]):
+                    right = False
+                if not(pygame.key.get_pressed()[pygame.K_SPACE]):
+                    up = False
 
-        # if labirint.is_free(hero.get_position()):
-        #    hero.onGround = True
-        # else:
-        #    hero.onGround = False
+        if labirint.is_free(hero.get_position()):
+            hero.onGround = False
+        else:
+            hero.onGround = True
         hero.move(left, right, up)
         labirint.render(screen)
         hero.draw(screen)

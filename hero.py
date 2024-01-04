@@ -10,9 +10,7 @@ class Hero(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.xvel = 0  # скорость перемещения. 0 - стоять на месте
-        self.startX = x  # Начальная позиция Х, пригодится когда будем переигрывать уровень
-        self.startY = y
+        self.xvel = 0
         self.image = pygame.Surface((22, 32))
         self.rect = pygame.Rect(x, y, 32, 22)  # прямоугольный объект
         self.image.set_colorkey(pygame.Color(COLOR))
@@ -40,19 +38,10 @@ class Hero(pygame.sprite.Sprite):
                 self.yvel = -JUMP_POWER
         if not self.onGround:
             self.yvel += GRAVITY
-
         self.onGround = False  # Мы не знаем, когда мы на земле((
         self.rect.y += self.yvel
 
         self.rect.x += self.xvel  # переносим свои положение на xvel
 
     def get_position(self):
-        return self.x, self.y
-
-
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__(self)
-        #self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        #self.image.fill(Color(PLATFORM_COLOR))
-        #self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
+        return self.rect.x, self.rect.y

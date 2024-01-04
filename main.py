@@ -5,9 +5,10 @@ import sys
 import os
 from button import Button
 from settings import *
-from functions import load_image, Object, Border, all_sprites, vertical_borders, horizontal_borders
+from functions import load_image, Object, Border, all_sprites, vertical_borders, horizontal_borders, wrap, full_wrapper
 from level_generation import Labirint
 from hero import Hero
+from star import Star
 
 pygame.init()  # инициализация pygame
 
@@ -44,12 +45,27 @@ for i in range(1, 11):
                              load_image(f'{i}.png'),
                              load_image(f'{i}_.png'), None, WIDTH // 240))
 
+star_active = load_image('star_active.png')
+star_inactive = load_image('star_inactive.png')
 
+stars = []
+for button in level_btns:
+    stars.append([Star(star_active, star_inactive, 'left', button),
+                 Star(star_active, star_inactive, 'right', button),
+                  Star(star_active, star_inactive, 'middle', button)])
+
+
+# заставки к уровням
 def intro_maker(message, colour=(255, 255, 255)):  # пока убого работает
+    messages = full_wrapper(message, WIDTH // 16)
+    print(messages)
+    cur_message = 0
+    message_offsets = [50 * i for i in range(len(messages))]
+    print(message_offsets)
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
-    skip_text = font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, colour)
+    skip_text = font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
     skip_text.set_alpha(alpha)
     while True:
         screen.fill((0, 0, 0))
@@ -60,11 +76,22 @@ def intro_maker(message, colour=(255, 255, 255)):  # пока убого раб�
                     event.type == pygame.MOUSEBUTTONDOWN:
                 return  # начинаем игру
 
-        if count < len(message) * speed:
-            count += 1
+        for message in messages[0:cur_message]:
+            string = font.render(message, True, colour)
+            string_rect = string.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[messages.index(message)]))
+            screen.blit(string, string_rect)
 
-        text = font.render(message[0:count // speed], True, colour)
-        text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        if count < len(messages[cur_message]) * speed:
+            count += 1
+        elif cur_message < len(messages) - 1:
+            count = 0
+            cur_message += 1
+            for i in range(len(message_offsets)):
+                message_offsets[i] -= 25
+            print(message_offsets)
+
+        text = font.render(messages[cur_message][0:count // speed], True, colour)
+        text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[cur_message]))
 
         screen.blit(text, text_rect)
 
@@ -77,7 +104,7 @@ def intro_maker(message, colour=(255, 255, 255)):  # пока убого раб�
 
         skip_text.set_alpha(alpha)
 
-        screen.blit(skip_text, skip_text.get_rect(bottomright=(WIDTH * 0.8, HEIGHT * 0.8)))
+        screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -211,6 +238,10 @@ def levels():
             button.update(screen)
             button.change_colour(pygame.mouse.get_pos())
 
+        for star_group in stars:
+            for star in star_group:
+                star.draw(screen)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -221,9 +252,19 @@ def levels():
                     if button.click_check(event.pos):
                         print('level' + str(level_btns.index(button) + 1))
                         if level_btns.index(button) + 1 == 1:
-                            intro_maker('Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
-                                        'но вы не успели. Бегите!', (255, 255, 255))  # не очень работает
-                            level_displayer(Labirint('level1.tmx', [0, 4], 4), Hero(0, 0))
+                            intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
+                                        'но вы не успели.', 'Бегите!'], (255, 255, 255))
+                            level_displayer(1, Labirint('level1.tmx', [*range(1, 31)], 19), Hero(40, 40))
+                        elif level_btns.index(button) + 1 == 2:
+                            intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
+                        elif level_btns.index(button) + 1 == 5:
+                            intro_maker(['Спаси своего друга Сашу'], (255, 255, 255))
+                        elif level_btns.index(button) + 1 == 7:
+                            intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
+                        elif level_btns.index(button) + 1 == 10:
+                            intro_maker(['БЕГИ!', 'БЕГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
+                        level_displayer(level_btns.index(button) + 1,
+                                        Labirint(f'level{level_btns.index(button) + 1}.tmx', [*range(1, 31)], 19), Hero(0, 0))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -232,7 +273,19 @@ def levels():
         clock.tick(FPS)
 
 
-def level_displayer(labirint, hero):
+def character_choice():
+    pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+
+
+def level_displayer(level_number, labirint, hero):
+    pygame.display.set_caption(f'Escape from Kvantorium - {level_number} уровень')
     left = right = up = False
     while True:
         for event in pygame.event.get():
@@ -241,14 +294,14 @@ def level_displayer(labirint, hero):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                if event.type == pygame.KEYDOWN:
-                    if pygame.key.get_pressed()[pygame.K_a]:
-                        left = True
-                    if pygame.key.get_pressed()[pygame.K_d]:
-                        right = True
-                    if pygame.key.get_pressed()[pygame.K_SPACE]:
-                        up = True
+                if pygame.key.get_pressed()[pygame.K_a]:
+                    left = True
+                if pygame.key.get_pressed()[pygame.K_d]:
+                    right = True
+                if pygame.key.get_pressed()[pygame.K_SPACE]:
+                    up = True
                 if event.type == pygame.KEYUP:
+                    print(pygame.key.get_pressed()[pygame.K_a])
                     if not (pygame.key.get_pressed()[pygame.K_a]):
                         left = False
                     if not (pygame.key.get_pressed()[pygame.K_d]):
@@ -256,10 +309,10 @@ def level_displayer(labirint, hero):
                     if not (pygame.key.get_pressed()[pygame.K_SPACE]):
                         up = False
 
-        # if labirint.is_free(hero.get_position()):
-        #    hero.onGround = True
-        # else:
-        #    hero.onGround = False
+        if labirint.is_free(hero.get_position()):
+            hero.onGround = False
+        else:
+            hero.onGround = True
         hero.move(left, right, up)
         labirint.render(screen)
         hero.draw(screen)

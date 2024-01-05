@@ -36,8 +36,8 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-person_sheet = load_image('levels/characters/Никита.png', (64, 60, 147))
-person_image = get_image(person_sheet, 1, 48, 96, 4)
+person_sheet = load_image('levels/characters/Коля.png', (64, 60, 147))
+person_image = get_image(person_sheet, 1, 48, 96, 6)
 
 students = {
     'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
@@ -326,11 +326,10 @@ def character_selection():
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
 
-        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
 
-        #screen.blit(barrier, barrier_rect)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 10)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 import random
+import textwrap
 
 
 def load_image(name, colorkey=None):
@@ -26,7 +27,7 @@ horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 
 
-class Object(pygame.sprite.Sprite): # крутиться не будет
+class Object(pygame.sprite.Sprite):  # крутиться не будет
     """def __init__(self, radius, x, y):
         super().__init__(all_sprites)
         # self.image = image
@@ -39,6 +40,7 @@ class Object(pygame.sprite.Sprite): # крутиться не будет
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-5, 5)
         self.vy = random.randrange(-5, 5)"""
+
     def __init__(self, image, x, y):
         super().__init__(all_sprites)
         self.image = pygame.transform.scale(image,
@@ -69,3 +71,23 @@ class Border(pygame.sprite.Sprite):
             self.add(horizontal_borders)
             self.image = pygame.Surface([x2 - x1, 1])
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
+
+
+def wrap(text, length):
+    return textwrap.wrap(text, length)
+
+
+def full_wrapper(text, length):
+    new_text = []
+    for string in text:
+        wrapped_string = wrap(string, length)
+        if len(wrapped_string) > 1:
+            if text.index(string) < len(text) - 1:
+                text[text.index(string) + 1] = ''.join(wrapped_string[1:]) + ' ' + text[text.index(string) + 1]
+                new_text.append(wrapped_string[0])
+            else:
+                for sting_part in wrapped_string:
+                    new_text.append(sting_part)
+        else:
+            new_text.append(string)
+    return new_text

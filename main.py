@@ -36,7 +36,7 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-person_sheet = load_image('levels/characters/Влад.png')
+person_sheet = load_image('levels/characters/Никита.png', (64, 60, 147))
 person_image = get_image(person_sheet, 1, 48, 96, 4)
 
 students = {
@@ -291,7 +291,7 @@ def levels():
                         elif level_btns.index(button) + 1 == 7:
                             intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
-                            intro_maker(['БЕГИ!', 'БЕГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
+                            intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
                         all_sprites = pygame.sprite.Group()
                         hero = Hero(200, 40)
                         labirint = Labirint('level1.tmx', [*range(1, 31)], 18)
@@ -311,6 +311,9 @@ def character_selection():
 
     screen.fill((0, 0, 0))
 
+    barrier = pygame.Surface((10, 10))
+    barrier_rect = pygame.Rect(100, 400, 100, 100)
+
     tiles = get_background(bg_image1)
     # print('ok')
     count = 0
@@ -323,7 +326,12 @@ def character_selection():
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
 
-        screen.blit(person_image, (WIDTH // 2, 100))
+        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+
+        #screen.blit(barrier, barrier_rect)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()

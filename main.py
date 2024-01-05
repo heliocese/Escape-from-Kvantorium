@@ -38,6 +38,7 @@ def get_image(sheet, frame, width, height, scale):
 
 person_sheet = load_image('levels/characters/Коля.png', (64, 60, 147))
 person_image = get_image(person_sheet, 1, 48, 96, 6)
+id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
 
 students = {
     'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
@@ -294,7 +295,7 @@ def levels():
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
                         all_sprites = pygame.sprite.Group()
                         hero = Hero(200, 40)
-                        labirint = Labirint('level1.tmx', [*range(1, 31)], 18)
+                        labirint = Labirint('level1.tmx', id_texture, 18)
                         all_sprites.add(hero, labirint.sprites)
                         level_displayer(labirint, hero, all_sprites)
                         level_displayer(1, labirint, hero)
@@ -326,10 +327,11 @@ def character_selection():
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
 
-        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
+        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
 
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        #screen.blit(barrier, barrier_rect)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

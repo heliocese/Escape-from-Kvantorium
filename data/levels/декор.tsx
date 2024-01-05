@@ -44,15 +44,6 @@
  <tile id="11">
   <image width="11" height="23" source="decorative_objects/trash.png"/>
  </tile>
- <tile id="12">
-  <image width="20" height="21" source="decorative_objects/book2.png"/>
- </tile>
- <tile id="13">
-  <image width="18" height="16" source="decorative_objects/book1.png"/>
- </tile>
- <tile id="14">
-  <image width="25" height="46" source="decorative_objects/books.png"/>
- </tile>
  <tile id="15">
   <image width="42" height="38" source="decorative_objects/bookcase.png"/>
  </tile>

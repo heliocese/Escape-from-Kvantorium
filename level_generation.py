@@ -17,14 +17,15 @@ class Labirint:
         self.finish_tile = b
         self.platform = pygame.sprite.Group()
         self.sprites = pygame.sprite.Group()
-        platform = self.map.get_tile_image_by_gid(18)
-        for y in range(self.height):
-            for x in range(self.width):
-                image = self.map.get_tile_image(x, y, 0)
-                sprite = Sprite(image, x, y, self.tile_size)
-                self.sprites.add(sprite)
-                if image == platform:
-                    self.platform.add(sprite)
+        for i in range(2):
+            for y in range(self.height):
+                for x in range(self.width):
+                    image = self.map.get_tile_image(x, y, i)
+                    if image:
+                        sprite = Sprite(image, x, y, self.tile_size)
+                        self.sprites.add(sprite)
+                        if self.map.tiledgidmap[self.map.get_tile_gid(x, y, i)] == 18:
+                            self.platform.add(sprite)
 
     def render(self, screen):
         self.sprites.draw(screen)

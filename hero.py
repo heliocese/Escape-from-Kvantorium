@@ -34,14 +34,11 @@ class Hero(pygame.sprite.Sprite):
             self.xvel = 0
 
         if up:
-            if self.onGround:  # прыгаем, только когда можем оттолкнуться от земли
-                self.yvel = -JUMP_POWER
+            self.yvel = -JUMP_POWER
         if not self.onGround:
             self.yvel += GRAVITY
-            self.rect.y += self.yvel
-            self.collide(0, self.yvel, platforms)
-        if self.onGround:
-            self.yvel = 0
+        self.rect.y += self.yvel
+        self.collide(0, self.yvel, platforms)
 
         self.rect.x += self.xvel  # переносим свои положение на xvel
         self.collide(self.xvel, 0, platforms)
@@ -49,7 +46,6 @@ class Hero(pygame.sprite.Sprite):
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):  # если есть пересечение платформы с игроком
-                print('fsdf')
 
                 if xvel > 0:  # если движется вправо
                     self.rect.right = p.rect.left  # то не движется вправо

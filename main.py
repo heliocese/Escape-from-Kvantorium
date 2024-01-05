@@ -254,7 +254,6 @@ def levels():
                         if level_btns.index(button) + 1 == 1:  #  проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                         'но вы не успели.', 'Бегите!'], (255, 255, 255))
-                            level_displayer(1, Labirint('level1.tmx', [*range(1, 31)], 19), Hero(40, 40))
                         elif level_btns.index(button) + 1 == 2:
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 5:
@@ -265,16 +264,12 @@ def levels():
                             intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БЕГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
-                        level_displayer(level_btns.index(button) + 1,
-                                        Labirint(f'level{level_btns.index(button) + 1}.tmx', [*range(1, 31)], 19), Hero(0, 0))
-                        if level_btns.index(button) + 1 == 1:
-                            intro_maker('Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
-                                        'но вы не успели. Бегите!', (255, 255, 255))  # не очень работает
-                            all_sprites = pygame.sprite.Group()
-                            hero = Hero(40, 40)
-                            labirint = Labirint('level1.tmx', [*range(1, 31)], 17)
-                            all_sprites.add(hero, labirint.sprites)
-                            level_displayer(labirint, hero, all_sprites)
+                        all_sprites = pygame.sprite.Group()
+                        hero = Hero(200, 40)
+                        labirint = Labirint('level1.tmx', [*range(1, 31)], 18)
+                        all_sprites.add(hero, labirint.sprites)
+                        level_displayer(labirint, hero, all_sprites)
+                        level_displayer(1, labirint, hero)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -296,6 +291,8 @@ def character_choice():
 
 def level_displayer(level_number, labirint, hero):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number} уровень')
+
+
 def level_displayer(labirint, hero, all_sprites):
     left = right = up = False
     while True:

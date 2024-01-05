@@ -223,7 +223,11 @@ def levels():
                         if level_btns.index(button) + 1 == 1:
                             intro_maker('Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                         'но вы не успели. Бегите!', (255, 255, 255))  # не очень работает
-                            level_displayer(Labirint('level1.tmx', [*range(1, 31)], 19), Hero(40, 40))
+                            all_sprites = pygame.sprite.Group()
+                            hero = Hero(40, 40)
+                            labirint = Labirint('level1.tmx', [*range(1, 31)], 17)
+                            all_sprites.add(hero, labirint.sprites)
+                            level_displayer(labirint, hero, all_sprites)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -232,7 +236,7 @@ def levels():
         clock.tick(FPS)
 
 
-def level_displayer(labirint, hero):
+def level_displayer(labirint, hero, all_sprites):
     left = right = up = False
     while True:
         for event in pygame.event.get():
@@ -256,13 +260,15 @@ def level_displayer(labirint, hero):
                     up = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print(labirint.is_free(event.pos))
+                print(event.pos)
+                print(hero.get_position())
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
         else:
             hero.onGround = True
-        hero.move(left, right, up)
         labirint.render(screen)
+        hero.move(left, right, up, labirint.platform)
         hero.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)

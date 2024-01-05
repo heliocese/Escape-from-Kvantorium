@@ -22,7 +22,37 @@ clock = pygame.time.Clock()
 main_font = pygame.font.Font(None, 64)
 
 bg_image = load_image('pattern6.png')
-bg_image1 = load_image('pattern8.png')
+bg_image1 = load_image('pattern13.png')
+bg_image_character = load_image('pattern9.png')
+# bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
+
+
+def get_image(sheet, frame, width, height, scale):
+    image = pygame.Surface((width, height)).convert_alpha()
+    image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
+    image = pygame.transform.scale(image, (width * scale, height * scale))
+    image.set_colorkey((0, 0, 0))
+
+    return image
+
+
+person_sheet = load_image('levels/characters/Влад.png')
+person_image = get_image(person_sheet, 1, 48, 96, 4)
+
+students = {
+    'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
+              'знания тайм менеджмента, ну, или же не спит ночами',
+    'Ангелина': 'На втором занятии уже всех знала по именам. Коммуникабельная, в общем.  Однажды смогла договориться '
+                'с муравьями, правда, не понятно, что больше помогло в переговорах: дихлофос или ее красноречие',
+    'Коля': '',
+    'Настя': '',
+    'Алиса': '',
+    'Ярик': '',
+    'Саша': 'Умудрился вылететь из Яндекс лицея до первого дедлайна',
+    'Влад': 'Ушел с лицея со словами "Чего-то у меня не получается с python, буду учить java"',
+    'Ваня': 'На начало второго года знал как зовут Ангелину, Сашу и Никиту. Не смог пройти первый бонусный уровень с '
+            'проектом, больше в Кванториуме его никто не видел. (разработчики сделали ему выпрямление, не удивляйтесь) '
+}
 
 button_image = load_image('button1.png')
 button_image1 = load_image('button2.png')
@@ -186,6 +216,7 @@ def main_menu():  # главное меню
                     levels()
                 if main_menu_buttons['Выбор персонажа'].click_check(event.pos):
                     print('Выбери персонажа')
+                    character_selection()
                 if main_menu_buttons['Статистика'].click_check(event.pos):
                     print('Смотри статистику')
                 if main_menu_buttons['Настройки'].click_check(event.pos):
@@ -206,16 +237,13 @@ def levels():
 
     text = 'Выберите уровень'
 
-    fon = pygame.transform.scale(load_image('bg.jpg'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
+    """fon = pygame.transform.scale(load_image('bg.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))"""
     font = pygame.font.Font(None, 64)
 
     string_rendered = font.render(text, 1, (28, 28, 28))
-    intro_rect = string_rendered.get_rect()
-    text_coord = 10
-    intro_rect.top = text_coord
-    intro_rect.x = 100
-    screen.blit(string_rendered, intro_rect)
+    text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
+    screen.blit(string_rendered, text_rect)
 
     # buttons_sprites = pygame.sprite.Group()
 
@@ -230,7 +258,7 @@ def levels():
             count += 0.5
 
         draw_backgound(tiles, int(count % 32), bg_image1)
-        screen.blit(string_rendered, intro_rect)
+        screen.blit(string_rendered, text_rect)
         return_btn.update(screen)
         return_btn.change_colour(pygame.mouse.get_pos())
 
@@ -278,15 +306,33 @@ def levels():
         clock.tick(FPS)
 
 
-def character_choice():
+def character_selection():
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
+
+    screen.fill((0, 0, 0))
+
+    tiles = get_background(bg_image1)
+    # print('ok')
+    count = 0
+
     while True:
+
+        ticks = pygame.time.get_ticks()
+        if ticks % FPS:
+            count += 0.5
+
+        draw_backgound(tiles, int(count % 32), bg_image_character)
+
+        screen.blit(person_image, (WIDTH // 2, 100))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
+
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 def level_displayer(level_number, labirint, hero):

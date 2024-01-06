@@ -34,8 +34,7 @@ class Button:
             screen.blit(self.text, self.text_rect)
 
     def click_check(self, pos):
-        if self.rect.collidepoint(pos):
-            return True
+        return self.rect.collidepoint(pos)
 
     def change_colour(self, pos):
         if self.rect.collidepoint(pos):

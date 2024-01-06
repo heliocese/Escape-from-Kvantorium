@@ -13,6 +13,8 @@ students = {
             'проектом, больше в Кванториуме его никто не видел. (разработчики сделали ему выпрямление, не удивляйтесь) '
 }
 
+students_lst = list(students.keys())
+
 level = {'0': {'level_map': 'level1.tmx', 'spawn': ('x', 'y')},
          '1': {'level_map': 'level2.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Ярослав.png', 'spawn_dop': ('x', 'y')},
          '2': {'level_map': 'level3.tmx', 'spawn': ('x', 'y')},

@@ -309,6 +309,12 @@ def levels():
 def character_selection():
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
 
+    text = 'Коля'
+
+    string_rendered = main_font.render(text, 1, (28, 28, 28))
+    text_rect = string_rendered.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6))
+    screen.blit(string_rendered, text_rect)
+
     screen.fill((0, 0, 0))
 
     barrier = pygame.Surface((10, 10))
@@ -325,6 +331,8 @@ def character_selection():
             count += 0.5
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
+
+        screen.blit(string_rendered, text_rect)
 
         screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
 

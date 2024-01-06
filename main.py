@@ -21,10 +21,13 @@ pygame.display.set_icon(icon)  # ставим нашу иконку вместо
 clock = pygame.time.Clock()
 
 main_font = pygame.font.Font(None, 64)
+mini_font = pygame.font.Font(None, 32)
 
 bg_image = load_image('pictures/pattern6.png')
 bg_image1 = load_image('pictures/pattern13.png')
 bg_image_character = load_image('pictures/pattern9.png')
+
+
 # bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
 
 
@@ -37,7 +40,8 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-person_sheet = load_image('characters/Коля.png', (64, 60, 147))
+character = 'Никита'
+person_sheet = load_image(f'characters/{character}.png', (64, 60, 147))
 person_image = get_image(person_sheet, 1, 48, 96, 6)
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
 
@@ -68,21 +72,19 @@ star_inactive = load_image('pictures/star_inactive.png')
 stars = []
 for button in level_btns:
     stars.append([Star(star_active, star_inactive, 'left', button),
-                 Star(star_active, star_inactive, 'right', button),
+                  Star(star_active, star_inactive, 'right', button),
                   Star(star_active, star_inactive, 'middle', button)])
 
 
 # заставки к уровням
 def intro_maker(message, colour=(255, 255, 255)):  # пока убого работает
     messages = full_wrapper(message, WIDTH // 16)
-    print(messages)
     cur_message = 0
     message_offsets = [50 * i for i in range(len(messages))]
-    print(message_offsets)
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
-    skip_text = font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
+    skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
     skip_text.set_alpha(alpha)
     while True:
         screen.fill((0, 0, 0))
@@ -94,7 +96,7 @@ def intro_maker(message, colour=(255, 255, 255)):  # пока убого раб�
                 return  # начинаем игру
 
         for message in messages[0:cur_message]:
-            string = font.render(message, True, colour)
+            string = mini_font.render(message, True, colour)
             string_rect = string.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[messages.index(message)]))
             screen.blit(string, string_rect)
 
@@ -266,9 +268,9 @@ def levels():
                 for button in level_btns:
                     if button.click_check(event.pos):
                         print('level' + str(level_btns.index(button) + 1))
-                        if level_btns.index(button) + 1 == 1:  #  проверка какой уровень
+                        if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
-                                        'но вы не успели.', 'Бегите!'], (255, 255, 255))
+                                         'но вы не успели.', 'Бегите!'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 2:
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 5:
@@ -298,8 +300,14 @@ def character_selection():
 
     screen.fill((0, 0, 0))
 
-    barrier = pygame.Surface((10, 10))
-    barrier_rect = pygame.Rect(100, 400, 100, 100)
+    name = main_font.render(character, 1, (28, 28, 28))
+    name_rect = name.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6))
+    # info = mini_font.render(students[character], 1, (28, 28, 28))
+    # info_rect = info.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6 * 4))
+    info = full_wrapper([students[character]], 25)
+    info_offsets = [25 * i - (12 * len(info))for i in range(len(info))]
+    print(len(info))
+    print(info_offsets)
 
     tiles = get_background(bg_image1)
     # print('ok')
@@ -313,11 +321,17 @@ def character_selection():
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
 
-        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+        screen.blit(name, name_rect)
+        #screen.blit(info, info_rect)
+        for line in info:
+            string = mini_font.render(line, True, (28, 28, 28))
+            string_rect = string.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6 * 4 + info_offsets[info.index(line)]))
+            screen.blit(string, string_rect)
 
-        #screen.blit(barrier, barrier_rect)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 10)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
+
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -350,11 +364,11 @@ def level_displayer(labirint, hero, all_sprites):
                 if pygame.key.get_pressed()[pygame.K_SPACE]:
                     up = True
             if event.type == pygame.KEYUP:
-                if not(pygame.key.get_pressed()[pygame.K_a]):
+                if not (pygame.key.get_pressed()[pygame.K_a]):
                     left = False
-                if not(pygame.key.get_pressed()[pygame.K_d]):
+                if not (pygame.key.get_pressed()[pygame.K_d]):
                     right = False
-                if not(pygame.key.get_pressed()[pygame.K_SPACE]):
+                if not (pygame.key.get_pressed()[pygame.K_SPACE]):
                     up = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print(labirint.is_free(event.pos))

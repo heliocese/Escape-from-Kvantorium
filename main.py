@@ -9,6 +9,7 @@ from functions import load_image, Object, Border, all_sprites, vertical_borders,
 from level_generation import Labirint
 from hero import Hero
 from star import Star
+from data_levels import students, level
 
 pygame.init()  # инициализация pygame
 
@@ -36,24 +37,9 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-person_sheet = load_image('levels/characters/Коля.png', (64, 60, 147))
+person_sheet = load_image('characters/Коля.png', (64, 60, 147))
 person_image = get_image(person_sheet, 1, 48, 96, 6)
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
-
-students = {
-    'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
-              'знания тайм менеджмента, ну, или же не спит ночами',
-    'Ангелина': 'На втором занятии уже всех знала по именам. Коммуникабельная, в общем.  Однажды смогла договориться '
-                'с муравьями, правда, не понятно, что больше помогло в переговорах: дихлофос или ее красноречие',
-    'Коля': '',
-    'Настя': '',
-    'Алиса': '',
-    'Ярик': '',
-    'Саша': 'Умудрился вылететь из Яндекс лицея до первого дедлайна',
-    'Влад': 'Ушел с лицея со словами "Чего-то у меня не получается с python, буду учить java"',
-    'Ваня': 'На начало второго года знал как зовут Ангелину, Сашу и Никиту. Не смог пройти первый бонусный уровень с '
-            'проектом, больше в Кванториуме его никто не видел. (разработчики сделали ему выпрямление, не удивляйтесь) '
-}
 
 button_image = load_image('pictures/button1.png')
 button_image1 = load_image('pictures/button2.png')

@@ -14,16 +14,16 @@ pygame.init()  # инициализация pygame
 
 pygame.display.set_caption('Проект')  # изменяем название окна
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # устанавливаем размеры экрана
-icon = load_image('gogol.png')  # добавляем иконку окна
+icon = load_image('pictures/gogol.png')  # добавляем иконку окна
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
 
 main_font = pygame.font.Font(None, 64)
 
-bg_image = load_image('pattern6.png')
-bg_image1 = load_image('pattern13.png')
-bg_image_character = load_image('pattern9.png')
+bg_image = load_image('pictures/pattern6.png')
+bg_image1 = load_image('pictures/pattern13.png')
+bg_image_character = load_image('pictures/pattern9.png')
 # bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
 
 
@@ -55,8 +55,8 @@ students = {
             'проектом, больше в Кванториуме его никто не видел. (разработчики сделали ему выпрямление, не удивляйтесь) '
 }
 
-button_image = load_image('button1.png')
-button_image1 = load_image('button2.png')
+button_image = load_image('pictures/button1.png')
+button_image1 = load_image('pictures/button2.png')
 
 button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']
 main_menu_buttons = {}
@@ -64,8 +64,8 @@ for i in range(5):
     main_menu_buttons[button_list[i]] = Button(WIDTH // 2, HEIGHT // 7 * (i + 2),
                                                button_image, button_image1, button_list[i], 4)
 
-return_img = load_image('return_btn.png')
-return_img_ = load_image('return_btn_.png')
+return_img = load_image('pictures/return_btn.png')
+return_img_ = load_image('pictures/return_btn_.png')
 
 return_btn = Button(50, 50, return_img, return_img_)
 level_btns = []
@@ -73,11 +73,11 @@ level_btns = []
 for i in range(1, 11):
     level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
                              HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
-                             load_image(f'{i}.png'),
-                             load_image(f'{i}_.png'), None, WIDTH // 240))
+                             load_image(f'pictures/{i}.png'),
+                             load_image(f'pictures/{i}_.png'), None, WIDTH // 240))
 
-star_active = load_image('star_active.png')
-star_inactive = load_image('star_inactive.png')
+star_active = load_image('pictures/star_active.png')
+star_inactive = load_image('pictures/star_inactive.png')
 
 stars = []
 for button in level_btns:
@@ -166,7 +166,7 @@ def main_menu():  # главное меню
 
     text = 'Escape from Kvantorium'
 
-    fon = pygame.transform.scale(load_image('bg1.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('pictures/bg1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 64)
 

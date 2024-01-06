@@ -59,15 +59,15 @@ for i in range(len(button_list)):
     main_menu_buttons[button_list[i]] = Button(WIDTH // 2, HEIGHT // 7 * (i + 2),
                                                button_image, button_image1, button_list[i], 4)
 
-return_img = load_image('pictures/return_btn.png')
-return_img_ = load_image('pictures/return_btn_.png')
-
-return_btn = Button(main_offset, main_offset, return_img, return_img_)
-
 arrow_right = load_image('pictures/arrow_right.png')
 arrow_right_ = load_image('pictures/arrow_right_.png')
 arrow_left = pygame.transform.rotate(arrow_right, 180)
 arrow_left_ = pygame.transform.rotate(arrow_right_, 180)
+
+return_img = load_image('pictures/return_btn.png')
+return_img_ = load_image('pictures/return_btn_.png')
+
+return_btn = Button(main_offset, main_offset, return_img, return_img_)
 
 arrow_right_btn = Button(WIDTH // 6 * 4 - main_offset, HEIGHT - main_offset, arrow_right, arrow_right_)
 arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_left_)
@@ -88,6 +88,20 @@ for button in level_btns:
     stars.append([Star(star_active, star_inactive, 'left', button),
                   Star(star_active, star_inactive, 'right', button),
                   Star(star_active, star_inactive, 'middle', button)])
+
+restart_img = load_image('pictures/restart_btn.png')
+restart_img_ = load_image('pictures/restart_btn_.png')
+restart_btn = Button(main_offset, main_offset, restart_img, restart_img_)
+
+pause_img = load_image('pictures/pause.png')
+pause_img_ = load_image('pictures/pause_.png')
+pause_btn = Button(main_offset * 1.2 + return_btn.image.get_width(), main_offset, pause_img, pause_img_)
+
+resume_btn = Button(WIDTH // 5 * 3, HEIGHT // 2, load_image('pictures/resume.png'),
+                    load_image('pictures/resume_.png'), None, 4)
+
+home_btn = Button(WIDTH // 5 * 2, HEIGHT // 2, load_image('pictures/home_btn.png'),
+                    load_image('pictures/home_btn_.png'), None, 4)
 
 
 # заставки к уровням
@@ -346,7 +360,7 @@ def character_selection(character):
     name = main_font.render(character, 1, (28, 28, 28))  # имя персонажа
     name_rect = name.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6))  # имя располагается в правой верхней части экрана
     info = full_wrapper([students[character]], 25)  # информация о персонаже
-    info_offsets = [25 * i - (12 * len(info))for i in range(len(info))]  # информация находится в правой нижней части
+    info_offsets = [25 * i - (12 * len(info)) for i in range(len(info))]  # информация находится в правой нижней части
 
     person_sheet = load_image(f'characters/{character}.png')
     person_image = get_image(person_sheet, 1, 48, 96, 6)
@@ -428,6 +442,10 @@ def level_displayer(level_number, labirint, hero, all_sprites):
                 if not (pygame.key.get_pressed()[pygame.K_SPACE]):
                     up = False
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_btn.click_check(event.pos):  # должно перезапускать уровень
+                    level_displayer(level_number, labirint, hero, all_sprites)
+                if pause_btn.click_check(event.pos):
+                    pause()
                 print(labirint.is_free(event.pos))
                 print(event.pos)
                 print(hero.get_position())
@@ -439,6 +457,42 @@ def level_displayer(level_number, labirint, hero, all_sprites):
         labirint.render(screen)
         hero.move(left, right, up, labirint.platform)
         hero.draw(screen)
+
+        restart_btn.update(screen)
+        restart_btn.change_colour(pygame.mouse.get_pos())
+        pause_btn.update(screen)
+        pause_btn.change_colour(pygame.mouse.get_pos())
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def pause():
+    pygame.display.set_caption(f'Escape from Kvantorium - пауза')
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if resume_btn.click_check(event.pos):
+                    return
+                if home_btn.click_check(event.pos):
+                    main_menu()
+
+        pygame.draw.rect(screen, pygame.Color('grey'), (WIDTH // 4, HEIGHT // 3, WIDTH // 4 * 2, HEIGHT // 3))
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3), (WIDTH // 4 * 3, HEIGHT // 3), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3 * 2), (WIDTH // 4 * 3, HEIGHT // 3 * 2), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3), (WIDTH // 4, HEIGHT // 3 * 2), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4 * 3, HEIGHT // 3), (WIDTH // 4 * 3, HEIGHT // 3 * 2), 10)
+        # pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        home_btn.update(screen)
+        home_btn.change_colour(pygame.mouse.get_pos())
+        resume_btn.update(screen)
+        resume_btn.change_colour(pygame.mouse.get_pos())
         pygame.display.flip()
         clock.tick(FPS)
 

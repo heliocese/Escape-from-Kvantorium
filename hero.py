@@ -11,7 +11,7 @@ class Hero(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
-        self.image = pygame.Surface((22, 32))
+        self.image = pygame.Surface((32, 32))
         self.rect = pygame.Rect(x, y, 32, 22)  # прямоугольный объект
         self.image.set_colorkey(pygame.Color(COLOR))
         self.yvel = 0  # скорость вертикального перемещения
@@ -63,4 +63,4 @@ class Hero(pygame.sprite.Sprite):
                     self.yvel = 0  # и энергия прыжка пропадает
 
     def get_position(self):
-        return self.rect.x + 20, self.rect.y + 20
+        return self.rect.x, self.rect.y

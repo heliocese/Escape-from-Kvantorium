@@ -9,21 +9,22 @@ from functions import load_image, Object, Border, all_sprites, vertical_borders,
 from level_generation import Labirint
 from hero import Hero
 from star import Star
+from data_levels import students, level
 
 pygame.init()  # инициализация pygame
 
 pygame.display.set_caption('Проект')  # изменяем название окна
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # устанавливаем размеры экрана
-icon = load_image('gogol.png')  # добавляем иконку окна
+icon = load_image('pictures/gogol.png')  # добавляем иконку окна
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
 
 main_font = pygame.font.Font(None, 64)
 
-bg_image = load_image('pattern6.png')
-bg_image1 = load_image('pattern13.png')
-bg_image_character = load_image('pattern9.png')
+bg_image = load_image('pictures/pattern6.png')
+bg_image1 = load_image('pictures/pattern13.png')
+bg_image_character = load_image('pictures/pattern9.png')
 # bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
 
 
@@ -36,26 +37,12 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-person_sheet = load_image('levels/characters/Коля.png', (64, 60, 147))
+person_sheet = load_image('characters/Коля.png', (64, 60, 147))
 person_image = get_image(person_sheet, 1, 48, 96, 6)
+id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
 
-students = {
-    'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
-              'знания тайм менеджмента, ну, или же не спит ночами',
-    'Ангелина': 'На втором занятии уже всех знала по именам. Коммуникабельная, в общем.  Однажды смогла договориться '
-                'с муравьями, правда, не понятно, что больше помогло в переговорах: дихлофос или ее красноречие',
-    'Коля': '',
-    'Настя': '',
-    'Алиса': '',
-    'Ярик': '',
-    'Саша': 'Умудрился вылететь из Яндекс лицея до первого дедлайна',
-    'Влад': 'Ушел с лицея со словами "Чего-то у меня не получается с python, буду учить java"',
-    'Ваня': 'На начало второго года знал как зовут Ангелину, Сашу и Никиту. Не смог пройти первый бонусный уровень с '
-            'проектом, больше в Кванториуме его никто не видел. (разработчики сделали ему выпрямление, не удивляйтесь) '
-}
-
-button_image = load_image('button1.png')
-button_image1 = load_image('button2.png')
+button_image = load_image('pictures/button1.png')
+button_image1 = load_image('pictures/button2.png')
 
 button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']
 main_menu_buttons = {}
@@ -63,8 +50,8 @@ for i in range(5):
     main_menu_buttons[button_list[i]] = Button(WIDTH // 2, HEIGHT // 7 * (i + 2),
                                                button_image, button_image1, button_list[i], 4)
 
-return_img = load_image('return_btn.png')
-return_img_ = load_image('return_btn_.png')
+return_img = load_image('pictures/return_btn.png')
+return_img_ = load_image('pictures/return_btn_.png')
 
 return_btn = Button(50, 50, return_img, return_img_)
 level_btns = []
@@ -72,11 +59,11 @@ level_btns = []
 for i in range(1, 11):
     level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
                              HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
-                             load_image(f'{i}.png'),
-                             load_image(f'{i}_.png'), None, WIDTH // 240))
+                             load_image(f'pictures/{i}.png'),
+                             load_image(f'pictures/{i}_.png'), None, WIDTH // 240))
 
-star_active = load_image('star_active.png')
-star_inactive = load_image('star_inactive.png')
+star_active = load_image('pictures/star_active.png')
+star_inactive = load_image('pictures/star_inactive.png')
 
 stars = []
 for button in level_btns:
@@ -165,7 +152,7 @@ def main_menu():  # главное меню
 
     text = 'Escape from Kvantorium'
 
-    fon = pygame.transform.scale(load_image('bg1.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('pictures/bg1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 64)
 
@@ -294,7 +281,7 @@ def levels():
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))  # неправильно работает
                         all_sprites = pygame.sprite.Group()
                         hero = Hero(200, 40)
-                        labirint = Labirint('level1.tmx', [*range(1, 31)], 18)
+                        labirint = Labirint('level1.tmx', id_texture, 18)
                         all_sprites.add(hero, labirint.sprites)
                         level_displayer(labirint, hero, all_sprites)
                         level_displayer(1, labirint, hero)
@@ -308,12 +295,6 @@ def levels():
 
 def character_selection():
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
-
-    text = 'Коля'
-
-    string_rendered = main_font.render(text, 1, (28, 28, 28))
-    text_rect = string_rendered.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6))
-    screen.blit(string_rendered, text_rect)
 
     screen.fill((0, 0, 0))
 
@@ -332,12 +313,11 @@ def character_selection():
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
 
-        screen.blit(string_rendered, text_rect)
+        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
 
-        screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
-
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
-        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        #screen.blit(barrier, barrier_rect)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 10)
+        pygame.draw.line(screen, (39, 36, 46), (WIDTH // 2, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

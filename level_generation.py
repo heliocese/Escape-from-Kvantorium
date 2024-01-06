@@ -12,7 +12,6 @@ class Labirint:
         self.height = self.map.height
         self.width = self.map.width
         self.tile_size = self.map.tilewidth
-        del a[17]
         self.free_tiles = a
         self.finish_tile = b
         self.platform = pygame.sprite.Group()

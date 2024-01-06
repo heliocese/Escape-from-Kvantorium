@@ -23,11 +23,6 @@ class Button:
             self.text = font.render(self.text, True, (0, 0, 15))
             self.text_rect = self.text.get_rect(center=(x, y))
 
-    """def draw_text(self, screen):
-        font = pygame.font.Font(None, 100)
-        text = font.render(self.text, True, (0, 0, 0))
-        screen.blit(text, self.rect)"""
-
     def update(self, screen):
         screen.blit(self.cur_image, self.rect)
         if self.is_text:
@@ -41,20 +36,3 @@ class Button:
             self.cur_image = self.second_image
         else:
             self.cur_image = self.image
-
-    """def draw(self, screen):
-        action = False
-        pos = pygame.mouse.get_pos()
-
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked is False:
-                self.clicked = True
-                action = True
-
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-        #self.draw_text(screen)
-
-        return action"""

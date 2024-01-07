@@ -326,7 +326,7 @@ def levels():
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
                             hero = Hero(200, 40)
                         all_sprites = pygame.sprite.Group()
-                        labirint = Labirint('level1.tmx', id_texture, 18)
+                        labirint = Labirint(level[level_btns.index(button)]['level_map'], id_texture, 18)
                         all_sprites.add(hero, labirint.sprites)
                         level_displayer(1, labirint, hero, all_sprites)
             if event.type == pygame.KEYDOWN:

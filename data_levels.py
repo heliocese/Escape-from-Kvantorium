@@ -15,13 +15,13 @@ students = {
 
 students_lst = list(students.keys())
 
-level = {'0': {'level_map': 'level1.tmx', 'spawn': ('x', 'y')},
-         '1': {'level_map': 'level2.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Ярослав.png', 'spawn_dop': ('x', 'y')},
-         '2': {'level_map': 'level3.tmx', 'spawn': ('x', 'y')},
-         '3': {'level_map': 'level4.tmx', 'spawn': ('x', 'y')},
-         '4': {'level_map': 'level5.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Саша.png', 'spawn_dop': ('x', 'y')},
-         '5': {'level_map': 'level6.tmx', 'spawn': ('x', 'y')},
-         '6': {'level_map': 'level7.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Влад.png', 'spawn_dop': ('x', 'y')},
-         '7': {'level_map': 'level8.tmx', 'spawn': ('x', 'y')},
-         '8': {'level_map': 'level9.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Ваня.png', 'spawn_dop': ('x', 'y')},
-         '9': {'level_map': 'level10.tmx', 'spawn': ('x', 'y')}}
+level = {0: {'level_map': 'level1.tmx', 'spawn': ('x', 'y')},
+         1: {'level_map': 'level2.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Ярослав.png', 'spawn_dop': ('x', 'y')},
+         2: {'level_map': 'level3.tmx', 'spawn': ('x', 'y')},
+         3: {'level_map': 'level4.tmx', 'spawn': ('x', 'y')},
+         4: {'level_map': 'level5.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Саша.png', 'spawn_dop': ('x', 'y')},
+         5: {'level_map': 'level6.tmx', 'spawn': ('x', 'y')},
+         6: {'level_map': 'level7.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Влад.png', 'spawn_dop': ('x', 'y')},
+         7: {'level_map': 'level8.tmx', 'spawn': ('x', 'y')},
+         8: {'level_map': 'level9.tmx', 'spawn': ('x', 'y'), 'dop_character': 'Ваня.png', 'spawn_dop': ('x', 'y')},
+         9: {'level_map': 'level10.tmx', 'spawn': ('x', 'y')}}

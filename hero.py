@@ -1,23 +1,70 @@
 import pygame
 from functions import load_image
+import pyganim
 
 
-COLOR = "#888888"
+COLOR = "#090909"
 GRAVITY = 0.35
 JUMP_POWER = 10
+data = 'data/characters/animation/'
+
+def scale_image(image):
+    return pygame.transform.scale(image, (200, 150))
+
+
+ANIMATION_DELAY = 10  # скорость смены кадров
+ANIMATION_RIGHT = [(data + 'Alice_rr1.png'), (data + 'Alice_rr2.png'), (data + 'Alice_rr3.png'), (data + 'Alice_rr4.png')]
+ANIMATION_LEFT = [(data + 'Alice_rl1.png'), (data + 'Alice_rl2.png'), (data + 'Alice_rl3.png'), (data + 'Alice_rl4.png')]
+ANIMATION_JUMP_LEFT = [(data + 'Alice_rl1.png', 10)]
+ANIMATION_JUMP_RIGHT = [(data + 'Alice_rr2.png', 10)]
+ANIMATION = [(data + 'Alice_0.png', 10)]
 
 
 class Hero(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, image):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
-        image = load_image(image)
-        self.image = image
+        self.image = pygame.Surface((16, 40))
+        self.image.fill(pygame.Color(COLOR))
+        self.rect = pygame.Rect(x, y, 16, 40)
         self.rect = self.image.get_rect(center=(x, y))
-        self.image.set_colorkey(pygame.Color(COLOR))
+        self.image.set_colorkey((9, 9, 9))
         self.yvel = 0  # скорость вертикального перемещения
         self.onGround = False
+
+        self.image.set_colorkey(pygame.Color(COLOR))  # делаем фон прозрачным
+        #        Анимация движения вправо
+        boltAnim = []
+        for anim in ANIMATION_RIGHT:
+
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimRight = pyganim.PygAnimation(boltAnim)
+        self.boltAnimRight.play()
+        self.boltAnimRight.scale((16, 40))
+        #        Анимация движения влево
+        boltAnim = []
+        for anim in ANIMATION_LEFT:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
+        self.boltAnimLeft.scale((16, 40))
+        self.boltAnimLeft.play()
+
+        self.boltAnimStay = pyganim.PygAnimation(ANIMATION)
+        self.boltAnimStay.play()
+        self.boltAnimStay.scale((16, 40))
+        self.boltAnimStay.blit(self.image, (0, 0))  # По-умолчанию, стоим
+
+        self.boltAnimJumpLeft = pyganim.PygAnimation(ANIMATION_JUMP_LEFT)
+        self.boltAnimJumpLeft.scale((16, 40))
+        self.boltAnimJumpLeft.play()
+
+        self.boltAnimJumpRight = pyganim.PygAnimation(ANIMATION_JUMP_RIGHT)
+        self.boltAnimJumpRight.scale((16, 40))
+        self.boltAnimJumpRight.play()
+
+        self.boltAnimJump = pyganim.PygAnimation(ANIMATION)
+        self.boltAnimJump.scale((16, 40))
+        self.boltAnimJump.play()
 
     def update(self):
             pass
@@ -28,16 +75,30 @@ class Hero(pygame.sprite.Sprite):
     def move(self, left, right, up, platforms):
         if left:
             self.xvel = -5  # Лево = x- n
+            self.image.fill(pygame.Color(COLOR))
+            if up:  # для прыжка влево есть отдельная анимация
+                self.boltAnimJumpLeft.blit(self.image, (0, 0))
+            else:
+                self.boltAnimLeft.blit(self.image, (0, 0))
 
         if right:
             self.xvel = 5  # Право = x + n
+            self.image.fill(pygame.Color(COLOR))
+            if up:
+                self.boltAnimJumpRight.blit(self.image, (0, 0))
+            else:
+                self.boltAnimRight.blit(self.image, (0, 0))
 
         if not (left or right):  # стоим, когда нет указаний идти
             self.xvel = 0
+            self.image.fill(pygame.Color(COLOR))
+            self.boltAnimStay.blit(self.image, (0, 0))
 
         if up:
             if self.onGround:
                 self.yvel = -JUMP_POWER * up
+                self.image.fill(pygame.Color(COLOR))
+                self.boltAnimJump.blit(self.image, (0, 0))
         if not self.onGround:
             self.yvel += GRAVITY
         self.rect.y += self.yvel
@@ -67,3 +128,4 @@ class Hero(pygame.sprite.Sprite):
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top
+

@@ -39,7 +39,6 @@ def get_image(sheet, frame, width, height, scale):  # берём часть из
     image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
     image = pygame.transform.scale(image, (width * scale, height * scale))
     image.set_colorkey((9, 9, 9))  # убираем задний фон
-
     return image
 
 
@@ -303,28 +302,16 @@ def levels():
                                          'но вы не успели.', 'Бегите!'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 2:
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
-                            hero = Hero(200, 40)
-                        elif level_btns.index(button) + 1 == 3:
-                            hero = Hero(200, 40)
-                        elif level_btns.index(button) + 1 == 4:
-                            hero = Hero(200, 40)
+
                         elif level_btns.index(button) + 1 == 5:
                             intro_maker(['Спаси своего друга Сашу'], (255, 255, 255))
-                            hero = Hero(200, 40)
-                        elif level_btns.index(button) + 1 == 6:
-                            hero = Hero(200, 40)
                         elif level_btns.index(button) + 1 == 7:
                             intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
-                            hero = Hero(200, 40)
-                        elif level_btns.index(button) + 1 == 8:
-                            hero = Hero(200, 40)
                         elif level_btns.index(button) + 1 == 9:
                             intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
-                            hero = Hero(200, 40)
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
-                            hero = Hero(200, 40)
-                        hero = Hero(300, 100, 'characters/animation/тест.png')
+                        hero = Hero(300, 100)
                         all_sprites = pygame.sprite.Group()
                         labirint = Labirint(level[level_btns.index(button)]['level_map'], id_texture, 18)
                         all_sprites.add(hero, labirint.sprites)
@@ -376,7 +363,7 @@ def character_selection(character):
             count += 0.5
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
-        pygame.draw.rect(screen, pygame.Color('grey'), (WIDTH // 6 * 4, 0, WIDTH, HEIGHT))
+        pygame.draw.rect(screen, pygame.Color('#f6f4fc'), (WIDTH // 6 * 4, 0, WIDTH, HEIGHT))
 
         for btn in buttons:
             btn.update(screen)

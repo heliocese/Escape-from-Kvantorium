@@ -34,7 +34,8 @@ class Hero(pygame.sprite.Sprite):
             self.xvel = 0
 
         if up:
-            self.yvel = -JUMP_POWER
+            if self.onGround:
+                self.yvel = -JUMP_POWER
         if not self.onGround:
             self.yvel += GRAVITY
         self.rect.y += self.yvel
@@ -63,4 +64,4 @@ class Hero(pygame.sprite.Sprite):
                     self.yvel = 0  # и энергия прыжка пропадает
 
     def get_position(self):
-        return self.rect.x, self.rect.y
+        return self.rect.x, self.rect.y + 32

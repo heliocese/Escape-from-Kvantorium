@@ -450,11 +450,9 @@ def level_displayer(level_number, labirint, hero, all_sprites):
                 print(labirint.is_free(event.pos))
                 print(event.pos)
                 print(hero.get_position())
-
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
-        else:
-            hero.onGround = True
+
         labirint.render(screen)
         hero.move(left, right, up, labirint.platform)
         hero.draw(screen)

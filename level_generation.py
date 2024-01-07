@@ -33,7 +33,12 @@ class Labirint:
         return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size, 0)]
 
     def is_free(self, pos):
-        return self.get_tile_id(pos) in self.free_tiles
+        print(self.get_tile_id(pos) in self.free_tiles)
+        print(self.get_tile_id((pos[0] + 32, pos[1])) in self.free_tiles)
+        print()
+        if self.get_tile_id(pos) in self.free_tiles and self.get_tile_id((pos[0] + 31, pos[1])) in self.free_tiles:
+            return True
+        return False
 
 
 class Sprite(pygame.sprite.Sprite):

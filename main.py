@@ -22,11 +22,13 @@ clock = pygame.time.Clock()
 
 main_font = pygame.font.Font(None, 64)
 mini_font = pygame.font.Font(None, 32)
+big_font = pygame.font.Font(None, 128)
 main_offset = (WIDTH + HEIGHT) // 31
 
 bg_image = load_image('pictures/pattern6.png')
 bg_image1 = load_image('pictures/pattern13.png')
 bg_image_character = load_image('pictures/pattern9.png')
+bg_image_game_over = load_image('pictures/pattern16.png')
 
 
 # bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
@@ -101,7 +103,18 @@ resume_btn = Button(WIDTH // 5 * 3, HEIGHT // 2, load_image('pictures/resume.png
                     load_image('pictures/resume_.png'), None, 4)
 
 home_btn = Button(WIDTH // 5 * 2, HEIGHT // 2, load_image('pictures/home_btn.png'),
-                    load_image('pictures/home_btn_.png'), None, 4)
+                  load_image('pictures/home_btn_.png'), None, 4)
+
+coords_x = [i for i in range(-100, -50)] + [j for j in range(WIDTH + 50, WIDTH + 100)]
+coords_y = [i for i in range(-100, -50)] + [j for j in range(HEIGHT + 50, HEIGHT + 100)]
+objects = []
+for file in os.listdir('data/levels/decorative_objects'):
+    if file[-3:] != 'jpg' and file != 'sign exit.png' and file != 'фон.png':
+        objects.append(file)
+
+for _ in range(10):
+    Object(load_image(f'levels/decorative_objects/{random.choice(objects)}'),
+           random.choice(coords_x), random.choice(coords_y))
 
 
 # заставки к уровням
@@ -172,6 +185,12 @@ def draw_backgound(tiles, offset, image):
         screen.blit(image, (tile[0] - offset, tile[1] - offset))
 
 
+def draw_vertical_backgound(tiles, offset, image):
+    # print(offset)
+    for tile in tiles:
+        screen.blit(image, (tile[0] - offset, tile[1]))
+
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -182,11 +201,8 @@ def main_menu():  # главное меню
 
     text = 'Escape from Kvantorium'
 
-    fon = pygame.transform.scale(load_image('pictures/bg1.jpg'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 64)
-
-    string_rendered = font.render(text, 1, (28, 28, 28))
+    string_rendered = main_font.render(text, 1, (28, 28, 28))
+    string_rendered_shadow = main_font.render(text, 1, (1, 1, 1))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
     screen.blit(string_rendered, text_rect)
     offscreen = 200
@@ -195,17 +211,6 @@ def main_menu():  # главное меню
     Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
     Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
     Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
-
-    coords_x = [i for i in range(-100, -50)] + [j for j in range(WIDTH + 50, WIDTH + 100)]
-    coords_y = [i for i in range(-100, -50)] + [j for j in range(HEIGHT + 50, HEIGHT + 100)]
-    objects = []
-    for file in os.listdir('data/levels/decorative_objects'):
-        if file[-3:] != 'jpg' and file != 'sign exit.png' and file != 'фон.png':
-            objects.append(file)
-
-    for _ in range(10):
-        Object(load_image(f'levels/decorative_objects/{random.choice(objects)}'),
-               random.choice(coords_x), random.choice(coords_y))
 
     # buttons_sprites = pygame.sprite.Group()
     tiles = get_background(bg_image)
@@ -222,6 +227,7 @@ def main_menu():  # главное меню
         all_sprites.draw(screen)
         all_sprites.update()
 
+        screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))
         screen.blit(string_rendered, text_rect)
 
         for event in pygame.event.get():
@@ -254,18 +260,13 @@ def levels():
 
     text = 'Выберите уровень'
 
-    """fon = pygame.transform.scale(load_image('bg.jpg'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))"""
-    font = pygame.font.Font(None, 64)
-
-    string_rendered = font.render(text, 1, (28, 28, 28))
+    string_rendered = main_font.render(text, 1, (28, 28, 28))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
     screen.blit(string_rendered, text_rect)
 
     # buttons_sprites = pygame.sprite.Group()
 
     tiles = get_background(bg_image1)
-    # print('ok')
     count = 0
 
     while True:
@@ -482,17 +483,75 @@ def pause():
                     return
                 if home_btn.click_check(event.pos):
                     main_menu()
+                    # game_over()
 
         pygame.draw.rect(screen, pygame.Color('grey'), (WIDTH // 4, HEIGHT // 3, WIDTH // 4 * 2, HEIGHT // 3))
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3), (WIDTH // 4 * 3, HEIGHT // 3), 10)
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3 * 2), (WIDTH // 4 * 3, HEIGHT // 3 * 2), 10)
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3), (WIDTH // 4, HEIGHT // 3 * 2), 10)
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4 * 3, HEIGHT // 3), (WIDTH // 4 * 3, HEIGHT // 3 * 2), 10)
-        # pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
         home_btn.update(screen)
         home_btn.change_colour(pygame.mouse.get_pos())
         resume_btn.update(screen)
         resume_btn.change_colour(pygame.mouse.get_pos())
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def game_over(reason='Вас поймали'):  # экран конца игры, пока ничем не запускается
+    pygame.display.set_caption(f'Escape from Kvantorium - game over')
+    game_text = big_font.render('Game', 1, (28, 28, 28))
+    game_text_shadow = big_font.render('Game', 1, (1, 1, 1))
+    over_text = big_font.render('Over', 1, (28, 28, 28))
+    over_text_shadow = big_font.render('Over', 1, (1, 1, 1))
+    reason_text = main_font.render(reason, 1, (28, 28, 28))
+    reason_text_shadow = main_font.render(reason, 1, (1, 1, 1))
+
+    tiles_left = get_background(bg_image_game_over)
+    tiles_right = get_background(bg_image_game_over)
+    walls_collided = False
+
+    count = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if resume_btn.click_check(event.pos) and walls_collided:
+                    return
+                if home_btn.click_check(event.pos) and walls_collided:
+                    main_menu()
+
+        screen.fill((0, 0, 0))
+
+        if count < WIDTH // 2:
+            count += 7
+        else:
+            count = WIDTH // 2
+            walls_collided = True
+
+        # pygame.draw.rect(screen, (122, 119, 155), (0, 0, 0 + count, HEIGHT))
+        # pygame.draw.rect(screen, (122, 119, 155), (WIDTH - count, 0, WIDTH, HEIGHT))
+
+        draw_vertical_backgound(tiles_left, WIDTH - count, bg_image_game_over)
+        draw_vertical_backgound(tiles_right, -WIDTH + count, bg_image_game_over)
+
+        screen.blit(game_text_shadow, game_text.get_rect(center=(-WIDTH // 7 + count + 2, HEIGHT // 7 + 2)))
+        screen.blit(over_text_shadow, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count + 2, HEIGHT // 7 + 2)))
+        screen.blit(game_text, game_text.get_rect(center=(-WIDTH // 7 + count, HEIGHT // 7)))
+        screen.blit(over_text, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count, HEIGHT // 7)))
+        # pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
+        if walls_collided:
+            screen.blit(reason_text_shadow, game_text.get_rect(center=(WIDTH // 2 + 2, HEIGHT // 7 * 2 + 2)))
+            screen.blit(reason_text, game_text.get_rect(center=(WIDTH // 2, HEIGHT // 7 * 2)))
+            home_btn.update(screen)
+            home_btn.change_colour(pygame.mouse.get_pos())
+            resume_btn.update(screen)
+            resume_btn.change_colour(pygame.mouse.get_pos())
         pygame.display.flip()
         clock.tick(FPS)
 

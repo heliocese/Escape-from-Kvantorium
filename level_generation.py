@@ -33,7 +33,9 @@ class Labirint:
         return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size, 0)]
 
     def is_free(self, pos):
-        if self.get_tile_id(pos) in self.free_tiles and self.get_tile_id((pos[0] + 31, pos[1])) in self.free_tiles:
+        x1, x2 = pos[0], pos[0] + pos[2] - 1
+        y = pos[1] + pos[3]
+        if self.get_tile_id((x1, y)) in self.free_tiles and self.get_tile_id((x2, y)) in self.free_tiles:
             return True
         return False
 

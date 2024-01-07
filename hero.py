@@ -1,4 +1,5 @@
 import pygame
+from functions import load_image
 
 
 COLOR = "#888888"
@@ -8,11 +9,12 @@ JUMP_POWER = 10
 
 class Hero(pygame.sprite.Sprite):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, image):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
-        self.image = pygame.Surface((32, 32))
-        self.rect = pygame.Rect(x, y, 32, 22)  # прямоугольный объект
+        image = load_image(image)
+        self.image = image
+        self.rect = self.image.get_rect(center=(x, y))
         self.image.set_colorkey(pygame.Color(COLOR))
         self.yvel = 0  # скорость вертикального перемещения
         self.onGround = False
@@ -64,4 +66,4 @@ class Hero(pygame.sprite.Sprite):
                     self.yvel = 0  # и энергия прыжка пропадает
 
     def get_position(self):
-        return self.rect.x, self.rect.y + 32
+        return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top

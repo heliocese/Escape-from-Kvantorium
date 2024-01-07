@@ -301,7 +301,6 @@ def levels():
                         if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                          'но вы не успели.', 'Бегите!'], (255, 255, 255))
-                            hero = Hero(200, 40)
                         elif level_btns.index(button) + 1 == 2:
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                             hero = Hero(200, 40)
@@ -325,6 +324,7 @@ def levels():
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
                             hero = Hero(200, 40)
+                        hero = Hero(300, 100, 'characters/animation/тест.png')
                         all_sprites = pygame.sprite.Group()
                         labirint = Labirint(level[level_btns.index(button)]['level_map'], id_texture, 18)
                         all_sprites.add(hero, labirint.sprites)

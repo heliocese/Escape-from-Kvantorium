@@ -433,15 +433,18 @@ def level_displayer(level_number, labirint, hero, all_sprites):
                     left = True
                 if pygame.key.get_pressed()[pygame.K_d]:
                     right = True
-                if pygame.key.get_pressed()[pygame.K_SPACE]:
-                    up = True
+                if pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]:
+                    if pygame.key.get_pressed()[pygame.K_SPACE]:
+                        up = 2
+                elif pygame.key.get_pressed()[pygame.K_SPACE]:
+                    up = 1
             if event.type == pygame.KEYUP:
                 if not (pygame.key.get_pressed()[pygame.K_a]):
                     left = False
                 if not (pygame.key.get_pressed()[pygame.K_d]):
                     right = False
                 if not (pygame.key.get_pressed()[pygame.K_SPACE]):
-                    up = False
+                    up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if restart_btn.click_check(event.pos):  # должно перезапускать уровень
                     level_displayer(level_number, labirint, hero, all_sprites)

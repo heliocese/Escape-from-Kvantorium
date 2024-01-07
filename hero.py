@@ -37,7 +37,7 @@ class Hero(pygame.sprite.Sprite):
 
         if up:
             if self.onGround:
-                self.yvel = -JUMP_POWER
+                self.yvel = -JUMP_POWER * up
         if not self.onGround:
             self.yvel += GRAVITY
         self.rect.y += self.yvel

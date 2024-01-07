@@ -1,5 +1,4 @@
 import pygame
-from functions import load_image
 import pyganim
 
 
@@ -7,9 +6,6 @@ COLOR = "#090909"
 GRAVITY = 0.35
 JUMP_POWER = 10
 data = 'data/characters/animation/'
-
-def scale_image(image):
-    return pygame.transform.scale(image, (200, 150))
 
 
 ANIMATION_DELAY = 10  # скорость смены кадров

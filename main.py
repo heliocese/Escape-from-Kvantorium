@@ -1,5 +1,4 @@
-import random
-
+import random  # необходимые импорты
 import pygame
 import sys
 import os
@@ -20,9 +19,9 @@ pygame.display.set_icon(icon)  # ставим нашу иконку вместо
 
 clock = pygame.time.Clock()
 
-main_font = pygame.font.Font(None, 64)
-mini_font = pygame.font.Font(None, 32)
-big_font = pygame.font.Font(None, 128)
+main_font = pygame.font.Font(None, 64)  # основной шрифт
+mini_font = pygame.font.Font(None, 32)  # маленький шрифт
+big_font = pygame.font.Font(None, 128)  # большой шрифт
 main_offset = (WIDTH + HEIGHT) // 31
 
 bg_image = load_image('pictures/pattern6.png')
@@ -34,9 +33,9 @@ bg_image_game_over = load_image('pictures/pattern16.png')
 # bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
 
 
-def get_image(sheet, frame, width, height, scale):  # берём часть изображения
+def get_image(sheet, frame, line, width, height, scale):  # берём часть изображения
     image = pygame.Surface((width, height)).convert_alpha()
-    image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
+    image.blit(sheet, (0, 0), (width * (frame - 1), height * (line - 1), width, height))
     image = pygame.transform.scale(image, (width * scale, height * scale))
     image.set_colorkey((9, 9, 9))  # убираем задний фон
     return image
@@ -44,7 +43,22 @@ def get_image(sheet, frame, width, height, scale):  # берём часть из
 
 selected_character = 'Никита'
 person_sheet = load_image(f'characters/{selected_character}.png')
-person_image = get_image(person_sheet, 1, 48, 96, 6)
+person_image = get_image(person_sheet, 1, 1, 48, 96, 6)
+
+characters_list = ['Ангелина', 'Ваня', 'Влад', 'Иван Дмитриевич']  # список персонажей для раскадровки
+for char in characters_list:
+    char_sheet = load_image(f'characters/{char}.png')
+    pygame.image.save(get_image(char_sheet, 2, 1, 48, 96, 6), f'data/characters/animation/{char}_0.png')
+    pygame.image.save(get_image(char_sheet, 1, 2, 48, 96, 6), f'data/characters/animation/{char}_rl2.png')
+    pygame.image.save(get_image(char_sheet, 3, 2, 48, 96, 6), f'data/characters/animation/{char}_rl3.png')
+    pygame.image.save(get_image(char_sheet, 7, 2, 48, 96, 6), f'data/characters/animation/{char}_rl1.png')
+    pygame.image.save(get_image(char_sheet, 9, 2, 48, 96, 6), f'data/characters/animation/{char}_rl4.png')
+    pygame.image.save(get_image(char_sheet, 1, 3, 48, 96, 6), f'data/characters/animation/{char}_rr2.png')
+    pygame.image.save(get_image(char_sheet, 3, 3, 48, 96, 6), f'data/characters/animation/{char}_rr3.png')
+    pygame.image.save(get_image(char_sheet, 7, 3, 48, 96, 6), f'data/characters/animation/{char}_rr4.png')
+    pygame.image.save(get_image(char_sheet, 9, 3, 48, 96, 6), f'data/characters/animation/{char}_rr1.png')
+
+
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
 
 button_image = load_image('pictures/button1.png')
@@ -68,7 +82,7 @@ arrow_left_ = pygame.transform.rotate(arrow_right_, 180)
 return_img = load_image('pictures/return_btn.png')
 return_img_ = load_image('pictures/return_btn_.png')
 
-return_btn = Button(main_offset, main_offset, return_img, return_img_)
+return_btn = Button(main_offset, main_offset, return_img, return_img_)  # кнопка возврата
 
 arrow_right_btn = Button(WIDTH // 6 * 4 - main_offset, HEIGHT - main_offset, arrow_right, arrow_right_)
 arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_left_)

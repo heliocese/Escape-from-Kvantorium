@@ -8,12 +8,12 @@ JUMP_POWER = 10
 data = 'data/characters/animation/'
 
 
-ANIMATION_DELAY = 10  # скорость смены кадров
+ANIMATION_DELAY = 50  # скорость смены кадров
 ANIMATION_RIGHT = [(data + 'Alice_rr1.png'), (data + 'Alice_rr2.png'), (data + 'Alice_rr3.png'), (data + 'Alice_rr4.png')]
 ANIMATION_LEFT = [(data + 'Alice_rl1.png'), (data + 'Alice_rl2.png'), (data + 'Alice_rl3.png'), (data + 'Alice_rl4.png')]
-ANIMATION_JUMP_LEFT = [(data + 'Alice_rl1.png', 10)]
-ANIMATION_JUMP_RIGHT = [(data + 'Alice_rr1.png', 10)]
-ANIMATION = [(data + 'Alice_0.png', 10)]
+ANIMATION_JUMP_LEFT = [(data + 'Alice_rl1.png', 50)]
+ANIMATION_JUMP_RIGHT = [(data + 'Alice_rr1.png', 50)]
+ANIMATION = [(data + 'Alice_0.png', 50)]
 
 
 class Hero(pygame.sprite.Sprite):

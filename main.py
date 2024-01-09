@@ -361,7 +361,7 @@ def character_selection(character):
     info_offsets = [25 * i - (12 * len(info)) for i in range(len(info))]  # информация находится в правой нижней части
 
     person_sheet = load_image(f'characters/{character}.png')
-    person_image = get_image(person_sheet, 1, 48, 96, 6)
+    person_image = get_image(person_sheet, 2, 1, 48, 96, 6)
 
     tiles = get_background(bg_image1)
     count = 0
@@ -415,7 +415,7 @@ def character_selection(character):
 
 
 def new_game(level_number):
-    person = 'Ангелинаф'
+    person = 'Ангелина'
     hero = Hero(*level[level_number]['spawn'], person)
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)

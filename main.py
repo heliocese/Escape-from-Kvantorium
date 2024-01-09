@@ -324,6 +324,7 @@ def levels():
                             intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
+                        print(level_btns.index(button))
                         new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -414,7 +415,7 @@ def character_selection(character):
 
 
 def new_game(level_number):
-    hero = Hero(300, 100)
+    hero = Hero(*level[level_number]['spawn'])
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
 
@@ -429,7 +430,7 @@ def new_game(level_number):
 
 # отображает уровень
 def level_displayer(level_number, labirint, hero, all_sprites, camera):
-    pygame.display.set_caption(f'Escape from Kvantorium - {level_number} уровень')
+    pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
 
     while True:
@@ -462,6 +463,7 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
                 if restart_btn.click_check(event.pos):  # должно перезапускать уровень
                     new_game(level_number)
                 if pause_btn.click_check(event.pos):
+                    left = right = False
                     pause()
                 print(event.pos)
         if labirint.is_free(hero.get_position()):

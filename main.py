@@ -10,6 +10,7 @@ from hero import Hero
 from star import Star
 from data_levels import students, students_lst, level
 from camera import Camera, camera_configure
+from timer import Timer
 
 pygame.init()  # инициализация pygame
 
@@ -430,6 +431,7 @@ def new_game(level_number):
 def level_displayer(level_number, labirint, hero, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
+    timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font, FPS)
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -473,6 +475,8 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
+        timer.update()
+        timer.draw(screen)
 
         restart_btn.update(screen)
         restart_btn.change_colour(pygame.mouse.get_pos())

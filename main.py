@@ -311,7 +311,6 @@ def levels():
                 for button in level_btns:
                     if button.click_check(event.pos):
                         print('level' + str(level_btns.index(button) + 1))
-                        hero = None
                         if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                          'но вы не успели.', 'Бегите!'], (255, 255, 255))
@@ -325,17 +324,7 @@ def levels():
                             intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
-                        hero = Hero(300, 100)
-                        all_sprites = pygame.sprite.Group()
-                        labirint = Labirint(level[level_btns.index(button)]['level_map'], id_texture, 18)
-
-                        total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
-                        total_level_height = labirint.height * 32  # высоту
-
-                        camera = Camera(camera_configure, total_level_width, total_level_height)
-
-                        all_sprites.add(labirint.sprites, hero)
-                        level_displayer(level_btns.index(button) + 1, labirint, hero, all_sprites, camera)
+                        new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -424,6 +413,20 @@ def character_selection(character):
         clock.tick(FPS)
 
 
+def new_game(level_number):
+    hero = Hero(300, 100)
+    all_sprites = pygame.sprite.Group()
+    labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
+
+    total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
+    total_level_height = labirint.height * 32  # высоту
+
+    camera = Camera(camera_configure, total_level_width, total_level_height)
+
+    all_sprites.add(labirint.sprites, hero)
+    level_displayer(level_number, labirint, hero, all_sprites, camera)
+
+
 # отображает уровень
 def level_displayer(level_number, labirint, hero, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number} уровень')
@@ -457,12 +460,10 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
                     up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if restart_btn.click_check(event.pos):  # должно перезапускать уровень
-                    level_displayer(level_number, labirint, hero, all_sprites)
+                    new_game(level_number)
                 if pause_btn.click_check(event.pos):
                     pause()
-                print(labirint.is_free(event.pos))
                 print(event.pos)
-                print(hero.get_position())
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
 

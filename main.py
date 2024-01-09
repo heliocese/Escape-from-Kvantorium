@@ -47,7 +47,7 @@ person_sheet = load_image(f'characters/{selected_character}.png')
 person_image = get_image(person_sheet, 1, 1, 48, 96, 6)
 
 
-def storyboard():  # для каскадровки персонажей
+def storyboard():  # для раскадровки персонажей
     frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
                       (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
     for char in ['Иван Дмитриевич']:  # список персонажей для раскадровки
@@ -56,8 +56,6 @@ def storyboard():  # для каскадровки персонажей
             image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
             image = image.subsurface((8, 24, 32, 70))
             pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
-
-storyboard()
 
 
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]
@@ -324,7 +322,6 @@ def levels():
                             intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
-                        print(level_btns.index(button))
                         new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -415,7 +412,7 @@ def character_selection(character):
 
 
 def new_game(level_number):
-    person = 'Ангелинаф'
+    person = 'Ангелина'
     hero = Hero(*level[level_number]['spawn'], person)
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
@@ -439,26 +436,27 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         # будем использовать как фон
         bg.fill(pygame.Color('#004400'))  # Заливаем поверхность сплошным цветом
         for event in pygame.event.get():
+            keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                if pygame.key.get_pressed()[pygame.K_a]:
+                if keys[pygame.K_a] or keys[pygame.K_LEFT]:
                     left = True
-                if pygame.key.get_pressed()[pygame.K_d]:
+                if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                     right = True
-                if pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT]:
-                    if pygame.key.get_pressed()[pygame.K_SPACE]:
+                if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
+                    if pygame.key.get_pressed()[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]:
                         up = 2
-                elif pygame.key.get_pressed()[pygame.K_SPACE]:
+                elif keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]:
                     up = 1
             if event.type == pygame.KEYUP:
-                if not (pygame.key.get_pressed()[pygame.K_a]):
+                if not (keys[pygame.K_a]) and not (keys[pygame.K_LEFT]):
                     left = False
-                if not (pygame.key.get_pressed()[pygame.K_d]):
+                if not (keys[pygame.K_d]) and not (keys[pygame.K_RIGHT]):
                     right = False
-                if not (pygame.key.get_pressed()[pygame.K_SPACE]):
+                if not (keys[pygame.K_SPACE]) and not (keys[pygame.K_w]) and not (keys[pygame.K_UP]):
                     up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if restart_btn.click_check(event.pos):  # должно перезапускать уровень

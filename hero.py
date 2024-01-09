@@ -22,38 +22,37 @@ class Hero(pygame.sprite.Sprite):
         self.onGround = False
 
         self.image.set_colorkey(pygame.Color(COLOR))  # делаем фон прозрачным
-        (ANIMATION_DELAY, ANIMATION_RIGHT, ANIMATION_LEFT, ANIMATION_JUMP_RIGHT,
-         ANIMATION_JUMP_LEFT, ANIMATION) = get_animation(person)
+        delay, right, left, jump_right, jump_left, stay = get_animation(person)
         #        Анимация движения вправо
         boltAnim = []
-        for anim in ANIMATION_RIGHT:
+        for anim in right:
 
-            boltAnim.append((anim, ANIMATION_DELAY))
+            boltAnim.append((anim, delay))
         self.boltAnimRight = pyganim.PygAnimation(boltAnim)
         self.boltAnimRight.scale((w, h))
         self.boltAnimRight.play()
         #        Анимация движения влево
         boltAnim = []
-        for anim in ANIMATION_LEFT:
-            boltAnim.append((anim, ANIMATION_DELAY))
+        for anim in left:
+            boltAnim.append((anim, delay))
         self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
         self.boltAnimLeft.scale((w, h))
         self.boltAnimLeft.play()
 
-        self.boltAnimStay = pyganim.PygAnimation(ANIMATION)
+        self.boltAnimStay = pyganim.PygAnimation(stay)
         self.boltAnimStay.play()
         self.boltAnimStay.scale((w, h))
         self.boltAnimStay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
-        self.boltAnimJumpLeft = pyganim.PygAnimation(ANIMATION_JUMP_LEFT)
+        self.boltAnimJumpLeft = pyganim.PygAnimation(jump_left)
         self.boltAnimJumpLeft.scale((w, h))
         self.boltAnimJumpLeft.play()
 
-        self.boltAnimJumpRight = pyganim.PygAnimation(ANIMATION_JUMP_RIGHT)
+        self.boltAnimJumpRight = pyganim.PygAnimation(jump_right)
         self.boltAnimJumpRight.scale((w, h))
         self.boltAnimJumpRight.play()
 
-        self.boltAnimJump = pyganim.PygAnimation(ANIMATION)
+        self.boltAnimJump = pyganim.PygAnimation(stay)
         self.boltAnimJump.scale((w, h))
         self.boltAnimJump.play()
 

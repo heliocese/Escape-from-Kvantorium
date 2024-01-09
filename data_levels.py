@@ -33,12 +33,12 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445)},
 def get_animation(person):
     data = 'data/characters/animation/'
 
-    ANIMATION_DELAY = 80  # скорость смены кадров
-    ANIMATION_RIGHT = [(data + person + '_rr1.png'), (data + person + '_rr2.png'), (data + person + '_rr3.png'),
+    delay = 80  # скорость смены кадров
+    right = [(data + person + '_rr1.png'), (data + person + '_rr2.png'), (data + person + '_rr3.png'),
                        (data + person + '_rr4.png')]
-    ANIMATION_LEFT = [(data + person + '_rl1.png'), (data + person + '_rl2.png'), (data + person + '_rl3.png'),
+    left = [(data + person + '_rl1.png'), (data + person + '_rl2.png'), (data + person + '_rl3.png'),
                       (data + person + '_rl4.png')]
-    ANIMATION_JUMP_LEFT = [(data + person + '_rl1.png', 80)]
-    ANIMATION_JUMP_RIGHT = [(data + person + '_rr1.png', 80)]
-    ANIMATION = [(data + person + '_0.png', 80)]
-    return ANIMATION_DELAY, ANIMATION_RIGHT, ANIMATION_LEFT, ANIMATION_JUMP_RIGHT, ANIMATION_JUMP_LEFT, ANIMATION
+    jump_left = [(data + person + '_rl1.png', 80)]
+    jump_right = [(data + person + '_rr1.png', 80)]
+    stay = [(data + person + '_0.png', 80)]
+    return delay, right, left, jump_right, jump_left, stay

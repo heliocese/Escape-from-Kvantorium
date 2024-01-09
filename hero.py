@@ -7,6 +7,18 @@ COLOR = "#090909"
 GRAVITY = 0.35
 JUMP_POWER = 10
 
+vertical_borders = pygame.sprite.Group()
+
+
+class Border(pygame.sprite.Sprite):
+    # строго вертикальный отрезок (стена для выхода)
+    def __init__(self, x1, y1, x2, y2):
+        super().__init__()
+        if x1 == x2:  # вертикальная стенка
+            self.add(vertical_borders)
+            self.image = pygame.Surface([1, y2 - y1])
+            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
+
 
 class Hero(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
@@ -97,6 +109,12 @@ class Hero(pygame.sprite.Sprite):
         self.rect.x += self.xvel  # переносим свои положение на xvel
         self.collide(self.xvel, 0, platforms)
 
+    def exit(self):  # найден выход
+        p = Border(959, 0, 959, 608)
+        if pygame.sprite.collide_rect(self, p):
+            return True
+        return False
+
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):  # если есть пересечение платформы с игроком
@@ -115,6 +133,7 @@ class Hero(pygame.sprite.Sprite):
                 if yvel < 0:  # если движется вверх
                     self.rect.top = p.rect.bottom  # то не движется вверх
                     self.yvel = 0  # и энергия прыжка пропадает
+
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top

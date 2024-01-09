@@ -9,7 +9,7 @@ from level_generation import Labirint
 from hero import Hero
 from star import Star
 from data_levels import students, students_lst, level
-from camera import Camera, camera_configure
+from Camera import Camera, camera_configure
 from timer import Timer
 
 pygame.init()  # инициализация pygame
@@ -427,6 +427,39 @@ def new_game(level_number):
     level_displayer(level_number, labirint, hero, all_sprites, camera)
 
 
+def End(time):  # окончание уровня победой
+    pygame.display.set_caption('Escape from Kvantorium - WIN')
+
+    text = 'WIN'
+
+    string_rendered = main_font.render(text, 1, (28, 28, 28))
+    string_rendered_shadow = main_font.render(text, 1, (1, 1, 1))
+    text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
+    screen.blit(string_rendered, text_rect)
+    offscreen = 200
+
+    Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
+    Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
+    Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
+    Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
+
+    # buttons_sprites = pygame.sprite.Group()
+    tiles = get_background(bg_image)
+    count = 0
+    while True:
+        ticks = pygame.time.get_ticks()
+        if ticks % FPS:
+            count += 0.5
+
+        draw_backgound(tiles, int(count % 32), bg_image)
+
+        all_sprites.draw(screen)
+        all_sprites.update()
+
+        screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))
+        screen.blit(string_rendered, text_rect)
+
+
 # отображает уровень
 def level_displayer(level_number, labirint, hero, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
@@ -482,7 +515,9 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         restart_btn.change_colour(pygame.mouse.get_pos())
         pause_btn.update(screen)
         pause_btn.change_colour(pygame.mouse.get_pos())
-
+        if hero.exit():  # если игрок дошел до выхода
+            timer.pauses()
+            # End(timer.get_time())
         pygame.display.flip()
         clock.tick(FPS)
 

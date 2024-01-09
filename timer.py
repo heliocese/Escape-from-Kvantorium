@@ -11,6 +11,9 @@ class Timer:
         self.text = self.font.render(f'Время {self.minutes}:{self.seconds}', True, (9, 9, 9))
         self.rect = self.text.get_rect(center=(x, y))
 
+    def pauses(self):
+        self.pause = True
+
     def draw(self, screen):
         screen.blit(self.text, self.rect)
 

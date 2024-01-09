@@ -1,25 +1,15 @@
 import pygame
 import pyganim
+from data_levels import get_animation
 
 
 COLOR = "#090909"
 GRAVITY = 0.35
 JUMP_POWER = 10
-data = 'data/characters/animation/'
-person = 'Ангелина'
-
-ANIMATION_DELAY = 80  # скорость смены кадров
-ANIMATION_RIGHT = [(data + person + '_rr1.png'), (data + person + '_rr2.png'), (data + person + '_rr3.png'),
-                   (data + person + '_rr4.png')]
-ANIMATION_LEFT = [(data + person + '_rl1.png'), (data + person + '_rl2.png'), (data + person + '_rl3.png'),
-                  (data + person + '_rl4.png')]
-ANIMATION_JUMP_LEFT = [(data + person + '_rl1.png', 80)]
-ANIMATION_JUMP_RIGHT = [(data + person + '_rr1.png', 80)]
-ANIMATION = [(data + person + '_0.png', 80)]
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, person):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
         w, h = 19, 40
@@ -32,6 +22,8 @@ class Hero(pygame.sprite.Sprite):
         self.onGround = False
 
         self.image.set_colorkey(pygame.Color(COLOR))  # делаем фон прозрачным
+        (ANIMATION_DELAY, ANIMATION_RIGHT, ANIMATION_LEFT, ANIMATION_JUMP_RIGHT,
+         ANIMATION_JUMP_LEFT, ANIMATION) = get_animation(person)
         #        Анимация движения вправо
         boltAnim = []
         for anim in ANIMATION_RIGHT:

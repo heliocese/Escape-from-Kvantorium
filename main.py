@@ -48,8 +48,8 @@ person_image = get_image(person_sheet, 1, 1, 48, 96, 6)
 
 
 def storyboard():  # для каскадровки персонажей
-    frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'),
-                      (9, 2, '_rl4.png'), (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
+    frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
+                      (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
     for char in students_lst:  # список персонажей для раскадровки
         for f in frame_and_line:
             char_sheet = load_image(f'characters/{char}.png')
@@ -413,7 +413,8 @@ def character_selection(character):
 
 
 def new_game(level_number):
-    hero = Hero(*level[level_number]['spawn'])
+    person = 'Ангелинаф'
+    hero = Hero(*level[level_number]['spawn'], person)
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
 

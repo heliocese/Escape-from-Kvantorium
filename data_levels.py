@@ -28,3 +28,17 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445)},
          7: {'level_map': 'level8.tmx', 'spawn': (40, 1000)},
          8: {'level_map': 'level9.tmx', 'spawn': (40, 270), 'dop_character': 'Ваня', 'spawn_dop': ('x', 'y')},
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60)}}
+
+
+def get_animation(person):
+    data = 'data/characters/animation/'
+
+    ANIMATION_DELAY = 80  # скорость смены кадров
+    ANIMATION_RIGHT = [(data + person + '_rr1.png'), (data + person + '_rr2.png'), (data + person + '_rr3.png'),
+                       (data + person + '_rr4.png')]
+    ANIMATION_LEFT = [(data + person + '_rl1.png'), (data + person + '_rl2.png'), (data + person + '_rl3.png'),
+                      (data + person + '_rl4.png')]
+    ANIMATION_JUMP_LEFT = [(data + person + '_rl1.png', 80)]
+    ANIMATION_JUMP_RIGHT = [(data + person + '_rr1.png', 80)]
+    ANIMATION = [(data + person + '_0.png', 80)]
+    return ANIMATION_DELAY, ANIMATION_RIGHT, ANIMATION_LEFT, ANIMATION_JUMP_RIGHT, ANIMATION_JUMP_LEFT, ANIMATION

@@ -6,23 +6,26 @@ COLOR = "#090909"
 GRAVITY = 0.35
 JUMP_POWER = 10
 data = 'data/characters/animation/'
-
+person = 'Ангелина'
 
 ANIMATION_DELAY = 80  # скорость смены кадров
-ANIMATION_RIGHT = [(data + 'Alice_rr1.png'), (data + 'Alice_rr2.png'), (data + 'Alice_rr3.png'), (data + 'Alice_rr4.png')]
-ANIMATION_LEFT = [(data + 'Alice_rl1.png'), (data + 'Alice_rl2.png'), (data + 'Alice_rl3.png'), (data + 'Alice_rl4.png')]
-ANIMATION_JUMP_LEFT = [(data + 'Alice_rl1.png', 80)]
-ANIMATION_JUMP_RIGHT = [(data + 'Alice_rr1.png', 80)]
-ANIMATION = [(data + 'Alice_0.png', 80)]
+ANIMATION_RIGHT = [(data + person + '_rr1.png'), (data + person + '_rr2.png'), (data + person + '_rr3.png'),
+                   (data + person + '_rr4.png')]
+ANIMATION_LEFT = [(data + person + '_rl1.png'), (data + person + '_rl2.png'), (data + person + '_rl3.png'),
+                  (data + person + '_rl4.png')]
+ANIMATION_JUMP_LEFT = [(data + person + '_rl1.png', 80)]
+ANIMATION_JUMP_RIGHT = [(data + person + '_rr1.png', 80)]
+ANIMATION = [(data + person + '_0.png', 80)]
 
 
 class Hero(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
-        self.image = pygame.Surface((16, 40))
+        w, h = 19, 40
+        self.image = pygame.Surface((w, h))
         self.image.fill(pygame.Color(COLOR))
-        self.rect = pygame.Rect(x, y, 16, 40)
+        self.rect = pygame.Rect(x, y, w, h)
         self.rect = self.image.get_rect(center=(x, y))
         self.image.set_colorkey((9, 9, 9))
         self.yvel = 0  # скорость вертикального перемещения
@@ -35,31 +38,31 @@ class Hero(pygame.sprite.Sprite):
 
             boltAnim.append((anim, ANIMATION_DELAY))
         self.boltAnimRight = pyganim.PygAnimation(boltAnim)
+        self.boltAnimRight.scale((w, h))
         self.boltAnimRight.play()
-        self.boltAnimRight.scale((16, 40))
         #        Анимация движения влево
         boltAnim = []
         for anim in ANIMATION_LEFT:
             boltAnim.append((anim, ANIMATION_DELAY))
         self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
-        self.boltAnimLeft.scale((16, 40))
+        self.boltAnimLeft.scale((w, h))
         self.boltAnimLeft.play()
 
         self.boltAnimStay = pyganim.PygAnimation(ANIMATION)
         self.boltAnimStay.play()
-        self.boltAnimStay.scale((16, 40))
+        self.boltAnimStay.scale((w, h))
         self.boltAnimStay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
         self.boltAnimJumpLeft = pyganim.PygAnimation(ANIMATION_JUMP_LEFT)
-        self.boltAnimJumpLeft.scale((16, 40))
+        self.boltAnimJumpLeft.scale((w, h))
         self.boltAnimJumpLeft.play()
 
         self.boltAnimJumpRight = pyganim.PygAnimation(ANIMATION_JUMP_RIGHT)
-        self.boltAnimJumpRight.scale((16, 40))
+        self.boltAnimJumpRight.scale((w, h))
         self.boltAnimJumpRight.play()
 
         self.boltAnimJump = pyganim.PygAnimation(ANIMATION)
-        self.boltAnimJump.scale((16, 40))
+        self.boltAnimJump.scale((w, h))
         self.boltAnimJump.play()
 
     def update(self):

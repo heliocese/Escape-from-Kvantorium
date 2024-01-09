@@ -46,18 +46,16 @@ selected_character = 'Никита'
 person_sheet = load_image(f'characters/{selected_character}.png')
 person_image = get_image(person_sheet, 1, 1, 48, 96, 6)
 
-characters_list = ['Ангелина', 'Ваня', 'Влад', 'Иван Дмитриевич']  # список персонажей для раскадровки
-for char in characters_list:
-    char_sheet = load_image(f'characters/{char}.png')
-    pygame.image.save(get_image(char_sheet, 2, 1, 48, 96, 6), f'data/characters/animation/{char}_0.png')
-    pygame.image.save(get_image(char_sheet, 1, 2, 48, 96, 6), f'data/characters/animation/{char}_rl2.png')
-    pygame.image.save(get_image(char_sheet, 3, 2, 48, 96, 6), f'data/characters/animation/{char}_rl3.png')
-    pygame.image.save(get_image(char_sheet, 7, 2, 48, 96, 6), f'data/characters/animation/{char}_rl1.png')
-    pygame.image.save(get_image(char_sheet, 9, 2, 48, 96, 6), f'data/characters/animation/{char}_rl4.png')
-    pygame.image.save(get_image(char_sheet, 1, 3, 48, 96, 6), f'data/characters/animation/{char}_rr2.png')
-    pygame.image.save(get_image(char_sheet, 3, 3, 48, 96, 6), f'data/characters/animation/{char}_rr3.png')
-    pygame.image.save(get_image(char_sheet, 7, 3, 48, 96, 6), f'data/characters/animation/{char}_rr4.png')
-    pygame.image.save(get_image(char_sheet, 9, 3, 48, 96, 6), f'data/characters/animation/{char}_rr1.png')
+
+def storyboard():  # для каскадровки персонажей
+    frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'),
+                      (9, 2, '_rl4.png'), (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
+    for char in students_lst:  # список персонажей для раскадровки
+        for f in frame_and_line:
+            char_sheet = load_image(f'characters/{char}.png')
+            image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
+            image = image.subsurface((8, 24, 32, 70))
+            pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
 
 
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]

@@ -9,7 +9,7 @@ from level_generation import Labirint
 from hero import Hero
 from star import Star
 from data_levels import students, students_lst, level
-from Camera import Camera, camera_configure
+from camera import Camera, camera_configure
 from timer import Timer
 
 pygame.init()  # инициализация pygame
@@ -413,7 +413,7 @@ def character_selection(character):
 
 
 def new_game(level_number):
-    person = 'Ангелина'
+    person = selected_character
     hero = Hero(*level[level_number]['spawn'], person)
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
@@ -444,20 +444,30 @@ def End(time):  # окончание уровня победой
     Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
 
     # buttons_sprites = pygame.sprite.Group()
-    tiles = get_background(bg_image)
+    tiles = get_background(bg_image1)
     count = 0
+
     while True:
+
         ticks = pygame.time.get_ticks()
         if ticks % FPS:
             count += 0.5
+        print(count)
 
-        draw_backgound(tiles, int(count % 32), bg_image)
+        draw_backgound(tiles, int(count % 32), bg_image_character)
 
         all_sprites.draw(screen)
         all_sprites.update()
 
         screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))
         screen.blit(string_rendered, text_rect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+                # добавить кнопки
+
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 # отображает уровень
@@ -465,12 +475,15 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
     timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font, FPS)
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
         # будем использовать как фон
         bg.fill(pygame.Color('#004400'))  # Заливаем поверхность сплошным цветом
         for event in pygame.event.get():
+            if event.type == pygame.USEREVENT:
+                timer.update()
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
@@ -508,7 +521,6 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
-        timer.update()
         timer.draw(screen)
 
         restart_btn.update(screen)
@@ -517,7 +529,7 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         pause_btn.change_colour(pygame.mouse.get_pos())
         if hero.exit():  # если игрок дошел до выхода
             timer.pauses()
-            # End(timer.get_time())
+            End(timer.get_time())
         pygame.display.flip()
         clock.tick(FPS)
 

@@ -19,9 +19,7 @@ class Timer:
 
     def update(self):
         if not self.pause:
-            self.count += 1
-            if self.count % self.fps == 0:
-                self.time += 1
+            self.time += 1
             self.seconds = '0' + str(self.time % 60) if self.time % 60 < 10 else str(self.time % 60)
             self.minutes = '0' + str(self.time // 60) if self.time // 60 < 10 else str(self.time // 60)
             self.text = self.font.render(f'Время {self.minutes}:{self.seconds}', True, (9, 9, 9))

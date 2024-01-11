@@ -16,7 +16,7 @@ class Labirint:
         self.finish_tile = b
         self.platform = pygame.sprite.Group()
         self.sprites = pygame.sprite.Group()
-        for i in range(2):
+        for i in range(2):  # слои
             for y in range(self.height):
                 for x in range(self.width):
                     image = self.map.get_tile_image(x, y, i)
@@ -38,6 +38,29 @@ class Labirint:
         if self.get_tile_id((x1, y)) in self.free_tiles and self.get_tile_id((x2, y)) in self.free_tiles:
             return True
         return False
+
+    def find_path_step(self, start, target):
+        INF = 1000
+        x, y = start
+        distance = [[INF] * self.width for _ in range(self.height)]
+        distance[y][x] = 0
+        previous = [[None] * self.width for _ in range(self.height)]
+        queue = [(x, y)]
+        while queue:
+            x, y = queue.pop(0)
+            for dx, dy in (1, 0), (0, 1), (-1, 0), (0, -1):
+                next_x, next_y = x + dx, y + dy
+                if 0 <= next_x < self.width and 0 <= next_y < self.height and \
+                    self.is_free((next_x, next_y)) and distance[next_y][next_x] == INF:
+                    distance[next_y][next_x] = distance[y][x] + 1
+                    previous[next_y][next_x] = (x, y)
+                    queue.append((next_x, next_y))
+        x, y = target
+        if distance[y][x] == INF or start == target:
+            return start
+        while previous[y][x] != start:
+            x, y = previous[y][x]
+        return x, y
 
 
 class Sprite(pygame.sprite.Sprite):

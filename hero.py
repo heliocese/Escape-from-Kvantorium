@@ -69,7 +69,7 @@ class Hero(pygame.sprite.Sprite):
         self.boltAnimJump.play()
 
     def update(self):
-            pass
+        pass
 
     def draw(self, screen):  # Выводим себя на экран
         screen.blit(self.image, (self.rect.x, self.rect.y))
@@ -136,4 +136,3 @@ class Hero(pygame.sprite.Sprite):
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top
-

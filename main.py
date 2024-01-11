@@ -4,19 +4,21 @@ import sys
 import os
 from button import Button
 from settings import *
-from functions import load_image, Object, Border, all_sprites, vertical_borders, horizontal_borders, wrap, full_wrapper
+from functions import load_image, Object, Border, all_sprites, full_wrapper
 from level_generation import Labirint
 from hero import Hero
 from star import Star
 from data_levels import students, students_lst, level
 from camera import Camera, camera_configure
 from timer import Timer
+from graffiti import Graffiti
+from enemy import Enemy
 
 pygame.init()  # инициализация pygame
 
 pygame.display.set_caption('Проект')  # изменяем название окна
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  # устанавливаем размеры экрана
-icon = load_image('pictures/gogol.png')  # добавляем иконку окна
+icon = load_image('pictures/kvantorium_logo.png')  # добавляем иконку окна
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
@@ -24,15 +26,14 @@ clock = pygame.time.Clock()
 main_font = pygame.font.Font(None, 64)  # основной шрифт
 mini_font = pygame.font.Font(None, 32)  # маленький шрифт
 big_font = pygame.font.Font(None, 128)  # большой шрифт
-main_offset = (WIDTH + HEIGHT) // 31
+main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от краёв экрана
 
 bg_image = load_image('pictures/pattern6.png')
 bg_image1 = load_image('pictures/pattern13.png')
 bg_image_character = load_image('pictures/pattern9.png')
 bg_image_game_over = load_image('pictures/pattern16.png')
 
-
-# bg_images = [load_image('pattern9'), load_image('pattern10'),load_image('pattern11'), load_image('pattern12')]
+ENEMY_EVENT_TYPE = 30
 
 
 def get_image(sheet, frame, line, width, height, scale):  # берём часть изображения
@@ -43,9 +44,9 @@ def get_image(sheet, frame, line, width, height, scale):  # берём част�
     return image
 
 
-selected_character = 'Никита'
-person_sheet = load_image(f'characters/{selected_character}.png')
-person_image = get_image(person_sheet, 1, 1, 48, 96, 6)
+selected_character = 'Никита'  # изначально выбранный персонаж
+person_sheet = None  # загружаем картинку персонажа
+person_image = get_image(load_image(f'characters/{selected_character}.png'), 1, 1, 48, 96, 6)
 
 
 def storyboard():  # для раскадровки персонажей
@@ -68,7 +69,7 @@ button_image2 = load_image('pictures/button3.png')
 select_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image, button_image1, 'Выбрать', 4)
 selected_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image2, button_image2, 'Выбрано', 4)
 
-button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']
+button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']  # список кнопок
 main_menu_buttons = {}
 for i in range(len(button_list)):
     main_menu_buttons[button_list[i]] = Button(WIDTH // 2, HEIGHT // 7 * (i + 2),
@@ -79,10 +80,8 @@ arrow_right_ = load_image('pictures/arrow_right_.png')
 arrow_left = pygame.transform.rotate(arrow_right, 180)
 arrow_left_ = pygame.transform.rotate(arrow_right_, 180)
 
-return_img = load_image('pictures/return_btn.png')
-return_img_ = load_image('pictures/return_btn_.png')
-
-return_btn = Button(main_offset, main_offset, return_img, return_img_)  # кнопка возврата
+return_btn = Button(main_offset, main_offset, load_image('pictures/return_btn.png'),
+                    load_image('pictures/return_btn_.png'))  # кнопка возврата
 
 arrow_right_btn = Button(WIDTH // 6 * 4 - main_offset, HEIGHT - main_offset, arrow_right, arrow_right_)
 arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_left_)
@@ -104,13 +103,11 @@ for button in level_btns:
                   Star(star_active, star_inactive, 'right', button),
                   Star(star_active, star_inactive, 'middle', button)])
 
-restart_img = load_image('pictures/restart_btn.png')
-restart_img_ = load_image('pictures/restart_btn_.png')
-restart_btn = Button(main_offset, main_offset, restart_img, restart_img_)
+restart_btn = Button(main_offset, main_offset, load_image('pictures/restart_btn.png'),
+                     load_image('pictures/restart_btn_.png'))
 
-pause_img = load_image('pictures/pause.png')
-pause_img_ = load_image('pictures/pause_.png')
-pause_btn = Button(main_offset * 1.2 + return_btn.image.get_width(), main_offset, pause_img, pause_img_)
+pause_btn = Button(main_offset * 1.2 + return_btn.image.get_width(), main_offset, load_image('pictures/pause.png'),
+                   load_image('pictures/pause_.png'))
 
 resume_btn = Button(WIDTH // 5 * 3, HEIGHT // 2, load_image('pictures/resume.png'),
                     load_image('pictures/resume_.png'), None, 4)
@@ -120,12 +117,12 @@ home_btn = Button(WIDTH // 5 * 2, HEIGHT // 2, load_image('pictures/home_btn.png
 
 coords_x = [i for i in range(-100, -50)] + [j for j in range(WIDTH + 50, WIDTH + 100)]
 coords_y = [i for i in range(-100, -50)] + [j for j in range(HEIGHT + 50, HEIGHT + 100)]
-objects = []
+objects = []  # объекты, летающие в главном меню
 for file in os.listdir('data/levels/decorative_objects'):
-    if file[-3:] != 'jpg' and file != 'sign exit.png' and file != 'фон.png':
+    if file[-3:] != 'jpg' and file != 'sign exit.png' and file != 'фон.png':  # не используем неподходящие картинки
         objects.append(file)
 
-for _ in range(10):
+for _ in range(10):  # создаём 10 объектов со случайными начальными координатами
     Object(load_image(f'levels/decorative_objects/{random.choice(objects)}'),
            random.choice(coords_x), random.choice(coords_y))
 
@@ -161,7 +158,6 @@ def intro_maker(message, colour=(255, 255, 255)):
             cur_message += 1
             for i in range(len(message_offsets)):
                 message_offsets[i] -= 25
-            print(message_offsets)
 
         text = font.render(messages[cur_message][0:count // speed], True, colour)
         text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[cur_message]))
@@ -288,7 +284,7 @@ def levels():
         if ticks % FPS:
             count += 0.5
 
-        draw_backgound(tiles, int(count % 32), bg_image1)
+        draw_backgound(tiles, int(count % 32), bg_image_character)
         screen.blit(string_rendered, text_rect)
         return_btn.update(screen)
         return_btn.change_colour(pygame.mouse.get_pos())
@@ -332,6 +328,7 @@ def levels():
         clock.tick(FPS)
 
 
+# меню выбора персонажей
 def character_selection(character):
     global selected_character
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
@@ -366,8 +363,7 @@ def character_selection(character):
 
     while True:
 
-        ticks = pygame.time.get_ticks()
-        if ticks % FPS:
+        if pygame.time.get_ticks() % FPS:
             count += 0.5
 
         draw_backgound(tiles, int(count % 32), bg_image_character)
@@ -393,6 +389,14 @@ def character_selection(character):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
+            keys = pygame.key.get_pressed()
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
+                    character_selection(students_lst[students_lst.index(character) - 1])
+                if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
+                    character_selection(students_lst[students_lst.index(character) - 1])
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if return_btn.click_check(event.pos):
                     main_menu()
@@ -415,6 +419,7 @@ def character_selection(character):
 def new_game(level_number):
     person = selected_character
     hero = Hero(*level[level_number]['spawn'], person)
+    enemy = Enemy(*level[level_number]['spawn_dop'])
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
 
@@ -423,11 +428,11 @@ def new_game(level_number):
 
     camera = Camera(camera_configure, total_level_width, total_level_height)
 
-    all_sprites.add(labirint.sprites, hero)
-    level_displayer(level_number, labirint, hero, all_sprites, camera)
+    all_sprites.add(labirint.sprites, hero, enemy)
+    level_displayer(level_number, labirint, hero, enemy, all_sprites, camera)
 
 
-def End(time):  # окончание уровня победой
+def end(time):  # окончание уровня победой
     pygame.display.set_caption('Escape from Kvantorium - WIN')
 
     text = 'WIN'
@@ -471,11 +476,14 @@ def End(time):  # окончание уровня победой
 
 
 # отображает уровень
-def level_displayer(level_number, labirint, hero, all_sprites, camera):
+def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
-    timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font, FPS)
+    timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font)
     pygame.time.set_timer(pygame.USEREVENT, 1000)
+    graffiti_list = [Graffiti([300, 122], 'LEFT')]
+    drawing = False
+    draw_new_graffiti = True
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -487,9 +495,40 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
+            if event.type == ENEMY_EVENT_TYPE:
+                enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()[:2]))
             if event.type == pygame.KEYDOWN:
+                if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+                    if draw_new_graffiti:
+                        draw_new_graffiti = False
+                        drawing = True
+                        if keys[pygame.K_w] or keys[pygame.K_UP]:
+                            graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'UP'))
+                        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                            graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'RIGHT'))
+                        elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                            graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'DOWN'))
+                        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                            graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'LEFT'))
+                        else:
+                            draw_new_graffiti = True
+                            drawing = False
+                    if drawing:
+                        if keys[pygame.K_w] or keys[pygame.K_UP]:
+                            graffiti_list[-1].change_direction('UP')
+                        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                            graffiti_list[-1].change_direction('RIGHT')
+                        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                            graffiti_list[-1].change_direction('DOWN')
+                        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                            graffiti_list[-1].change_direction('LEFT')
+                    if keys[pygame.K_q]:
+                        if drawing:
+                            graffiti_list = graffiti_list[:-1]
+                            draw_new_graffiti = True
+                            drawing = False
                 if event.key == pygame.K_ESCAPE:
-                    return
+                    pause()
                 if keys[pygame.K_a] or keys[pygame.K_LEFT]:
                     left = True
                 if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
@@ -507,19 +546,30 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
                 if not (keys[pygame.K_SPACE]) and not (keys[pygame.K_w]) and not (keys[pygame.K_UP]):
                     up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if restart_btn.click_check(event.pos):  # должно перезапускать уровень
+                if restart_btn.click_check(event.pos):  # перезапускает уровень
                     new_game(level_number)
                 if pause_btn.click_check(event.pos):
                     left = right = False
                     pause()
+                if drawing:
+                    draw_new_graffiti = True
+                    drawing = False
                 print(event.pos)
+            if event.type == pygame.MOUSEMOTION:
+                if drawing:
+                    graffiti_list[-1].update(pygame.mouse.get_pos())
+
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
 
         camera.update(hero)  # центризируем камеру относительно персонажа
         hero.move(left, right, up, labirint.platform)  # передвижение
+        # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
+
+        for graffiti in graffiti_list:
+            screen.blit(graffiti.image, camera.apply(graffiti))
 
         timer.draw(screen)
 
@@ -529,11 +579,12 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         pause_btn.change_colour(pygame.mouse.get_pos())
         if hero.exit():  # если игрок дошел до выхода
             timer.pauses()
-            End(timer.get_time())
+            end(timer.get_time())
         pygame.display.flip()
         clock.tick(FPS)
 
 
+# пауза в уровне
 def pause():
     pygame.display.set_caption(f'Escape from Kvantorium - пауза')
 

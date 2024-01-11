@@ -1,12 +1,11 @@
 class Timer:
-    def __init__(self, x, y, font, fps, time=0):
-        self.time = time
+    def __init__(self, x, y, font):
+        self.time = 0
         self.seconds = '0' + str(self.time % 60) if self.time % 60 < 10 else str(self.time % 60)
         self.minutes = '0' + str(self.time // 60) if self.time // 60 < 10 else str(self.time // 60)
         self.pause = False
         self.font = font
         self.count = 0
-        self.fps = fps
         self.x, self.y = x, y
         self.text = self.font.render(f'Время {self.minutes}:{self.seconds}', True, (9, 9, 9))
         self.rect = self.text.get_rect(center=(x, y))

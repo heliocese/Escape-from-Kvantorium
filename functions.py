@@ -27,20 +27,7 @@ horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 
 
-class Object(pygame.sprite.Sprite):  # крутиться не будет
-    """def __init__(self, radius, x, y):
-        super().__init__(all_sprites)
-        # self.image = image
-        # self.rect.topleft = (x, y)
-        self.radius = radius
-        self.image = pygame.Surface((2 * radius, 2 * radius),
-                                    pygame.SRCALPHA, 32)
-        pygame.draw.circle(self.image, pygame.Color("red"),
-                           (radius, radius), radius)
-        self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
-        self.vx = random.randint(-5, 5)
-        self.vy = random.randrange(-5, 5)"""
-
+class Object(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         super().__init__(all_sprites)
         self.image = pygame.transform.scale(image,

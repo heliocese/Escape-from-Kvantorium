@@ -419,7 +419,7 @@ def character_selection(character):
 def new_game(level_number):
     person = selected_character
     hero = Hero(*level[level_number]['spawn'], person)
-    enemy = Enemy(*level[level_number]['spawn_dop'])
+    # enemy = Enemy(*level[level_number]['spawn_dop'])
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
 
@@ -428,8 +428,8 @@ def new_game(level_number):
 
     camera = Camera(camera_configure, total_level_width, total_level_height)
 
-    all_sprites.add(labirint.sprites, hero, enemy)
-    level_displayer(level_number, labirint, hero, enemy, all_sprites, camera)
+    all_sprites.add(labirint.sprites, hero)
+    level_displayer(level_number, labirint, hero, all_sprites, camera)
 
 
 def end(time):  # окончание уровня победой
@@ -476,7 +476,7 @@ def end(time):  # окончание уровня победой
 
 
 # отображает уровень
-def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
+def level_displayer(level_number, labirint, hero, all_sprites, camera):
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
     timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font)
@@ -495,8 +495,8 @@ def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
-            if event.type == ENEMY_EVENT_TYPE:
-                enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()[:2]))
+            """if event.type == ENEMY_EVENT_TYPE:
+                enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()[:2]))"""
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
                     if draw_new_graffiti:

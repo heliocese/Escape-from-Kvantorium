@@ -43,7 +43,7 @@ def get_image(sheet, frame, line, width, height, scale):  # берём част�
     image.set_colorkey((9, 9, 9))  # убираем задний фон
     return image
 
-
+reasons = ''  # уровень
 selected_character = 'Никита'  # изначально выбранный персонаж
 person_sheet = None  # загружаем картинку персонажа
 person_image = get_image(load_image(f'characters/{selected_character}.png'), 1, 1, 48, 96, 6)
@@ -305,7 +305,9 @@ def levels():
                     return
                 for button in level_btns:
                     if button.click_check(event.pos):
+                        global reasons
                         print('level' + str(level_btns.index(button) + 1))
+                        reasons = level_btns.index(button)
                         if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                             intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
                                          'но вы не успели.', 'Бегите!'], (255, 255, 255))
@@ -477,6 +479,7 @@ def end(time):  # окончание уровня победой
 
 # отображает уровень
 def level_displayer(level_number, labirint, hero, all_sprites, camera):
+    global reasons
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
     timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font)
@@ -577,6 +580,8 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
         restart_btn.change_colour(pygame.mouse.get_pos())
         pause_btn.update(screen)
         pause_btn.change_colour(pygame.mouse.get_pos())
+        if level[reasons]['one'] <= timer.get_time():
+            game_over('Время кончилось')
         if hero.exit():  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
@@ -615,7 +620,7 @@ def pause():
         clock.tick(FPS)
 
 
-def game_over(reason='Вас поймали'):  # экран конца игры, пока ничем не запускается
+def game_over(reason='Вас поймали'):  # проигрыш
     pygame.display.set_caption(f'Escape from Kvantorium - game over')
     game_text = big_font.render('Game', 1, (28, 28, 28))
     game_text_shadow = big_font.render('Game', 1, (1, 1, 1))

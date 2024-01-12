@@ -3,8 +3,8 @@ students = {
               'знания тайм менеджмента, ну, или же не спит ночами',
     'Ангелина': 'На втором занятии уже всех знала по именам. Коммуникабельная, в общем.  Однажды смогла договориться '
                 'с муравьями, правда, не понятно, что больше помогло в переговорах: дихлофос или ее красноречие',
-    'Коля': 'Обычный мальчик, живущей самой обычной жизнью',
-    'Настя': '',
+    'Коля': 'Обычный мальчик, живущий самой обычной жизнью',
+    'Настя': 'Испугалась ,что Ангелина на самом деле обиделась, что она с ней не поздоровалась',
     'Алиса': 'При нашей просьбе написать шуточное описание, она написала резюме:        '
              ' "Спокойна, сдерженна, ценю любые мнения;       И весела довольна, да умна"',
     'Ярик': 'Меняет цвет волос как светофор',
@@ -20,19 +20,19 @@ students_lst = list(students.keys())
 
 level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 45, 'two': 60, 'one': 70},
          1: {'level_map': 'level2.tmx', 'spawn': (50, 260), 'dop_character': 'Ярослав', 'spawn_dop': ('x', 'y'),
-             'three': 60, 'two': 90, 'one': 120},
-         2: {'level_map': 'level3.tmx', 'spawn': (40, 800), 'three': 90, 'two': 120, 'one': 160},
-         3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'three': 240, 'two': 270, 'one': 310},
+             'three': 70, 'two': 90, 'one': 100},
+         2: {'level_map': 'level3.tmx', 'spawn': (40, 800), 'three': 60, 'two': 70, 'one': 90},
+         3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'three': 60, 'two': 70, 'one': 90},
          4: {'level_map': 'level5.tmx', 'spawn': (40, 1250), 'dop_character': 'Саша', 'spawn_dop': ('x', 'y'),
-             'three': 240, 'two': 270, 'one': 310},
-         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 300, 'two': 310, 'one': 360},
+             'three': 70, 'two': 90, 'one': 120},
+         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 120, 'two': 140, 'one': 160},
          6: {'level_map': 'level7.tmx', 'spawn': (175, 65), 'dop_character': 'Влад', 'spawn_dop': ('x', 'y'),
-             'three': 360, 'two': 450, 'one': 480},
-         7: {'level_map': 'level8.tmx', 'spawn': (40, 1000), 'three': 240, 'two': 300, 'one': 360},
+             'three': 170, 'two': 190, 'one': 220},
+         7: {'level_map': 'level8.tmx', 'spawn': (40, 1021), 'three': 130, 'two': 150, 'one': 180},
          8: {'level_map': 'level9.tmx', 'spawn': (40, 270), 'dop_character': 'Ваня', 'spawn_dop': ('x', 'y'),
              'three': 420, 'two': 480, 'one': 540},
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'dop_character': 'Иван', 'spawn_dop': (500, 100),
-             'three': 420, 'two': 540, 'one': 570}}
+             'three': 160, 'two': 200, 'one': 240}}
 
 
 def get_animation(person):

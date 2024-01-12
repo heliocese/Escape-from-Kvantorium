@@ -13,6 +13,7 @@ from camera import Camera, camera_configure
 from timer import Timer
 from graffiti import Graffiti
 from enemy import Enemy
+from winstar import Stars
 
 pygame.init()  # инициализация pygame
 
@@ -309,8 +310,8 @@ def levels():
                         print('level' + str(level_btns.index(button) + 1))
                         reasons = level_btns.index(button)
                         if level_btns.index(button) + 1 == 1:  # проверка какой уровень
-                            intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть доделать проект, '
-                                         'но вы не успели.', 'Бегите!'], (255, 255, 255))
+                            intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
+                                         'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 2:
                             intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 5:
@@ -419,8 +420,9 @@ def character_selection(character):
 
 
 def new_game(level_number):
+    global reasons
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person)
+    hero = Hero(*level[level_number]['spawn'], person, reasons)
     # enemy = Enemy(*level[level_number]['spawn_dop'])
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
@@ -435,44 +437,71 @@ def new_game(level_number):
 
 
 def end(time):  # окончание уровня победой
+    global reasons
     pygame.display.set_caption('Escape from Kvantorium - WIN')
-
     text = 'WIN'
-
     string_rendered = main_font.render(text, 1, (28, 28, 28))
     string_rendered_shadow = main_font.render(text, 1, (1, 1, 1))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
     screen.blit(string_rendered, text_rect)
     offscreen = 200
-
+    seconds = '0' + str(time % 60) if time % 60 < 10 else str(time % 60)
+    minutes = '0' + str(time // 60) if time // 60 < 10 else str(time // 60)
+    text1 = 'YOUR TIME: ' + minutes + ':' + seconds
+    string_rendern = main_font.render(text1, 1, (28, 28, 28))
+    string_rendern_shadow = main_font.render(text1, 1, (1, 1, 1))
+    text_rect1 = string_rendern.get_rect(center=(WIDTH // 2, 175))
+    screen.blit(string_rendern, text_rect1)
+    print(text1)
     Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
     Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
     Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
     Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
-
     # buttons_sprites = pygame.sprite.Group()
     tiles = get_background(bg_image1)
     count = 0
-
+    stars1 = []
+    if time <= level[reasons]['three']:
+        stars1.append([Stars(star_active, 'left', 480, 300),
+                       Stars(star_active, 'right', 480, 300),
+                       Stars(star_active, 'middle', 480, 300)])
+    elif level[reasons]['two'] >= time > level[reasons]['three']:
+        stars1.append([Stars(star_active, 'left', 480, 300),
+                       Stars(star_inactive, 'right', 480, 300),
+                       Stars(star_active, 'middle', 480, 300)])
+    else:
+        stars1.append([Stars(star_active, 'left', 480, 300),
+                       Stars(star_inactive, 'right', 480, 300),
+                       Stars(star_inactive, 'middle', 480, 300)])
+    alpha, direction = 0, 2
+    skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
+                                 True, (0, 0, 0))
+    skip_text.set_alpha(alpha)
     while True:
-
         ticks = pygame.time.get_ticks()
         if ticks % FPS:
             count += 0.5
-        print(count)
-
         draw_backgound(tiles, int(count % 32), bg_image_character)
-
         all_sprites.draw(screen)
         all_sprites.update()
-
+        alpha += direction
+        if alpha == 0:
+            direction = 2
+        skip_text.set_alpha(alpha)
+        screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
         screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))
         screen.blit(string_rendered, text_rect)
+        screen.blit(string_rendern_shadow, (text_rect1.x + 2, text_rect1.y + 2))
+        screen.blit(string_rendern, text_rect1)
+        for star_group in stars1:
+            for star in star_group:
+                star.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-                # добавить кнопки
-
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                levels()
         pygame.display.flip()
         clock.tick(FPS)
 

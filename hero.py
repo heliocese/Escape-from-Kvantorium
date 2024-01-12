@@ -21,7 +21,7 @@ class Border(pygame.sprite.Sprite):
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, x, y, person):
+    def __init__(self, x, y, person, reasons):
         pygame.sprite.Sprite.__init__(self)
         self.xvel = 0
         w, h = 19, 40
@@ -32,7 +32,7 @@ class Hero(pygame.sprite.Sprite):
         self.image.set_colorkey((9, 9, 9))
         self.yvel = 0  # скорость вертикального перемещения
         self.onGround = False
-
+        self.reasons = reasons
         self.image.set_colorkey(pygame.Color(COLOR))  # делаем фон прозрачным
         delay, right, left, jump_right, jump_left, stay = get_animation(person)
         #        Анимация движения вправо
@@ -111,6 +111,22 @@ class Hero(pygame.sprite.Sprite):
 
     def exit(self):  # найден выход
         p = Border(959, 0, 959, 608)
+        if self.reasons == 1:
+            p = Border(1050, 0, 1050, 700)
+        elif self.reasons == 3:
+            p = Border(1812, 0, 1812, 1000)
+        elif self.reasons == 4:
+            p = Border(1710, -1000, 1710, 1000)
+        elif self.reasons == 5:
+            p = Border(2155, -1000, 2155, 5000)
+        elif self.reasons == 6:
+            p = Border(2103, -1000, 2103, 5000)
+        elif self.reasons == 7:
+            p = Border(2230, -1000, 2230, 5000)
+        elif self.reasons == 8:
+            p = Border(2530, -1000, 2530, 5000)
+        elif self.reasons == 9:
+            p = Border(2887, -1000, 2887, 5000)
         if pygame.sprite.collide_rect(self, p):
             return True
         return False

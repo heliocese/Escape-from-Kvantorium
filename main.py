@@ -14,6 +14,7 @@ from timer import Timer
 from graffiti import Graffiti
 from enemy import Enemy
 from winstar import Stars
+import sqlite3
 
 pygame.init()  # инициализация pygame
 
@@ -43,6 +44,7 @@ def get_image(sheet, frame, line, width, height, scale):  # берём част�
     image = pygame.transform.scale(image, (width * scale, height * scale))
     image.set_colorkey((9, 9, 9))  # убираем задний фон
     return image
+
 
 reasons = ''  # уровень
 selected_character = 'Никита'  # изначально выбранный персонаж
@@ -98,11 +100,36 @@ for i in range(1, 11):
 star_active = load_image('pictures/star_active.png')
 star_inactive = load_image('pictures/star_inactive.png')
 
-stars = []
-for button in level_btns:
-    stars.append([Star(star_active, star_inactive, 'left', button),
-                  Star(star_active, star_inactive, 'right', button),
-                  Star(star_active, star_inactive, 'middle', button)])
+
+def update():  # обновление звездочек в меню
+    con = sqlite3.connect('data/EFK.sql')
+    cur = con.cursor()
+    a = 1
+    base = cur.execute("""SELECT stars FROM levels
+                WHERE number = ?""", (str(a),)).fetchall()
+    con.commit()
+    con.close()
+    star = []
+    for button in level_btns:
+        if base == 0:
+            star.append([Star(star_active, star_inactive, 'left', button),
+                         Star(star_active, star_inactive, 'right', button),
+                         Star(star_active, star_inactive, 'middle', button)])
+        elif base == 1:
+            star.append([Star(star_active, star_active, 'left', button),
+                         Star(star_active, star_inactive, 'right', button),
+                         Star(star_active, star_inactive, 'middle', button)])
+        elif base == 2:
+            star.append([Star(star_active, star_active, 'left', button),
+                         Star(star_active, star_inactive, 'right', button),
+                         Star(star_active, star_active, 'middle', button)])
+        else:
+            star.append([Star(star_active, star_active, 'left', button),
+                         Star(star_active, star_active, 'right', button),
+                         Star(star_active, star_active, 'middle', button)])
+        a += 1
+    return star
+
 
 restart_btn = Button(main_offset, main_offset, load_image('pictures/restart_btn.png'),
                      load_image('pictures/restart_btn_.png'))
@@ -278,7 +305,7 @@ def levels():
 
     tiles = get_background(bg_image1)
     count = 0
-
+    stars = update()
     while True:
 
         ticks = pygame.time.get_ticks()
@@ -465,14 +492,31 @@ def end(time):  # окончание уровня победой
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_active, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
+        sp = 3
     elif level[reasons]['two'] >= time > level[reasons]['three']:
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_inactive, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
+        sp = 2
     else:
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_inactive, 'right', 480, 300),
                        Stars(star_inactive, 'middle', 480, 300)])
+        sp = 1
+    base = cur.execute("""SELECT stars FROM levels
+            WHERE number = ?""", (reasons,)).fetchall()
+    con.commit()
+    con.close()
+    if sp > int(base):
+        cur.execute("""UPDATE levels
+        SET stars = ?
+        WHERE number = ?""", (str(sp), reasons)).fetchall()
+        con.commit()
+        cur.execute("""UPDATE levels
+                SET state = 'разблок'
+                WHERE number = ?""", (str(int(reasons) + 2),)).fetchall()
+        con.commit()
+        update()
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))

@@ -102,7 +102,7 @@ star_inactive = load_image('pictures/star_inactive.png')
 
 
 def update():  # обновление звездочек в меню
-    con = sqlite3.connect('data/EFK.sql')
+    con = sqlite3.connect('data/EFK.db')
     cur = con.cursor()
     a = 1
     base = cur.execute("""SELECT stars FROM levels

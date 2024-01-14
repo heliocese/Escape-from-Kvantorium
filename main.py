@@ -24,6 +24,8 @@ icon = load_image('pictures/kvantorium_logo.png')  # добавляем икон
 pygame.display.set_icon(icon)  # ставим нашу иконку вместо стандартной
 
 clock = pygame.time.Clock()
+con = sqlite3.connect('data/EFK.db')
+cur = con.cursor()
 
 main_font = pygame.font.Font(None, 64)  # основной шрифт
 mini_font = pygame.font.Font(None, 32)  # маленький шрифт
@@ -102,24 +104,20 @@ star_inactive = load_image('pictures/star_inactive.png')
 
 
 def update():  # обновление звездочек в меню
-    con = sqlite3.connect('data/EFK.sql')
-    cur = con.cursor()
     a = 1
-    base = cur.execute("""SELECT stars FROM levels
-                WHERE number = ?""", (str(a),)).fetchall()
-    con.commit()
-    con.close()
     star = []
     for button in level_btns:
-        if base == 0:
+        base = cur.execute("""SELECT stars FROM levels
+                        WHERE number = ?""", (str(a),)).fetchall()
+        if base == [('0',)]:
             star.append([Star(star_active, star_inactive, 'left', button),
                          Star(star_active, star_inactive, 'right', button),
                          Star(star_active, star_inactive, 'middle', button)])
-        elif base == 1:
+        elif base == [('1',)]:
             star.append([Star(star_active, star_active, 'left', button),
                          Star(star_active, star_inactive, 'right', button),
                          Star(star_active, star_inactive, 'middle', button)])
-        elif base == 2:
+        elif base == [('2',)]:
             star.append([Star(star_active, star_active, 'left', button),
                          Star(star_active, star_inactive, 'right', button),
                          Star(star_active, star_active, 'middle', button)])
@@ -504,13 +502,15 @@ def end(time):  # окончание уровня победой
                        Stars(star_inactive, 'middle', 480, 300)])
         sp = 1
     base = cur.execute("""SELECT stars FROM levels
-            WHERE number = ?""", (reasons,)).fetchall()
+            WHERE number = ?""", (int(reasons) + 1,)).fetchall()
     con.commit()
-    con.close()
-    if sp > int(base):
+    if sp > int(base[0][0]):  # изменение количества звезд
+        sp1 = base
+        sp1[0] = tuple(str(sp))
+        print(sp1)
         cur.execute("""UPDATE levels
         SET stars = ?
-        WHERE number = ?""", (str(sp), reasons)).fetchall()
+        WHERE number = ?""", (sp, int(reasons) + 1)).fetchall()
         con.commit()
         cur.execute("""UPDATE levels
                 SET state = 'разблок'
@@ -520,6 +520,15 @@ def end(time):  # окончание уровня победой
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))
+    base = cur.execute("""SELECT time FROM levels
+                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+    base1 = int(base[0][0].split(':')[0])
+    base2 = int(base[0][0].split(':')[1])
+    if base1 * 60 + base2 > time or base1 * 60 + base2 == 0:  # изменение времени
+        cur.execute("""UPDATE levels
+                SET time = ?
+                WHERE number = ?""", (minutes + ':' + seconds, int(reasons) + 1)).fetchall()
+        con.commit()
     skip_text.set_alpha(alpha)
     while True:
         ticks = pygame.time.get_ticks()

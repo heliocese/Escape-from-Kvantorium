@@ -102,7 +102,7 @@ star_inactive = load_image('pictures/star_inactive.png')
 
 
 def update():  # обновление звездочек в меню
-    con = sqlite3.connect('data/EFK.sql')
+    con = sqlite3.connect('data/EFK.db')
     cur = con.cursor()
     a = 1
     base = cur.execute("""SELECT stars FROM levels
@@ -465,6 +465,8 @@ def new_game(level_number):
 
 def end(time):  # окончание уровня победой
     global reasons
+    con = sqlite3.connect('data/EFK.db')
+    cur = con.cursor()
     pygame.display.set_caption('Escape from Kvantorium - WIN')
     text = 'WIN'
     string_rendered = main_font.render(text, 1, (28, 28, 28))
@@ -505,8 +507,8 @@ def end(time):  # окончание уровня победой
         sp = 1
     base = cur.execute("""SELECT stars FROM levels
             WHERE number = ?""", (reasons,)).fetchall()
+    print(base)
     con.commit()
-    con.close()
     if sp > int(base):
         cur.execute("""UPDATE levels
         SET stars = ?

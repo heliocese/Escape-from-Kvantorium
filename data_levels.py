@@ -32,7 +32,7 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'star': 0, 'three':
          8: {'level_map': 'level9.tmx', 'spawn': (40, 270), 'star': 0, 'dop_character': 'Ваня',
              'spawn_dop': ('x', 'y'), 'three': 420, 'two': 480, 'one': 540},
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'star': 0, 'dop_character': 'Иван',
-             'spawn_dop': (500, 100), 'three': 160, 'two': 200, 'one': 240}}
+             'spawn_dop': (500, 60), 'three': 160, 'two': 200, 'one': 240}}
 
 
 def get_animation(person):

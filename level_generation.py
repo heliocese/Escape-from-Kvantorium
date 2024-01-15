@@ -41,6 +41,7 @@ class Labirint:
 
     def find_path_step(self, start, target):
         INF = 1000
+        start, target = (start[0] // 32, start[1] // 32), (target[0] // 32, target[1] // 32)
         x, y = start
         distance = [[INF] * self.width for _ in range(self.height)]
         distance[y][x] = 0
@@ -51,16 +52,18 @@ class Labirint:
             for dx, dy in (1, 0), (0, 1), (-1, 0), (0, -1):
                 next_x, next_y = x + dx, y + dy
                 if 0 <= next_x < self.width and 0 <= next_y < self.height and \
-                    self.is_free((next_x, next_y)) and distance[next_y][next_x] == INF:
+                    self.is_free((next_x, next_y, 19, 40)) and distance[next_y][next_x] == INF:
                     distance[next_y][next_x] = distance[y][x] + 1
                     previous[next_y][next_x] = (x, y)
                     queue.append((next_x, next_y))
         x, y = target
         if distance[y][x] == INF or start == target:
-            return start
+            return start[0] * 32, start[1] * 32
         while previous[y][x] != start:
-            x, y = previous[y][x]
-        return x, y
+            if previous[y][x]:
+
+                x, y = previous[y][x]
+        return x * 32, y * 32
 
 
 class Sprite(pygame.sprite.Sprite):

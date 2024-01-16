@@ -96,10 +96,18 @@ arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_lef
 level_btns = []
 
 for i in range(1, 11):
-    level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
-                             HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
-                             load_image(f'pictures/{i}.png'),
-                             load_image(f'pictures/{i}_.png'), None, WIDTH // 240))
+    bases = cur.execute("""SELECT state FROM levels
+                        WHERE number = ?""", (str(i),)).fetchall()
+    if bases[0][0] == 'разблок':
+        level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
+                                 HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
+                                 load_image(f'pictures/{i}.png'),
+                                 load_image(f'pictures/{i}_.png'), None, WIDTH // 240))
+    else:
+        level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
+                                 HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
+                                 load_image('pictures/locked_btn.png'),
+                                 load_image('pictures/locked_btn.png'), None, WIDTH // 240))
 
 star_active = load_image('pictures/star_active.png')
 star_inactive = load_image('pictures/star_inactive.png')
@@ -292,7 +300,7 @@ def main_menu():  # главное меню
         clock.tick(FPS)
 
 
-def attemp():  # подсчёт попыток
+def attempt():  # подсчёт попыток
     base = cur.execute("""SELECT atempts FROM levels
                         WHERE number = ?""", (int(reasons) + 1,)).fetchall()
     base = base[0][0]
@@ -340,27 +348,30 @@ def levels():
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if return_btn.click_check(event.pos):
-                    return
+                    main_menu()
                 for button in level_btns:
                     if button.click_check(event.pos):
                         global reasons
                         print('level' + str(level_btns.index(button) + 1))
                         reasons = level_btns.index(button)
-                        if level_btns.index(button) + 1 == 1:  # проверка какой уровень
-                            intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
-                                         'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 2:
-                            intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 5:
-                            intro_maker(['Спаси своего друга Сашу'], (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 7:
-                            intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 9:
-                            intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
-                        elif level_btns.index(button) + 1 == 10:
-                            intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
-                        attemp()
-                        new_game(level_btns.index(button))
+                        base = cur.execute("""SELECT state FROM levels
+                                                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                        if base[0][0] == 'разблок':  # проверка разблокирован ли уровень
+                            if level_btns.index(button) + 1 == 1:  # проверка какой уровень
+                                intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
+                                            'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
+                            elif level_btns.index(button) + 1 == 2:
+                                intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
+                            elif level_btns.index(button) + 1 == 5:
+                                intro_maker(['Спаси своего друга Сашу'], (255, 255, 255))
+                            elif level_btns.index(button) + 1 == 7:
+                                intro_maker(['Спаси своего друга Влада'], (255, 255, 255))
+                            elif level_btns.index(button) + 1 == 9:
+                                intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
+                            elif level_btns.index(button) + 1 == 10:
+                                intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
+                            attempt()
+                            new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -525,11 +536,16 @@ def end(time):  # окончание уровня победой
         SET stars = ?
         WHERE number = ?""", (sp, int(reasons) + 1)).fetchall()
         con.commit()
-        cur.execute("""UPDATE levels
+        cur.execute("""UPDATE levels  
                 SET state = 'разблок'
                 WHERE number = ?""", (str(int(reasons) + 2),)).fetchall()
-        con.commit()
+        con.commit()  # разблокировка следующего уровня
         update()
+        level_btns[int(reasons) + 1] = Button(WIDTH // 6 * 5 if ((int(reasons) + 2) % 5) == 0 else
+                                              WIDTH // 6 * ((int(reasons) + 2) % 5), HEIGHT // 3
+                                              if (int(reasons) + 2) < 6 else HEIGHT // 3 * 2,
+                                              load_image(f'pictures/{int(reasons) + 2}.png'),
+                                              load_image(f'pictures/{int(reasons) + 2}_.png'), None, WIDTH // 240)
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))
@@ -645,7 +661,7 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
                     up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if restart_btn.click_check(event.pos):  # перезапускает уровень
-                    attemp()
+                    attempt()  # добавляем попытку
                     new_game(level_number)
                 if pause_btn.click_check(event.pos):
                     left = right = False

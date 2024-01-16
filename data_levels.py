@@ -25,7 +25,7 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 13, 'two':
          3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'three': 30, 'two': 45, 'one': 60},
          4: {'level_map': 'level5.tmx', 'spawn': (40, 1250), 'dop_character': 'Саша',
              'spawn_dop': ('x', 'y'), 'three': 60, 'two': 70, 'one': 75},
-         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 120, 'two': 140, 'one': 160},
+         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 60, 'two': 100, 'one': 120},
          6: {'level_map': 'level7.tmx', 'spawn': (175, 65), 'dop_character': 'Влад',
              'spawn_dop': ('x', 'y'), 'three': 170, 'two': 190, 'one': 220},
          7: {'level_map': 'level8.tmx', 'spawn': (40, 1021), 'three': 130, 'two': 150, 'one': 180},

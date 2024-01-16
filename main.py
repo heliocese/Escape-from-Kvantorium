@@ -12,7 +12,7 @@ from data_levels import students, students_lst, level
 from camera import Camera, camera_configure
 from timer import Timer
 from graffiti import Graffiti
-from enemy import Enemy
+from enemy import Teacher, Students
 from winstar import Stars
 import sqlite3
 
@@ -448,19 +448,25 @@ def character_selection(character):
 
 def new_game(level_number):
     global reasons
-    person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, reasons)
-    enemy = Enemy(*level[level_number]['spawn_dop'])
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
+    person = selected_character
+    hero = Hero(*level[level_number]['spawn'], person, reasons)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
 
     camera = Camera(camera_configure, total_level_width, total_level_height)
 
-    all_sprites.add(labirint.sprites, hero, enemy)
-    level_displayer(level_number, labirint, hero, enemy, all_sprites, camera)
+    if 'dop_character' in level[level_number]:
+        if level_number == 9:
+            character = Teacher(*level[level_number]['spawn_dop'])
+        else:
+            character = Students(*level[level_number]['spawn_dop'])
+        level_displayer(level_number, labirint, all_sprites, camera, hero, character)
+        all_sprites.add(labirint.sprites, hero, character)
+    else:
+        level_displayer(level_number, labirint, all_sprites, camera, hero)
 
 
 def end(time):  # окончание уровня победой
@@ -553,7 +559,7 @@ def end(time):  # окончание уровня победой
 
 
 # отображает уровень
-def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
+def level_displayer(level_number, labirint, all_sprites, camera, hero, character=None):
     global reasons
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
@@ -574,7 +580,7 @@ def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == ENEMY_EVENT_TYPE:
-                enemy.move(labirint.find_path_step(enemy.get_position()[:2], hero.get_position()[:2]))
+                character.move(labirint.find_path_step(character.get_position()[:2], hero.get_position()[:2]))
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
                     if draw_new_graffiti:
@@ -636,13 +642,19 @@ def level_displayer(level_number, labirint, hero, enemy, all_sprites, camera):
             if event.type == pygame.MOUSEMOTION:
                 if drawing:
                     graffiti_list[-1].update(pygame.mouse.get_pos())
-            enemy.move(labirint.find_path_step(enemy.get_position()[:2], hero.get_position()[:2]))
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
 
         camera.update(hero)  # центризируем камеру относительно персонажа
+
+        if character:
+            if isinstance(character, Teacher):
+                character.move(labirint.find_path_step(character.get_position()[:2], hero.get_position()[:2]))
+            elif isinstance(character, Students):
+                character.move(hero.get_position())
         hero.move(left, right, up, labirint.platform)  # передвижение
+
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 

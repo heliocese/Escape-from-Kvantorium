@@ -292,6 +292,16 @@ def main_menu():  # главное меню
         clock.tick(FPS)
 
 
+def attemp():  # подсчёт попыток
+    base = cur.execute("""SELECT atempts FROM levels
+                        WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+    base = base[0][0]
+    cur.execute("""UPDATE levels
+            SET atempts = ?
+            WHERE number = ?""", (int(base) + 1, int(reasons) + 1)).fetchall()
+    con.commit()
+
+
 def levels():
     pygame.display.set_caption('Escape from Kvantorium - Выбор уровня')
 
@@ -349,6 +359,7 @@ def levels():
                             intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                         elif level_btns.index(button) + 1 == 10:
                             intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
+                        attemp()
                         new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -634,6 +645,7 @@ def level_displayer(level_number, labirint, hero, all_sprites, camera):
                     up = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if restart_btn.click_check(event.pos):  # перезапускает уровень
+                    attemp()
                     new_game(level_number)
                 if pause_btn.click_check(event.pos):
                     left = right = False

@@ -4,6 +4,18 @@ from data_levels import get_animation
 
 COLOR = '#090909'
 
+vertical_borders = pygame.sprite.Group()
+
+
+class Border(pygame.sprite.Sprite):
+    # строго вертикальный отрезок (стена для выхода)
+    def __init__(self, x1, y1, x2, y2):
+        super().__init__()
+        if x1 == x2:  # вертикальная стенка
+            self.add(vertical_borders)
+            self.image = pygame.Surface([1, y2 - y1])
+            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
+
 
 class Teacher(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
@@ -36,9 +48,33 @@ class Students(pygame.sprite.Sprite):
         self.rect = pygame.Rect(x, y, w, h)
         self.image.set_colorkey(pygame.Color(COLOR))
         self.flag = False
+        self.reasons = '0'
         self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
         #        Анимация движения вправо
         self.stay.blit(self.image, (0, 0))  # По-умолчанию, стоим
+
+    def exit(self, reasons):  # найден выход
+        self.reasons = int(reasons)
+        p = Border(957, 0, 957, 608)
+        if self.reasons == 1:
+            p = Border(1048, 0, 1048, 700)
+        elif self.reasons == 3:
+            p = Border(1810, 0, 1810, 1000)
+        elif self.reasons == 4:
+            p = Border(1701, -1000, 1701, 1000)
+        elif self.reasons == 5:
+            p = Border(2153, -1000, 2153, 5000)
+        elif self.reasons == 6:
+            p = Border(2101, -1000, 2101, 5000)
+        elif self.reasons == 7:
+            p = Border(2227, -1000, 2227, 5000)
+        elif self.reasons == 8:
+            p = Border(2527, -1000, 2527, 5000)
+        elif self.reasons == 9:
+            p = Border(2885, -1000, 2885, 5000)
+        if pygame.sprite.collide_rect(self, p):
+            return True
+        return False
 
     def move(self, coods_list, difference):
         if difference != 0:

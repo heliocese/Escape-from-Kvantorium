@@ -241,57 +241,6 @@ def terminate():
     sys.exit()
 
 
-def leader_board():  # вывод статистики из бд
-    pygame.display.set_caption('Statistics')
-    screen.fill((74, 71, 108))
-    pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
-    text = cur.execute("""SELECT * FROM levels where state = 'разблок'""").fetchall()
-    string_rendered = ''
-    text_rect = (0, 0)
-    h = HEIGHT // 10
-    offscreen = 200
-
-    Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
-    Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
-    Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
-    Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
-
-    # buttons_sprites = pygame.sprite.Group()
-    tiles = get_background(bg_image)
-
-    count = 0  # остановка фона меню
-    draw_backgound(tiles, int(count % 32), bg_image)
-
-    all_sprites.draw(screen)
-    all_sprites.update()
-    pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
-    for txt1 in text:  # считывние строк
-        a = []
-        for u in txt1:
-            a.append(u)
-        string_rendered = main_font.render('    '.join(a), 1, (28, 28, 28))
-        text_rect = string_rendered.get_rect(center=(WIDTH // 2, h))
-        screen.blit(string_rendered, text_rect)
-        h += 55
-    while True:
-        return_btn.update(screen)
-        return_btn.change_colour(pygame.mouse.get_pos())
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if return_btn.click_check(event.pos):
-                    main_menu()
-
-        ticks = pygame.time.get_ticks()
-        if ticks % FPS:
-            count += 0.5
-
-        screen.blit(string_rendered, text_rect)
-        pygame.display.flip()
-        clock.tick(FPS)
-
-
 def main_menu():  # главное меню
     pygame.display.set_caption('Escape from Kvantorium')
 
@@ -338,7 +287,6 @@ def main_menu():  # главное меню
                     character_selection(selected_character)
                 if main_menu_buttons['Статистика'].click_check(event.pos):
                     print('Смотри статистику')
-                    leader_board()
                 if main_menu_buttons['Настройки'].click_check(event.pos):
                     print('Настрой себя')
                 if main_menu_buttons['Выход'].click_check(event.pos):
@@ -762,13 +710,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         pause_btn.change_colour(pygame.mouse.get_pos())
         if level[reasons]['one'] <= timer.get_time():
             game_over('Время кончилось')
-        if str(reasons) in '1468' and character.exit(reasons):  # проверка пройден ли уровень с персонажем
-            hero.exit(True)
-            timer.pauses()
-            end(timer.get_time())
-        elif str(reasons) in '1468' and hero.exit() and not character.exit(reasons):
-            hero.exit(False)
-        elif hero.exit() and str(reasons) in '023579':  # если игрок дошел до выхода
+        if hero.exit():  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()

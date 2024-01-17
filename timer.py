@@ -1,8 +1,8 @@
 class Timer:
     def __init__(self, x, y, font):
         self.time = 0
-        self.seconds = '0' + str(self.time % 60) if self.time % 60 < 10 else str(self.time % 60)
-        self.minutes = '0' + str(self.time // 60) if self.time // 60 < 10 else str(self.time // 60)
+        self.seconds = '00'
+        self.minutes = '00'
         self.pause = False
         self.font = font
         self.count = 0

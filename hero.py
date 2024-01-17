@@ -116,6 +116,7 @@ class Hero(pygame.sprite.Sprite):
         return False
 
     def collide(self, xvel, yvel, platforms, character):
+        a = Border(0, -1000, 0, 5000)  # стена слева у входа
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):  # если есть пересечение платформы с игроком
 
@@ -136,6 +137,8 @@ class Hero(pygame.sprite.Sprite):
         if character:
             if pygame.sprite.collide_rect(self, character):
                 character.flag = True
+        if pygame.sprite.collide_rect(self, a):
+            self.rect.left = a.rect.right
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top

@@ -23,19 +23,19 @@ students_lst = list(students.keys())
 
 level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'star': 0, 'three': 45, 'two': 60, 'one': 70},
          1: {'level_map': 'level2.tmx', 'spawn': (50, 240), 'star': 0, 'dop_character': 'Ярик',
-             'spawn_dop': (80, 240), 'three': 70, 'two': 90, 'one': 100},
-         2: {'level_map': 'level3.tmx', 'spawn': (40, 800), 'star': 0, 'three': 60, 'two': 70, 'one': 90},
+             'spawn_dop': (665, 150), 'three': 70, 'two': 90, 'one': 100},
+         2: {'level_map': 'level3.tmx', 'spawn': (40, 780), 'star': 0, 'three': 60, 'two': 70, 'one': 90},
          3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'star': 0, 'three': 60, 'two': 70, 'one': 90},
          4: {'level_map': 'level5.tmx', 'spawn': (40, 1250), 'star': 0, 'dop_character': 'Саша',
-             'spawn_dop': ('x', 'y'), 'three': 70, 'two': 90, 'one': 120},
+             'spawn_dop': (47, 440), 'three': 70, 'two': 90, 'one': 120},
          5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'star': 0, 'three': 120, 'two': 140, 'one': 160},
          6: {'level_map': 'level7.tmx', 'spawn': (175, 65), 'star': 0, 'dop_character': 'Влад',
-             'spawn_dop': ('x', 'y'), 'three': 170, 'two': 190, 'one': 220},
+             'spawn_dop': (327, 1400), 'three': 170, 'two': 190, 'one': 220},
          7: {'level_map': 'level8.tmx', 'spawn': (40, 1021), 'star': 0, 'three': 130, 'two': 150, 'one': 180},
          8: {'level_map': 'level9.tmx', 'spawn': (40, 270), 'star': 0, 'dop_character': 'Ваня',
-             'spawn_dop': ('x', 'y'), 'three': 420, 'two': 480, 'one': 540},
+             'spawn_dop': (40, 270), 'three': 420, 'two': 480, 'one': 540},
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'star': 0, 'dop_character': 'Иван',
-             'spawn_dop': (500, 60), 'three': 160, 'two': 200, 'one': 240}}
+             'spawn_dop': (576, 40), 'three': 160, 'two': 200, 'one': 240}}
 
 
 def get_animation(person):

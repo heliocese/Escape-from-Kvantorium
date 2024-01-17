@@ -42,9 +42,6 @@ class Hero(pygame.sprite.Sprite):
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
     def move(self, left, right, up, platforms, character):
-        if self.get_position()[:2] not in self.coords_list:
-            self.coords_list.append(self.get_position()[:2])
-
         if left:
             self.xvel = -5  # Лево
             self.image.fill(pygame.Color(COLOR))
@@ -78,19 +75,22 @@ class Hero(pygame.sprite.Sprite):
         self.collide(self.xvel, 0, platforms, character)
 
         if character:
-            character.image.fill(pygame.Color(COLOR))
-            if left:
-                if up:
-                    character.jump_left.blit(character.image, (0, 0))
-                else:
-                    character.left.blit(character.image, (0, 0))
-            if right:
-                if up:
-                    character.jump_right.blit(character.image, (0, 0))
-                else:
-                    character.right.blit(character.image, (0, 0))
-            if not(right or left):
-                character.stay.blit(character.image, (0, 0))
+            if character.flag:
+                character.image.fill(pygame.Color(COLOR))
+                if self.get_position()[:2] not in self.coords_list:
+                    self.coords_list.append(self.get_position()[:2])
+                if left:
+                    if up:
+                        character.jump_left.blit(character.image, (0, 0))
+                    else:
+                        character.left.blit(character.image, (0, 0))
+                if right:
+                    if up:
+                        character.jump_right.blit(character.image, (0, 0))
+                    else:
+                        character.right.blit(character.image, (0, 0))
+                if not(right or left):
+                    character.stay.blit(character.image, (0, 0))
 
     def exit(self):  # найден выход
         p = Border(959, 0, 959, 608)

@@ -6,7 +6,7 @@ COLOR = '#090909'
 
 
 class Teacher(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, person):
         super().__init__()
         self.x, self.y = x, y
         w, h = 19, 40
@@ -47,7 +47,7 @@ class Students(pygame.sprite.Sprite):
     def move(self, coods_list, difference):
         if difference != 0:
             self.difference = difference
-        if self.flag and len(coods_list) > 5:
+        if self.flag and len(coods_list) > 1:
             self.rect.x, self.rect.y = coods_list[-1][0] - self.difference, coods_list[-1][1]
             del coods_list[-1]
 

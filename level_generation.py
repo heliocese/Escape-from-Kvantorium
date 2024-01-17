@@ -30,7 +30,10 @@ class Labirint:
         self.sprites.draw(screen)
 
     def get_tile_id(self, pos):
-        return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size, 0)]
+        try:
+            return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size,0)]
+        except Exception:
+            return False
 
     def is_free(self, pos):
         x1, x2 = pos[0], pos[0] + pos[2] - 1

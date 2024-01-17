@@ -638,7 +638,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 if drawing:
                     draw_new_graffiti = True
                     drawing = False
-                print(event.pos)
+                print(hero.get_position())
             if event.type == pygame.MOUSEMOTION:
                 if drawing:
                     graffiti_list[-1].update(pygame.mouse.get_pos())

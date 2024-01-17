@@ -94,7 +94,7 @@ arrow_right_btn = Button(WIDTH // 6 * 4 - main_offset, HEIGHT - main_offset, arr
 arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_left_)
 
 level_btns = []
-
+# открытые уровни
 for i in range(1, 11):
     bases = cur.execute("""SELECT state FROM levels
                         WHERE number = ?""", (str(i),)).fetchall()

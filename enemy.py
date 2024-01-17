@@ -53,7 +53,7 @@ class Students(pygame.sprite.Sprite):
         #        Анимация движения вправо
         self.stay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
-    def exit(self, reasons):  # найден выход
+    def exit(self, reasons):  # найден выход персонажем
         self.reasons = int(reasons)
         p = Border(957, 0, 957, 608)
         if self.reasons == 1:

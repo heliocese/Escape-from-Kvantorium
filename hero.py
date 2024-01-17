@@ -93,7 +93,7 @@ class Hero(pygame.sprite.Sprite):
                 if not(right or left):
                     character.stay.blit(character.image, (0, 0))
 
-    def exit(self, prmt=True):  # найден выход
+    def exit(self, prmt=True):  # найден выход персонажем
         p = Border(959, 0, 959, 608)
         if self.reasons == 1:
             p = Border(1050, 0, 1050, 700)

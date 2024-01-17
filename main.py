@@ -83,11 +83,11 @@ selected_character = 'Никита'  # изначально выбранный �
 def storyboard():  # для раскадровки персонажей
     frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
                       (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
-    for char in ['Илья']:  # список персонажей для раскадровки
+    for char in ['Ваня']:  # список персонажей для раскадровки
         for f in frame_and_line:
             char_sheet = load_image(f'characters/{char}.png')
             image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
-            image = image.subsurface((8, 24, 32, 70))
+            image = image.subsurface((8, 20, 32, 70))
             pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
 
 storyboard()

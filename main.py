@@ -615,6 +615,9 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             if event.type == pygame.USEREVENT:
                 timer.update()
             keys = pygame.key.get_pressed()
+            if event.type == ENEMY_EVENT_TYPE:
+                if isinstance(character, Teacher):
+                    character.move(labirint.find_path_step(character.get_position()[:2], hero.get_position()[:2]))
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.KEYDOWN:
@@ -689,9 +692,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         camera.update(hero)  # центризируем камеру относительно персонажа
 
         if character:
-            if isinstance(character, Teacher):
-                character.move(labirint.find_path_step(character.get_position()[:2], hero.get_position()[:2]))
-            elif isinstance(character, Students):
+            if isinstance(character, Students):
                 character.move(hero.coords_list, hero.xvel)
         hero.move(left, right, up, labirint.platform, character)  # передвижение
 

@@ -8,6 +8,7 @@ COLOR = '#090909'
 class Teacher(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
         super().__init__()
+        pygame.time.set_timer(30, 100)
         self.x, self.y = x, y
         w, h = 19, 40
         self.image = pygame.Surface((w, h))
@@ -18,16 +19,11 @@ class Teacher(pygame.sprite.Sprite):
     def get_position(self):
         return self.x, self.y, 19, 40
 
-    def set_position(self, pos):
-        self.rect.center = pos
-
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
     def move(self, pos):
-        print(pos)
-        next_pos = pos
-        self.set_position(next_pos)
+        self.rect.center = pos
 
 
 class Students(pygame.sprite.Sprite):

@@ -54,8 +54,8 @@ class Labirint:
             x, y = queue.pop(0)
             for dx, dy in (1, 0), (0, 1), (-1, 0), (0, -1):
                 next_x, next_y = x + dx, y + dy
-                if 0 <= next_x < self.width and 0 <= next_y < self.height and \
-                    self.is_free((next_x, next_y, 19, 40)) and distance[next_y][next_x] == INF:
+                if 0 <= next_x * 32 < self.width * 32 and 0 <= next_y * 32 < self.height * 32 and \
+                    self.is_free((next_x * 32 + 5, next_y * 32 + 5, 19, 40)) and distance[next_y][next_x] == INF:
                     distance[next_y][next_x] = distance[y][x] + 1
                     previous[next_y][next_x] = (x, y)
                     queue.append((next_x, next_y))
@@ -64,7 +64,6 @@ class Labirint:
             return start[0] * 32, start[1] * 32
         while previous[y][x] != start:
             if previous[y][x]:
-
                 x, y = previous[y][x]
         return x * 32, y * 32
 

@@ -83,13 +83,14 @@ selected_character = 'Никита'  # изначально выбранный �
 def storyboard():  # для раскадровки персонажей
     frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
                       (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
-    for char in ['Максим']:  # список персонажей для раскадровки
+    for char in ['Илья']:  # список персонажей для раскадровки
         for f in frame_and_line:
             char_sheet = load_image(f'characters/{char}.png')
             image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
             image = image.subsurface((8, 24, 32, 70))
             pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
 
+storyboard()
 
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]  # id текстур уровней
 
@@ -467,7 +468,7 @@ def character_selection(character):
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
-                    character_selection(students_lst[students_lst.index(character) - 1])
+                    character_selection(students_lst[students_lst.index(character) + 1])
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if return_btn.click_check(event.pos):
                     main_menu()
@@ -481,7 +482,7 @@ def character_selection(character):
                     selected = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return
+                    main_menu()
 
         pygame.display.flip()
         clock.tick(FPS)

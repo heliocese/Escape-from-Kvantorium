@@ -1,4 +1,8 @@
 import pygame
+from data_levels import get_animation
+
+
+COLOR = '#090909'
 
 
 class Teacher(pygame.sprite.Sprite):
@@ -8,8 +12,8 @@ class Teacher(pygame.sprite.Sprite):
         w, h = 19, 40
         self.image = pygame.Surface((w, h))
         self.image.fill(pygame.Color((0, 0, 123)))
-        self.rect = pygame.Rect(self.x, self.y, w, h)
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect = pygame.Rect(x, y, w, h)
+        self.image.set_colorkey((9, 9, 9))
 
     def get_position(self):
         return self.x, self.y, 19, 40
@@ -27,16 +31,25 @@ class Teacher(pygame.sprite.Sprite):
 
 
 class Students(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, person):
         super().__init__()
         self.x, self.y = x, y
         w, h = 19, 40
         self.image = pygame.Surface((w, h))
-        self.image.fill(pygame.Color((0, 0, 123)))
-        self.rect = pygame.Rect(self.x, self.y, w, h)
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.image.fill(pygame.Color(COLOR))
+        self.rect = pygame.Rect(x, y, w, h)
+        self.image.set_colorkey(pygame.Color(COLOR))
         self.flag = False
+        self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
+        #        Анимация движения вправо
+        self.stay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
-    def move(self, pos):
-        if self.flag:
-            pass
+    def move(self, coods_list, difference):
+        if difference != 0:
+            self.difference = difference
+        if self.flag and len(coods_list) > 5:
+            self.rect.x, self.rect.y = coods_list[-1][0] - self.difference, coods_list[-1][1]
+            del coods_list[-1]
+
+    def get_position(self):
+        return self.rect.x, self.rect.y, self.rect.right - self.rect.left, self.rect.bottom - self.rect.top

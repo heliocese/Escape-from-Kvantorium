@@ -1,3 +1,6 @@
+import pyganim
+
+
 students = {
     'Никита': 'Успевает делать все задания в Лицее. Как именно это ему это удаётся никто не знает. Возможно освоил '
               'знания тайм менеджмента, ну, или же не спит ночами',
@@ -19,8 +22,8 @@ students = {
 students_lst = list(students.keys())
 
 level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'star': 0, 'three': 45, 'two': 60, 'one': 70},
-         1: {'level_map': 'level2.tmx', 'spawn': (50, 260), 'star': 0, 'dop_character': 'Ярослав',
-             'spawn_dop': ('x', 'y'), 'three': 70, 'two': 90, 'one': 100},
+         1: {'level_map': 'level2.tmx', 'spawn': (50, 240), 'star': 0, 'dop_character': 'Ярик',
+             'spawn_dop': (80, 240), 'three': 70, 'two': 90, 'one': 100},
          2: {'level_map': 'level3.tmx', 'spawn': (40, 800), 'star': 0, 'three': 60, 'two': 70, 'one': 90},
          3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'star': 0, 'three': 60, 'two': 70, 'one': 90},
          4: {'level_map': 'level5.tmx', 'spawn': (40, 1250), 'star': 0, 'dop_character': 'Саша',
@@ -46,4 +49,31 @@ def get_animation(person):
     jump_left = [(data + person + '_rl1.png', 80)]
     jump_right = [(data + person + '_rr1.png', 80)]
     stay = [(data + person + '_0.png', 80)]
-    return delay, right, left, jump_right, jump_left, stay
+    anim = []
+
+    for a in right:
+        anim.append((a, delay))
+    anim_right = pyganim.PygAnimation(anim)
+    anim_right.scale((19, 40))
+    anim_right.play()
+    #        Анимация движения влево
+    anim = []
+    for a in left:
+        anim.append((a, delay))
+    anim_left = pyganim.PygAnimation(anim)
+    anim_left.scale((19, 40))
+    anim_left.play()
+
+    anim_stay = pyganim.PygAnimation(stay)
+    anim_stay.play()
+    anim_stay.scale((19, 40))
+
+    anim_jump_left = pyganim.PygAnimation(jump_left)
+    anim_jump_left.scale((19, 40))
+    anim_jump_left.play()
+
+    anim_jump_right = pyganim.PygAnimation(jump_right)
+    anim_jump_right.scale((19, 40))
+    anim_jump_right.play()
+
+    return delay, anim_right, anim_left, anim_jump_right, anim_jump_left, anim_stay

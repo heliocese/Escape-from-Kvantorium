@@ -1,5 +1,6 @@
 import pygame
 from data_levels import get_animation
+from enemy import Students
 
 
 COLOR = "#090909"
@@ -74,7 +75,7 @@ class Hero(pygame.sprite.Sprite):
         self.rect.x += self.xvel  # переносим свои положение на xvel
         self.collide(self.xvel, 0, platforms, character)
 
-        if character:
+        if isinstance(character, Students):
             if character.flag:
                 character.image.fill(pygame.Color(COLOR))
                 if self.get_position()[:2] not in self.coords_list:

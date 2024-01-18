@@ -642,7 +642,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     drawing = False
     draw_new_graffiti = True
     ctrl = False
-
+    h , w = labirint.size()  # размер
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
         # будем использовать как фон
@@ -759,13 +759,13 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
 
         if level[reasons]['one'] <= timer.get_time():
             game_over(level_number, 'Время кончилось')
-        if str(reasons) in '1468' and character.exit(reasons):  # проверка пройден ли уровень с персонажем
-            hero.exit(True)
+        if str(reasons) in '1468' and character.exit(h, w):  # проверка пройден ли уровень с персонажем
+            hero.exit(h, w, False)
             timer.pauses()
             end(timer.get_time())
-        elif str(reasons) in '1468' and hero.exit() and not character.exit(reasons):
-            hero.exit(False)
-        elif hero.exit() and str(reasons) in '023579':  # если игрок дошел до выхода
+        elif str(reasons) in '1468' and hero.exit(h, w) and not character.exit(h, w):
+            hero.exit(h, w, False)
+        elif hero.exit(h, w) and str(reasons) in '023579':  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()  # обновляем экран

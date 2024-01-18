@@ -53,25 +53,10 @@ class Students(pygame.sprite.Sprite):
         #        Анимация движения вправо
         self.stay.blit(self.image, (0, 0))  # По-умолчанию, стоим
 
-    def exit(self, reasons):  # найден выход персонажем
-        self.reasons = int(reasons)
-        p = Border(957, 0, 957, 608)
-        if self.reasons == 1:
-            p = Border(1048, 0, 1048, 700)
-        elif self.reasons == 3:
-            p = Border(1810, 0, 1810, 1000)
-        elif self.reasons == 4:
-            p = Border(1701, -1000, 1701, 1000)
-        elif self.reasons == 5:
-            p = Border(2153, -1000, 2153, 5000)
-        elif self.reasons == 6:
-            p = Border(2101, -1000, 2101, 5000)
-        elif self.reasons == 7:
-            p = Border(2227, -1000, 2227, 5000)
-        elif self.reasons == 8:
-            p = Border(2527, -1000, 2527, 5000)
-        elif self.reasons == 9:
-            p = Border(2885, -1000, 2885, 5000)
+    def exit(self, h, w):  # найден выход персонажем
+        h = h * 32
+        w = w * 32 - 2
+        p = Border(w, 0, w, h)
         if pygame.sprite.collide_rect(self, p):
             return True
         return False

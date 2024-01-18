@@ -396,7 +396,7 @@ def levels():
                             new_game(level_btns.index(button))
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return
+                    main_menu()
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -547,7 +547,7 @@ def options():
                         check_btn_ARROWS.check()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return
+                    main_menu()
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -558,7 +558,7 @@ def new_game(level_number):
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, reasons)
+    hero = Hero(*level[level_number]['spawn'], person, main_font, reasons)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
@@ -706,7 +706,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             button.change_colour(pygame.mouse.get_pos())
 
         if level[reasons]['one'] <= timer.get_time():
-            game_over('Время кончилось')
+            game_over(level_number, 'Время кончилось')
         if hero.exit():  # если игрок дошел до выхода
             timer.pauses()  # останавливаем таймер
             end(timer.get_time())  # фиксируе время и выводим экран победы
@@ -746,7 +746,7 @@ def pause():
         clock.tick(FPS)
 
 
-def game_over(reason='Вас поймали'):  # проигрыш
+def game_over(level_number, reason='Вас поймали'):  # проигрыш
     pygame.display.set_caption(f'Escape from Kvantorium - game over')
 
     # texts = [get_text('Game', big_font, )]
@@ -771,7 +771,7 @@ def game_over(reason='Вас поймали'):  # проигрыш
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if resume_btn.click_check(event.pos) and walls_collided:
-                    return
+                    new_game(level_number)
                 if home_btn.click_check(event.pos) and walls_collided:
                     main_menu()
 

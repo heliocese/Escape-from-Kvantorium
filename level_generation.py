@@ -42,7 +42,7 @@ class Labirint:
             return True
         return False
 
-    def find_path_step(self, start, target):
+    """def find_path_step(self, start, target):
         INF = 1000
         start, target = (start[0] // 32, start[1] // 32), (target[0] // 32, target[1] // 32)
         x, y = start
@@ -65,7 +65,7 @@ class Labirint:
         while previous[y][x] != start:
             if previous[y][x]:
                 x, y = previous[y][x]
-        return x * 32, y * 32
+        return x * 32, y * 32"""
 
 
 class Sprite(pygame.sprite.Sprite):

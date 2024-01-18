@@ -1,6 +1,7 @@
 import pygame
 from data_levels import get_animation
 from enemy import Students
+from functions import Border
 
 
 COLOR = "#090909"
@@ -10,19 +11,12 @@ JUMP_POWER = 10
 vertical_borders = pygame.sprite.Group()
 
 
-class Border(pygame.sprite.Sprite):
-    # строго вертикальный отрезок (стена для выхода)
-    def __init__(self, x1, y1, x2, y2):
-        super().__init__()
-        if x1 == x2:  # вертикальная стенка
-            self.add(vertical_borders)
-            self.image = pygame.Surface([1, y2 - y1])
-            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
-
-
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, x, y, person, reasons):
+    def __init__(self, x, y, person, font, reasons):
         pygame.sprite.Sprite.__init__(self)
+        self.name = person
+        self.name = font.render(self.name, True, (9, 9, 9))
+        self.name_rect = self.name.get_rect(center=(x, y))
         self.xvel = 0
         w, h = 19, 40
         self.coords_list = []
@@ -36,11 +30,15 @@ class Hero(pygame.sprite.Sprite):
         self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
         self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
 
+    def draw_name(self, screen):
+        screen.blit(self.name, self.name_rect)
+
     def update(self):
         pass
 
     def draw(self, screen):  # Выводим себя на экран
         screen.blit(self.image, (self.rect.x, self.rect.y))
+        self.draw_name(screen)
 
     def move(self, left, right, up, platforms, character):
         if left:

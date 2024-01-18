@@ -918,11 +918,11 @@ def end(time):  # окончание уровня победой
                 WHERE number = ?""", (str(int(number) + 2),)).fetchall()
         con.commit()  # разблокировка следующего уровня
         stars_update()
-        level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(reasons) + 2) % 5) == 0 else
-                                              WIDTH // 6 * ((int(reasons) + 2) % 5), HEIGHT // 3
-                                              if (int(reasons) + 2) < 6 else HEIGHT // 3 * 2,
-                                              load_image(f'pictures/{int(reasons) + 2}.png'),
-                                              load_image(f'pictures/{int(reasons) + 2}_.png'), None, WIDTH // 240)
+        level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
+                                              WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
+                                              if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
+                                              load_image(f'pictures/{int(number) + 2}.png'),
+                                              load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))

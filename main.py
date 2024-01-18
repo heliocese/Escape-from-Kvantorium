@@ -2,18 +2,18 @@ import random  # необходимые импорты
 import pygame
 import sys
 import os
-from button import Button, CheckButton
-from settings import *
-from functions import load_image, Object, Border, all_sprites, full_wrapper
-from level_generation import Labirint
-from hero import Hero
-from star import Star
-from data_levels import students, students_lst, level
-from camera import Camera, camera_configure
-from timer import Timer
-from graffiti import Graffiti
-from enemy import Students, Teacher
-from winstar import Stars
+from files.button import Button, CheckButton
+from files.settings import *
+from files.functions import load_image, Object, Border, all_sprites, full_wrapper
+from files.level_generation import Labirint
+from files.hero import Hero
+from files.star import Star
+from files.data_levels import students, students_lst, level
+from files.camera import Camera, camera_configure
+from files.timer import Timer
+from files.graffiti import Graffiti
+from files.enemy import Students, Teacher
+from files.winstar import Stars
 import sqlite3
 
 pygame.init()  # инициализация pygame

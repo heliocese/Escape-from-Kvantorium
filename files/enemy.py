@@ -1,5 +1,5 @@
 import pygame
-from data_levels import get_animation
+from files.data_levels import get_animation
 
 
 COLOR = '#090909'

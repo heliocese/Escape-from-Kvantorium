@@ -1,7 +1,7 @@
 import pygame
-from data_levels import get_animation
-from enemy import Students
-from functions import Border
+from files.data_levels import get_animation
+from files.enemy import Students
+from files.functions import Border
 
 
 COLOR = "#090909"

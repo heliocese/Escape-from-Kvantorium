@@ -40,12 +40,10 @@ class Button(pygame.sprite.Sprite):
 class CheckButton(Button):
     def __init__(self, x, y, unchecked_image, unchecked_image_, checked_image, checked_image_, is_checked=False,
                  scale=2):
-        Button.__init__(self, x, y, checked_image, unchecked_image_, text=None, scale=4)
+        Button.__init__(self, x, y, checked_image, checked_image_, text=None, scale=4)
         pygame.sprite.Sprite.__init__(self)
-        # основное изображение
         self.unchecked_image = pygame.transform.scale(unchecked_image, (int(unchecked_image.get_width() * scale),
                                                                         int(unchecked_image.get_height() * scale)))
-        # избражение используещееся при наведении на кнопку
         self.unchecked_image_ = pygame.transform.scale(unchecked_image_, (int(unchecked_image_.get_width() * scale),
                                                                           int(unchecked_image_.get_height() * scale)))
         self.checked_image = pygame.transform.scale(checked_image, (int(checked_image.get_width() * scale),
@@ -59,11 +57,20 @@ class CheckButton(Button):
             self.cur_image = self.unchecked_image
         self.rect = self.cur_image.get_rect(center=(x, y))
 
+    def update(self, screen):
+        screen.blit(self.cur_image, self.rect)
+
     def change_colour(self, pos):
         if self.rect.collidepoint(pos):
-            self.cur_image = self.second_image
+            if self.is_checked:
+                self.cur_image = self.checked_image_
+            else:
+                self.cur_image = self.unchecked_image_
         else:
-            self.cur_image = self.image
+            if self.is_checked:
+                self.cur_image = self.checked_image
+            else:
+                self.cur_image = self.unchecked_image
 
     def check(self):
         self.is_checked = True

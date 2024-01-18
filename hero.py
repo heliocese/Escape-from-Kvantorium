@@ -93,14 +93,14 @@ class Hero(pygame.sprite.Sprite):
                 if not(right or left):
                     character.stay.blit(character.image, (0, 0))
 
-    def exit(self):  # найден выход
+    def exit(self, prmt=True):  # найден выход персонажем
         p = Border(959, 0, 959, 608)
         if self.reasons == 1:
             p = Border(1050, 0, 1050, 700)
         elif self.reasons == 3:
             p = Border(1812, 0, 1812, 1000)
         elif self.reasons == 4:
-            p = Border(1710, -1000, 1710, 1000)
+            p = Border(1703, -1000, 1703, 1000)
         elif self.reasons == 5:
             p = Border(2155, -1000, 2155, 5000)
         elif self.reasons == 6:
@@ -112,7 +112,9 @@ class Hero(pygame.sprite.Sprite):
         elif self.reasons == 9:
             p = Border(2887, -1000, 2887, 5000)
         if pygame.sprite.collide_rect(self, p):
-            return True
+            self.rect.right = p.rect.left
+            if prmt:
+                return True
         return False
 
     def collide(self, xvel, yvel, platforms, character):

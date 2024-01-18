@@ -76,6 +76,8 @@ cur = con.cursor()
 
 reasons = ''  # уровень
 selected_character = 'Никита'  # изначально выбранный персонаж
+
+
 # загружаем картинку персонажа
 # person_image = get_image(load_image(f'characters/{selected_character}.png'), 1, 1, 48, 96, 6)
 
@@ -83,14 +85,13 @@ selected_character = 'Никита'  # изначально выбранный �
 def storyboard():  # для раскадровки персонажей
     frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
                       (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
-    for char in ['Ваня']:  # список персонажей для раскадровки
+    for char in ['Илья']:  # список персонажей для раскадровки
         for f in frame_and_line:
             char_sheet = load_image(f'characters/{char}.png')
             image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
-            image = image.subsurface((8, 20, 32, 70))
+            image = image.subsurface((8, 24, 32, 70))
             pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
 
-storyboard()
 
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]  # id текстур уровней
 
@@ -130,8 +131,10 @@ for i in range(1, 11):
                                  load_image('pictures/locked_btn.png'),
                                  load_image('pictures/locked_btn.png'), None, WIDTH // 240))
 
-check_btn1 = CheckButton(WIDTH // 5, HEIGHT // 6 * 2, empty_image, empty_image_, checked_image, checked_image_, True, 4)
-check_btn2 = CheckButton(WIDTH // 5, HEIGHT // 6 * 4, empty_image, empty_image_, checked_image, checked_image_, scale=4)
+check_btn_WASD = CheckButton(WIDTH // 5, HEIGHT // 6 * 2, empty_image, empty_image_, checked_image, checked_image_,
+                             control_settings['WASD'], 4)
+check_btn_ARROWS = CheckButton(WIDTH // 5, HEIGHT // 6 * 4, empty_image, empty_image_, checked_image, checked_image_,
+                               control_settings['ARROWS'], 4)
 
 
 def stars_update():  # обновление звездочек в меню
@@ -378,7 +381,7 @@ def levels():
                         if base[0][0] == 'разблок':  # проверка разблокирован ли уровень
                             if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                                 intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
-                                            'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
+                                             'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
                             elif level_btns.index(button) + 1 == 2:
                                 intro_maker(['Спаси своего друга Ярика'], (255, 255, 255))
                             elif level_btns.index(button) + 1 == 5:
@@ -404,6 +407,7 @@ def character_selection(character):
     global selected_character
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
 
+    # получения списка кнопок
     buttons = [return_btn]
     left, right, selected = True, True, False
     if students_lst.index(character) == 0:
@@ -421,37 +425,31 @@ def character_selection(character):
     else:
         buttons.append(select_btn)
 
-    # name = main_font.render(character, 1, (28, 28, 28))  # имя персонажа
-    # name_rect = name.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6))  # имя располагается в правой верхней части экрана
-    name = get_text(character, main_font, (WIDTH // 6 * 5, HEIGHT // 6))
+    name = get_text(character, main_font, (WIDTH // 6 * 5, HEIGHT // 6))  # имя персонажа
     info = full_wrapper([students[character]], 23)  # информация о персонаже
     info_offsets = [25 * i - (12 * len(info)) for i in range(len(info))]  # информация находится в правой нижней части
 
     person_image = get_image(load_image(f'characters/{character}.png'), 2, 1, 48, 96, 6)
 
+    info_list = [get_text(line, mini_font, (WIDTH // 6 * 5, HEIGHT // 6 * 4 + info_offsets[info.index(line)]))
+                 for line in info]
+
     tiles = get_background(bg_image1)
     count = 0
-
-    #info_list = [get_text(line, main_font, (WIDTH // 6 * 5, HEIGHT // 6 * 4 + info_offsets[info.index(line)]))
-                 #for line in info]
-    #print(info_list)
 
     while True:
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
         pygame.draw.rect(screen, pygame.Color('#f6f4fc'), (WIDTH // 6 * 4, 0, WIDTH, HEIGHT))
 
+        # отрисовывание кнопок и другая текстура при наведении
         for btn in buttons:
             btn.update(screen)
             btn.change_colour(pygame.mouse.get_pos())
 
+        # отрисовывание имени персонажа и онформации о нём
         draw_text(screen, name)
-        #draw_text(screen, info_list)
-        #screen.blit(name, name_rect)  # отрисовываем имя
-        for line in info:  # отрисовываем информацию построчно
-            string = mini_font.render(line, True, (28, 28, 28))
-            string_rect = string.get_rect(center=(WIDTH // 6 * 5, HEIGHT // 6 * 4 + info_offsets[info.index(line)]))
-            screen.blit(string, string_rect)
+        draw_text(screen, *info_list)
 
         # отрисовываем картинку персонажа
         screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
@@ -465,6 +463,10 @@ def character_selection(character):
                 terminate()
             keys = pygame.key.get_pressed()
             if event.type == pygame.KEYDOWN:
+                if keys[pygame.K_RETURN] and not selected:
+                    selected_character = character
+                    buttons[-1] = selected_btn
+                    selected = True
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
@@ -491,12 +493,18 @@ def character_selection(character):
 def options():
     pygame.display.set_caption('Escape from Kvantorium - Настройки')
 
-    text = get_text('Настройки', main_font, (WIDTH // 2, HEIGHT // 10))
-    text_shadow = get_text('Настройки', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1))
+    texts = [get_text('Настройки', main_font, (WIDTH // 2, HEIGHT // 10)),
+             get_text('Настройки', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1)),
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 8)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 12)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 8)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 12)),
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10))]
 
-    check1 = get_text('WASD для передвижения + ПРОБЕЛ, CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2))
-
-    buttons = [return_btn, ]
+    buttons = [return_btn, check_btn_WASD, check_btn_ARROWS]
 
     tiles = get_background(bg_image_character)
     count = 0
@@ -504,13 +512,18 @@ def options():
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
 
-        draw_text(screen, text, text_shadow, check1)
-        check_btn1.update(screen)
-        check_btn1.change_colour(pygame.mouse.get_pos())
-        check_btn2.update(screen)
-        check_btn2.change_colour(pygame.mouse.get_pos())
-        return_btn.update(screen)
-        return_btn.change_colour(pygame.mouse.get_pos())
+        draw_text(screen, *texts)
+
+        for button in buttons:
+            button.update(screen)
+            if buttons.index(button) == 1:
+                if (button.is_checked and buttons[2].is_checked) or not button.is_checked:
+                    button.change_colour(pygame.mouse.get_pos())
+            elif buttons.index(button) == 2:
+                if (button.is_checked and buttons[1].is_checked) or not button.is_checked:
+                    button.change_colour(pygame.mouse.get_pos())
+            else:
+                button.change_colour(pygame.mouse.get_pos())
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -518,6 +531,20 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if return_btn.click_check(event.pos):
                     main_menu()
+                if check_btn_WASD.click_check(event.pos):
+                    if control_settings['WASD'] and control_settings['ARROWS']:
+                        control_settings['WASD'] = False
+                        check_btn_WASD.uncheck()
+                    elif not control_settings['WASD']:
+                        control_settings['WASD'] = True
+                        check_btn_WASD.check()
+                if check_btn_ARROWS.click_check(event.pos):
+                    if control_settings['ARROWS'] and control_settings['WASD']:
+                        control_settings['ARROWS'] = False
+                        check_btn_ARROWS.uncheck()
+                    elif not control_settings['ARROWS']:
+                        control_settings['ARROWS'] = True
+                        check_btn_ARROWS.check()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -556,11 +583,13 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     global reasons
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
+    buttons = [restart_btn, pause_btn]
     timer = Timer(WIDTH // 2, HEIGHT * 0.07, mini_font)
     pygame.time.set_timer(pygame.USEREVENT, 1000)
     graffiti_list = []
     drawing = False
     draw_new_graffiti = True
+    ctrl = False
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -573,48 +602,64 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             if event.type == pygame.QUIT:
                 terminate()
             # if event.type == ENEMY_EVENT_TYPE:
-                # print(enemy)
-                # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
+            # print(enemy)
+            # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
                     if draw_new_graffiti:
                         draw_new_graffiti = False
                         drawing = True
-                        if keys[pygame.K_w] or keys[pygame.K_UP]:
+                        ctrl = True
+                        if (keys[pygame.K_w] and control_settings['WASD']) or \
+                                (keys[pygame.K_UP] and control_settings['ARROWS']):
                             graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'UP'))
-                        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                        elif (keys[pygame.K_d] and control_settings['WASD']) or \
+                                (keys[pygame.K_RIGHT] and control_settings['ARROWS']):
                             graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'RIGHT'))
-                        elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                        elif (keys[pygame.K_s] and control_settings['WASD']) or \
+                                (keys[pygame.K_DOWN] and control_settings['ARROWS']):
                             graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'DOWN'))
-                        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                        elif (keys[pygame.K_a] and control_settings['WASD']) or \
+                                (keys[pygame.K_LEFT] and control_settings['ARROWS']):
                             graffiti_list.append(Graffiti(pygame.mouse.get_pos(), 'LEFT'))
                         else:
+                            ctrl = False
                             draw_new_graffiti = True
                             drawing = False
                     if drawing:
-                        if keys[pygame.K_w] or keys[pygame.K_UP]:
+                        pygame.mouse.set_visible(False)
+                        if (keys[pygame.K_w] and control_settings['WASD']) or \
+                                (keys[pygame.K_UP] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('UP')
-                        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                        if (keys[pygame.K_d] and control_settings['WASD']) or \
+                                (keys[pygame.K_RIGHT] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('RIGHT')
-                        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                        if (keys[pygame.K_s] and control_settings['WASD']) or \
+                                (keys[pygame.K_DOWN] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('DOWN')
-                        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                        if (keys[pygame.K_a] and control_settings['WASD']) or \
+                                (keys[pygame.K_LEFT] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('LEFT')
                     if keys[pygame.K_q]:
                         if drawing:
+                            pygame.mouse.set_visible(True)
                             graffiti_list = graffiti_list[:-1]
                             draw_new_graffiti = True
                             drawing = False
                 if event.key == pygame.K_ESCAPE:
                     pause()
-                if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                if ((keys[pygame.K_a] and control_settings['WASD']) or
+                    (keys[pygame.K_LEFT] and control_settings['ARROWS'])) and not ctrl:
                     left = True
-                if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                if ((keys[pygame.K_d] and control_settings['WASD']) or
+                    (keys[pygame.K_RIGHT] and control_settings['ARROWS'])) and not ctrl:
                     right = True
-                if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
-                    if pygame.key.get_pressed()[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]:
+                if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] and not ctrl:
+                    if pygame.key.get_pressed()[pygame.K_SPACE] or (keys[pygame.K_w] and control_settings['WASD']) or \
+                            (keys[pygame.K_UP] and control_settings['ARROWS']):
                         up = 2
-                elif keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]:
+                elif (keys[pygame.K_SPACE] or (keys[pygame.K_w] and control_settings['WASD']) or
+                      (keys[pygame.K_UP] and control_settings['ARROWS'])) and not ctrl:
                     up = 1
             if event.type == pygame.KEYUP:
                 if not (keys[pygame.K_a]) and not (keys[pygame.K_LEFT]):
@@ -633,6 +678,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 if drawing:
                     draw_new_graffiti = True
                     drawing = False
+                    pygame.mouse.set_visible(True)
                 print(event.pos)
             if event.type == pygame.MOUSEMOTION:
                 if drawing:
@@ -655,10 +701,10 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
 
         timer.draw(screen)
 
-        restart_btn.update(screen)
-        restart_btn.change_colour(pygame.mouse.get_pos())
-        pause_btn.update(screen)
-        pause_btn.change_colour(pygame.mouse.get_pos())
+        for button in buttons:
+            button.update(screen)
+            button.change_colour(pygame.mouse.get_pos())
+
         if level[reasons]['one'] <= timer.get_time():
             game_over('Время кончилось')
         if hero.exit():  # если игрок дошел до выхода
@@ -673,7 +719,7 @@ def pause():
     pygame.display.set_caption(f'Escape from Kvantorium - пауза')
     buttons = [home_btn, resume_btn]
 
-    while True: # игровой цикл
+    while True:  # игровой цикл
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -686,6 +732,7 @@ def pause():
                 if home_btn.click_check(event.pos):
                     main_menu()  # выходим из игры, переходим в главное меню
 
+        # окошно в центре окна с двумя кнопками: выход и продолжить
         pygame.draw.rect(screen, pygame.Color('grey'), (WIDTH // 4, HEIGHT // 3, WIDTH // 4 * 2, HEIGHT // 3))
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3), (WIDTH // 4 * 3, HEIGHT // 3), 10)
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 4, HEIGHT // 3 * 2), (WIDTH // 4 * 3, HEIGHT // 3 * 2), 10)
@@ -702,7 +749,7 @@ def pause():
 def game_over(reason='Вас поймали'):  # проигрыш
     pygame.display.set_caption(f'Escape from Kvantorium - game over')
 
-    # texts = [get_text('Game', big_font)]
+    # texts = [get_text('Game', big_font, )]
     game_text = big_font.render('Game', 1, (28, 28, 28))
     game_text_shadow = big_font.render('Game', 1, (1, 1, 1))
     over_text = big_font.render('Over', 1, (28, 28, 28))
@@ -738,6 +785,8 @@ def game_over(reason='Вас поймали'):  # проигрыш
 
         draw_game_over_background(tiles_left, WIDTH - count, bg_image_game_over)
         draw_game_over_background(tiles_right, -WIDTH + count, bg_image_game_over)
+
+        # draw_text(screen, *texts)
 
         screen.blit(game_text_shadow, game_text.get_rect(center=(-WIDTH // 7 + count + 2, HEIGHT // 7 + 2)))
         screen.blit(over_text_shadow, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count + 2, HEIGHT // 7 + 2)))

@@ -26,6 +26,9 @@ class Labirint:
                         if self.map.tiledgidmap[self.map.get_tile_gid(x, y, i)] == 18:
                             self.platform.add(sprite)
 
+    def size(self):  # размер карты в блоках
+        return self.height, self.width
+
     def render(self, screen):
         self.sprites.draw(screen)
 

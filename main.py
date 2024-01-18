@@ -74,7 +74,7 @@ def draw_text(screen, *texts):
 con = sqlite3.connect('data/EFK.db')
 cur = con.cursor()
 
-reasons = ''  # уровень
+number = ''  # уровень
 selected_character = 'Никита'  # изначально выбранный персонаж
 
 
@@ -383,11 +383,11 @@ def main_menu():  # главное меню
 
 def attempt():  # подсчёт попыток
     base = cur.execute("""SELECT atempts FROM levels
-                        WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                        WHERE number = ?""", (int(number) + 1,)).fetchall()
     base = base[0][0]
     cur.execute("""UPDATE levels
             SET atempts = ?
-            WHERE number = ?""", (int(base) + 1, int(reasons) + 1)).fetchall()
+            WHERE number = ?""", (int(base) + 1, int(number) + 1)).fetchall()
     con.commit()
 
 
@@ -425,11 +425,11 @@ def levels():
                     main_menu()
                 for button in level_btns:
                     if button.click_check(event.pos):
-                        global reasons
+                        global number
                         print('level' + str(level_btns.index(button) + 1))
-                        reasons = level_btns.index(button)
+                        number = level_btns.index(button)
                         base = cur.execute("""SELECT state FROM levels
-                                                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                                                WHERE number = ?""", (int(number) + 1,)).fetchall()
                         if base[0][0] == 'разблок':  # проверка разблокирован ли уровень
                             if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                                 intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
@@ -606,11 +606,11 @@ def options():
 
 
 def new_game(level_number):
-    global reasons
+    global number
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, main_font, reasons)
+    hero = Hero(*level[level_number]['spawn'], person, main_font, number)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
@@ -632,7 +632,7 @@ def new_game(level_number):
 
 # отображает уровень
 def level_displayer(level_number, labirint, all_sprites, camera, hero, character=None):
-    global reasons
+    global number
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
     buttons = [restart_btn, pause_btn]
@@ -757,15 +757,15 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             button.update(screen)
             button.change_colour(pygame.mouse.get_pos())
 
-        if level[reasons]['one'] <= timer.get_time():
+        if level[number]['one'] <= timer.get_time():
             game_over(level_number, 'Время кончилось')
-        if str(reasons) in '1468' and character.exit(h, w):  # проверка пройден ли уровень с персонажем
+        if str(number) in '1468' and character.exit(h, w):  # проверка пройден ли уровень с персонажем
             hero.exit(h, w, False)
             timer.pauses()
             end(timer.get_time())
-        elif str(reasons) in '1468' and hero.exit(h, w) and not character.exit(h, w):
+        elif str(number) in '1468' and hero.exit(h, w) and not character.exit(h, w):
             hero.exit(h, w, False)
-        elif hero.exit(h, w) and str(reasons) in '023579':  # если игрок дошел до выхода
+        elif hero.exit(h, w) and str(number) in '023579':  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()  # обновляем экран
@@ -863,7 +863,7 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
 
 
 def end(time):  # окончание уровня победой
-    global reasons
+    global number
     pygame.display.set_caption('Escape from Kvantorium - WIN')
     text = 'WIN'
     string_rendered = main_font.render(text, 1, (28, 28, 28))
@@ -887,12 +887,12 @@ def end(time):  # окончание уровня победой
     tiles = get_background(bg_image1)
     count = 0
     stars1 = []
-    if time <= level[reasons]['three']:  # выставление звёзд
+    if time <= level[number]['three']:  # выставление звёзд
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_active, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
         sp = 3
-    elif level[reasons]['two'] >= time > level[reasons]['three']:
+    elif level[number]['two'] >= time > level[number]['three']:
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_inactive, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
@@ -903,7 +903,7 @@ def end(time):  # окончание уровня победой
                        Stars(star_inactive, 'middle', 480, 300)])
         sp = 1
     base = cur.execute("""SELECT stars FROM levels
-            WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+            WHERE number = ?""", (int(number) + 1,)).fetchall()
     con.commit()
     if sp > int(base[0][0]):  # изменение количества звезд
         sp1 = base
@@ -911,14 +911,14 @@ def end(time):  # окончание уровня победой
         print(sp1)
         cur.execute("""UPDATE levels
         SET stars = ?
-        WHERE number = ?""", (sp, int(reasons) + 1)).fetchall()
+        WHERE number = ?""", (sp, int(number) + 1)).fetchall()
         con.commit()
         cur.execute("""UPDATE levels  
                 SET state = 'разблок'
-                WHERE number = ?""", (str(int(reasons) + 2),)).fetchall()
+                WHERE number = ?""", (str(int(number) + 2),)).fetchall()
         con.commit()  # разблокировка следующего уровня
         stars_update()
-        level_btns[int(reasons) + 1] = Button(WIDTH // 6 * 5 if ((int(reasons) + 2) % 5) == 0 else
+        level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(reasons) + 2) % 5) == 0 else
                                               WIDTH // 6 * ((int(reasons) + 2) % 5), HEIGHT // 3
                                               if (int(reasons) + 2) < 6 else HEIGHT // 3 * 2,
                                               load_image(f'pictures/{int(reasons) + 2}.png'),
@@ -927,13 +927,13 @@ def end(time):  # окончание уровня победой
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))
     base = cur.execute("""SELECT time FROM levels
-                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                WHERE number = ?""", (int(number) + 1,)).fetchall()
     base1 = int(base[0][0].split(':')[0])
     base2 = int(base[0][0].split(':')[1])
     if base1 * 60 + base2 > time or base1 * 60 + base2 == 0:  # изменение времени
         cur.execute("""UPDATE levels
                 SET time = ?
-                WHERE number = ?""", (minutes + ':' + seconds, int(reasons) + 1)).fetchall()
+                WHERE number = ?""", (minutes + ':' + seconds, int(number) + 1)).fetchall()
         con.commit()
     skip_text.set_alpha(alpha)
     while True:

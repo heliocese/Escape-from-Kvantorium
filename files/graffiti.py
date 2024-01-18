@@ -1,8 +1,8 @@
 import pygame
-from functions import load_image
+from files.functions import load_image
 
 # IMAGE = load_image('pictures/red_arrow.png', (255, 255, 255))
-IMAGE = pygame.image.load('data/pictures/red_arrow.png')
+IMAGE = pygame.image.load('./data/pictures/red_arrow.png')
 IMAGE.set_colorkey((255, 255, 255))
 
 

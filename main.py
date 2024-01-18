@@ -2,18 +2,18 @@ import random  # необходимые импорты
 import pygame
 import sys
 import os
-from button import Button, CheckButton
-from settings import *
-from functions import load_image, Object, Border, all_sprites, full_wrapper
-from level_generation import Labirint
-from hero import Hero
-from star import Star
-from data_levels import students, students_lst, level
-from camera import Camera, camera_configure
-from timer import Timer
-from graffiti import Graffiti
-from enemy import Students, Teacher
-from winstar import Stars
+from files.button import Button, CheckButton
+from files.settings import *
+from files.functions import load_image, Object, Border, all_sprites, full_wrapper
+from files.level_generation import Labirint
+from files.hero import Hero
+from files.star import Star
+from files.data_levels import students, students_lst, level
+from files.camera import Camera, camera_configure
+from files.timer import Timer
+from files.graffiti import Graffiti
+from files.enemy import Students, Teacher
+from files.winstar import Stars
 import sqlite3
 
 pygame.init()  # инициализация pygame
@@ -29,6 +29,7 @@ clock = pygame.time.Clock()
 main_font = pygame.font.Font(None, 64)  # основной шрифт
 mini_font = pygame.font.Font(None, 32)  # маленький шрифт
 big_font = pygame.font.Font(None, 128)  # большой шрифт
+hero_font = pygame.font.Font(None, 20)  # шрифт для имён персонажей
 main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от краёв экрана
 
 # загрузка изображений
@@ -74,12 +75,11 @@ def draw_text(screen, *texts):
 con = sqlite3.connect('data/EFK.db')
 cur = con.cursor()
 
-reasons = ''  # уровень
-selected_character = 'Никита'  # изначально выбранный персонаж
-
-
-# загружаем картинку персонажа
-# person_image = get_image(load_image(f'characters/{selected_character}.png'), 1, 1, 48, 96, 6)
+number = ''  # уровень
+selected_character = cur.execute("""SELECT character FROM data""").fetchone()[0]  # изначально выбранный персонаж
+control_settings = {  # настройки управления
+    'WASD': cur.execute("""SELECT control_wasd FROM data""").fetchone()[0],
+    'ARROWS': cur.execute("""SELECT control_arrows FROM data""").fetchone()[0]}
 
 
 def storyboard():  # для раскадровки персонажей
@@ -383,11 +383,11 @@ def main_menu():  # главное меню
 
 def attempt():  # подсчёт попыток
     base = cur.execute("""SELECT atempts FROM levels
-                        WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                        WHERE number = ?""", (int(number) + 1,)).fetchall()
     base = base[0][0]
     cur.execute("""UPDATE levels
             SET atempts = ?
-            WHERE number = ?""", (int(base) + 1, int(reasons) + 1)).fetchall()
+            WHERE number = ?""", (int(base) + 1, int(number) + 1)).fetchall()
     con.commit()
 
 
@@ -425,11 +425,11 @@ def levels():
                     main_menu()
                 for button in level_btns:
                     if button.click_check(event.pos):
-                        global reasons
+                        global number
                         print('level' + str(level_btns.index(button) + 1))
-                        reasons = level_btns.index(button)
+                        number = level_btns.index(button)
                         base = cur.execute("""SELECT state FROM levels
-                                                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                                                WHERE number = ?""", (int(number) + 1,)).fetchall()
                         if base[0][0] == 'разблок':  # проверка разблокирован ли уровень
                             if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                                 intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
@@ -517,6 +517,9 @@ def character_selection(character):
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_RETURN] and not selected:
                     selected_character = character
+                    cur.execute(f"""UPDATE data
+                                    SET character = '{character}'""")
+                    con.commit()
                     buttons[-1] = selected_btn
                     selected = True
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
@@ -532,6 +535,9 @@ def character_selection(character):
                     character_selection(students_lst[students_lst.index(character) + 1])
                 if buttons[-1].click_check(event.pos) and not selected:  # если персонаж не выбран, выбираем
                     selected_character = character
+                    cur.execute(f"""UPDATE data
+                                    SET character = '{character}'""")
+                    con.commit()
                     buttons[-1] = selected_btn
                     selected = True
             if event.type == pygame.KEYDOWN:
@@ -587,16 +593,26 @@ def options():
                     if control_settings['WASD'] and control_settings['ARROWS']:
                         control_settings['WASD'] = False
                         check_btn_WASD.uncheck()
+                        cur.execute("""UPDATE data
+                                       SET control_wasd = 0""")
                     elif not control_settings['WASD']:
                         control_settings['WASD'] = True
                         check_btn_WASD.check()
+                        cur.execute("""UPDATE data
+                                       SET control_wasd = 1""")
+                    con.commit()
                 if check_btn_ARROWS.click_check(event.pos):
                     if control_settings['ARROWS'] and control_settings['WASD']:
                         control_settings['ARROWS'] = False
                         check_btn_ARROWS.uncheck()
+                        cur.execute("""UPDATE data
+                                       SET control_arrows = 0""")
                     elif not control_settings['ARROWS']:
                         control_settings['ARROWS'] = True
                         check_btn_ARROWS.check()
+                        cur.execute("""UPDATE data
+                                        SET control_arrows = 1""")
+                    con.commit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
@@ -606,11 +622,11 @@ def options():
 
 
 def new_game(level_number):
-    global reasons
+    global number
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, main_font, reasons)
+    hero = Hero(*level[level_number]['spawn'], person, hero_font, number)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
@@ -632,7 +648,7 @@ def new_game(level_number):
 
 # отображает уровень
 def level_displayer(level_number, labirint, all_sprites, camera, hero, character=None):
-    global reasons
+    global number
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
     buttons = [restart_btn, pause_btn]
@@ -653,9 +669,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
-            # if event.type == ENEMY_EVENT_TYPE:
-            # print(enemy)
-            # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
                     if draw_new_graffiti:
@@ -694,6 +707,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                             graffiti_list[-1].change_direction('LEFT')
                     if keys[pygame.K_q]:
                         if drawing:
+                            ctrl = False
                             pygame.mouse.set_visible(True)
                             graffiti_list = graffiti_list[:-1]
                             draw_new_graffiti = True
@@ -728,6 +742,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     left = right = False
                     pause()
                 if drawing:
+                    ctrl = False
                     draw_new_graffiti = True
                     drawing = False
                     pygame.mouse.set_visible(True)
@@ -745,11 +760,14 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 character.move(hero.coords_list, hero.xvel)
         hero.move(left, right, up, labirint.platform, character)  # передвижение
         # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
+
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
         for graffiti in graffiti_list:
             screen.blit(graffiti.image, camera.apply(graffiti))
+
+        hero.draw(screen)
 
         timer.draw(screen)
 
@@ -757,15 +775,15 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             button.update(screen)
             button.change_colour(pygame.mouse.get_pos())
 
-        if level[reasons]['one'] <= timer.get_time():
+        if level[number]['one'] <= timer.get_time():
             game_over(level_number, 'Время кончилось')
-        if str(reasons) in '1468' and character.exit(reasons):  # проверка пройден ли уровень с персонажем
+        if str(number) in '1468' and character.exit(number):  # проверка пройден ли уровень с персонажем
             hero.exit(True)
             timer.pauses()
             end(timer.get_time())
-        elif str(reasons) in '1468' and hero.exit() and not character.exit(reasons):
+        elif str(number) in '1468' and hero.exit() and not character.exit(number):
             hero.exit(False)
-        elif hero.exit() and str(reasons) in '023579':  # если игрок дошел до выхода
+        elif hero.exit() and str(number) in '023579':  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()  # обновляем экран
@@ -863,7 +881,7 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
 
 
 def end(time):  # окончание уровня победой
-    global reasons
+    global number
     pygame.display.set_caption('Escape from Kvantorium - WIN')
     text = 'WIN'
     string_rendered = main_font.render(text, 1, (28, 28, 28))
@@ -887,12 +905,12 @@ def end(time):  # окончание уровня победой
     tiles = get_background(bg_image1)
     count = 0
     stars1 = []
-    if time <= level[reasons]['three']:  # выставление звёзд
+    if time <= level[number]['three']:  # выставление звёзд
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_active, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
         sp = 3
-    elif level[reasons]['two'] >= time > level[reasons]['three']:
+    elif level[number]['two'] >= time > level[number]['three']:
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_inactive, 'right', 480, 300),
                        Stars(star_active, 'middle', 480, 300)])
@@ -903,7 +921,7 @@ def end(time):  # окончание уровня победой
                        Stars(star_inactive, 'middle', 480, 300)])
         sp = 1
     base = cur.execute("""SELECT stars FROM levels
-            WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+            WHERE number = ?""", (int(number) + 1,)).fetchall()
     con.commit()
     if sp > int(base[0][0]):  # изменение количества звезд
         sp1 = base
@@ -911,29 +929,29 @@ def end(time):  # окончание уровня победой
         print(sp1)
         cur.execute("""UPDATE levels
         SET stars = ?
-        WHERE number = ?""", (sp, int(reasons) + 1)).fetchall()
+        WHERE number = ?""", (sp, int(number) + 1)).fetchall()
         con.commit()
         cur.execute("""UPDATE levels  
                 SET state = 'разблок'
-                WHERE number = ?""", (str(int(reasons) + 2),)).fetchall()
+                WHERE number = ?""", (str(int(number) + 2),)).fetchall()
         con.commit()  # разблокировка следующего уровня
         stars_update()
-        level_btns[int(reasons) + 1] = Button(WIDTH // 6 * 5 if ((int(reasons) + 2) % 5) == 0 else
-                                              WIDTH // 6 * ((int(reasons) + 2) % 5), HEIGHT // 3
-                                              if (int(reasons) + 2) < 6 else HEIGHT // 3 * 2,
-                                              load_image(f'pictures/{int(reasons) + 2}.png'),
-                                              load_image(f'pictures/{int(reasons) + 2}_.png'), None, WIDTH // 240)
+        level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
+                                              WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
+                                              if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
+                                              load_image(f'pictures/{int(number) + 2}.png'),
+                                              load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))
     base = cur.execute("""SELECT time FROM levels
-                WHERE number = ?""", (int(reasons) + 1,)).fetchall()
+                WHERE number = ?""", (int(number) + 1,)).fetchall()
     base1 = int(base[0][0].split(':')[0])
     base2 = int(base[0][0].split(':')[1])
     if base1 * 60 + base2 > time or base1 * 60 + base2 == 0:  # изменение времени
         cur.execute("""UPDATE levels
                 SET time = ?
-                WHERE number = ?""", (minutes + ':' + seconds, int(reasons) + 1)).fetchall()
+                WHERE number = ?""", (minutes + ':' + seconds, int(number) + 1)).fetchall()
         con.commit()
     skip_text.set_alpha(alpha)
     while True:

@@ -21,7 +21,7 @@ students = {
 
 students_lst = list(students.keys())
 
-level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 13, 'two': 17, 'one': 20},
+level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 30, 'two': 40, 'one': 50},
          1: {'level_map': 'level2.tmx', 'spawn': (50, 240), 'dop_character': 'Ярик',
              'spawn_dop': (665, 150), 'three': 32, 'two': 50, 'one': 60},
          2: {'level_map': 'level3.tmx', 'spawn': (40, 800), 'three': 15, 'two': 30, 'one': 40},

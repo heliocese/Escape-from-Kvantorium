@@ -1,7 +1,7 @@
 import pygame
-from data_levels import get_animation
-from enemy import Students
-from functions import Border
+from files.data_levels import get_animation
+from files.enemy import Students
+from files.functions import Border
 
 
 COLOR = "#090909"
@@ -16,7 +16,6 @@ class Hero(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.name = person
         self.name = font.render(self.name, True, (9, 9, 9))
-        self.name_rect = self.name.get_rect(center=(x, y))
         self.xvel = 0
         w, h = 19, 40
         self.coords_list = []
@@ -31,7 +30,7 @@ class Hero(pygame.sprite.Sprite):
         self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
 
     def draw_name(self, screen):
-        screen.blit(self.name, self.name_rect)
+        screen.blit(self.name, self.name.get_rect(center=(self.rect.x + 9, self.rect.y - 10)))
 
     def update(self):
         pass

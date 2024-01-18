@@ -1,5 +1,5 @@
 import pygame
-from settings import WIDTH, HEIGHT
+from files.settings import WIDTH, HEIGHT
 
 
 class Camera(object):

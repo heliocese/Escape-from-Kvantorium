@@ -658,6 +658,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     drawing = False
     draw_new_graffiti = True
     ctrl = False
+    h, w = labirint.size()  # размер
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -760,16 +761,14 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 character.move(hero.coords_list, hero.xvel)
         hero.move(left, right, up, labirint.platform, character)  # передвижение
         # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
-
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
         for graffiti in graffiti_list:
             screen.blit(graffiti.image, camera.apply(graffiti))
 
-        hero.draw(screen)
-
         timer.draw(screen)
+        hero.draw(screen)
 
         for button in buttons:
             button.update(screen)
@@ -777,13 +776,13 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
 
         if level[number]['one'] <= timer.get_time():
             game_over(level_number, 'Время кончилось')
-        if str(number) in '1468' and character.exit(number):  # проверка пройден ли уровень с персонажем
-            hero.exit(True)
+        if str(number) in '1468' and character.exit(h, w):  # проверка пройден ли уровень с персонажем
+            hero.exit(h, w, False)
             timer.pauses()
             end(timer.get_time())
-        elif str(number) in '1468' and hero.exit() and not character.exit(number):
-            hero.exit(False)
-        elif hero.exit() and str(number) in '023579':  # если игрок дошел до выхода
+        elif str(number) in '1468' and hero.exit(h, w) and not character.exit(h, w):
+            hero.exit(h, w, False)
+        elif hero.exit(h, w) and str(number) in '023579':  # если игрок дошел до выхода
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()  # обновляем экран

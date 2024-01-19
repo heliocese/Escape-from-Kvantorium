@@ -1,5 +1,6 @@
 import pygame
 from files.data_levels import get_animation
+from files.functions import Border
 
 
 COLOR = '#090909'
@@ -7,19 +8,10 @@ COLOR = '#090909'
 vertical_borders = pygame.sprite.Group()
 
 
-class Border(pygame.sprite.Sprite):
-    # строго вертикальный отрезок (стена для выхода)
-    def __init__(self, x1, y1, x2, y2):
-        super().__init__()
-        if x1 == x2:  # вертикальная стенка
-            self.add(vertical_borders)
-            self.image = pygame.Surface([1, y2 - y1])
-            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
-
-
 class Teacher(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
         super().__init__()
+        self.person = person
         pygame.time.set_timer(30, 100)
         self.x, self.y = x, y
         w, h = 19, 40
@@ -41,6 +33,7 @@ class Teacher(pygame.sprite.Sprite):
 class Students(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
         super().__init__()
+        self.person = person
         self.x, self.y = x, y
         w, h = 19, 40
         self.image = pygame.Surface((w, h))

@@ -78,3 +78,21 @@ def full_wrapper(text, length):
         else:
             new_text.append(string)
     return new_text
+
+
+class Text(pygame.sprite.Sprite):
+    def __init__(self, text, font, x, y, colour, *groups):
+        super().__init__(*groups)
+
+        self.image = font.render(text, True, colour)
+        self.rect = self.image.get_rect(center=(x, y))
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def move(self, pos):
+        self.rect = self.image.get_rect(center=pos)
+        """self.image = pygame.Surface(size)
+        self.image.blit(self.text, self.text.get_rect(center=self.image.get_rect().center))
+        self.rect = self.image.get_rect(center=(x, y))
+"""

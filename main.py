@@ -4,7 +4,7 @@ import sys
 import os
 from files.button import Button, CheckButton
 from files.settings import *
-from files.functions import load_image, Object, Border, all_sprites, full_wrapper
+from files.functions import load_image, Object, Border, all_sprites, full_wrapper, Text
 from files.level_generation import Labirint
 from files.hero import Hero
 from files.star import Star
@@ -12,7 +12,7 @@ from files.data_levels import students, students_lst, level
 from files.camera import Camera, camera_configure
 from files.timer import Timer
 from files.graffiti import Graffiti
-from files.enemy import Students, Teacher
+from files.people import Students, Teacher
 from files.winstar import Stars
 import sqlite3
 
@@ -30,6 +30,7 @@ main_font = pygame.font.Font(None, 64)  # основной шрифт
 mini_font = pygame.font.Font(None, 32)  # маленький шрифт
 big_font = pygame.font.Font(None, 128)  # большой шрифт
 hero_font = pygame.font.Font(None, 20)  # шрифт для имён персонажей
+
 main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от краёв экрана
 
 # загрузка изображений
@@ -70,6 +71,12 @@ def get_text(text, font, coords, colour=(28, 28, 28)):
 def draw_text(screen, *texts):
     for text in texts:
         screen.blit(text[0], text[1])
+
+
+def draw_rect(screen, rect, center):
+    rect = pygame.Rect(rect)
+    rect.center = center
+    pygame.draw.rect(screen, (200, 200, 200), rect)
 
 
 con = sqlite3.connect('data/EFK.db')
@@ -557,10 +564,10 @@ def options():
              get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 12)),
              get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 8)),
              get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 12)),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10)),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10)),
-             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10)),
-             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10))]
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10), (1, 1, 1)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10), (1, 1, 1)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10), (1, 1, 1)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10), (1, 1, 1))]
 
     buttons = [return_btn, check_btn_WASD, check_btn_ARROWS]
 
@@ -569,6 +576,9 @@ def options():
     while True:
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
+
+        draw_rect(screen, (100, 100, 500, 100), (WIDTH // 5 * 3, HEIGHT // 6 * 2))
+        draw_rect(screen, (100, 100, 500, 100), (WIDTH // 5 * 3, HEIGHT // 6 * 4))
 
         draw_text(screen, *texts)
 
@@ -659,6 +669,10 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     draw_new_graffiti = True
     ctrl = False
     h, w = labirint.size()  # размер
+    names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
+    if character:
+        names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
+    all_sprites.add(names[:])
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -693,7 +707,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                             draw_new_graffiti = True
                             drawing = False
                     if drawing:
-                        pygame.mouse.set_visible(False)
+                        # pygame.mouse.set_visible(False)
                         if (keys[pygame.K_w] and control_settings['WASD']) or \
                                 (keys[pygame.K_UP] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('UP')
@@ -709,17 +723,17 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     if keys[pygame.K_q]:
                         if drawing:
                             ctrl = False
-                            pygame.mouse.set_visible(True)
+                            # pygame.mouse.set_visible(True)
                             graffiti_list = graffiti_list[:-1]
                             draw_new_graffiti = True
                             drawing = False
                 if event.key == pygame.K_ESCAPE:
                     pause()
                 if ((keys[pygame.K_a] and control_settings['WASD']) or
-                    (keys[pygame.K_LEFT] and control_settings['ARROWS'])) and not ctrl:
+                        (keys[pygame.K_LEFT] and control_settings['ARROWS'])) and not ctrl:
                     left = True
                 if ((keys[pygame.K_d] and control_settings['WASD']) or
-                    (keys[pygame.K_RIGHT] and control_settings['ARROWS'])) and not ctrl:
+                        (keys[pygame.K_RIGHT] and control_settings['ARROWS'])) and not ctrl:
                     right = True
                 if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] and not ctrl:
                     if pygame.key.get_pressed()[pygame.K_SPACE] or (keys[pygame.K_w] and control_settings['WASD']) or \
@@ -746,29 +760,37 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     ctrl = False
                     draw_new_graffiti = True
                     drawing = False
-                    pygame.mouse.set_visible(True)
+                    # pygame.mouse.set_visible(True)
                 print(event.pos)
-            if event.type == pygame.MOUSEMOTION:
+            """if event.type == pygame.MOUSEMOTION:
                 if drawing:
-                    graffiti_list[-1].update(pygame.mouse.get_pos())
+                    graffiti_list[-1].update(pygame.mouse.get_pos())"""
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
 
         camera.update(hero)  # центризируем камеру относительно персонажа
-        if character:
-            if isinstance(character, Students):
-                character.move(hero.coords_list, hero.xvel)
-        hero.move(left, right, up, labirint.platform, character)  # передвижение
-        # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
+        hero.move(left, right, up, labirint.platform, character)  # передвижениe
+        names[0].move((hero.rect.x + 10, hero.rect.y - 5))
+        if len(names) > 1:
+            names[1].move((character.rect.x + 10, character.rect.y - 5))
+        if drawing:
+            graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
         for graffiti in graffiti_list:
             screen.blit(graffiti.image, camera.apply(graffiti))
 
+        if character:
+            if isinstance(character, Students):
+                character.move(hero.coords_list, hero.xvel)
+            screen.blit(character.image, camera.apply(character))
+
         timer.draw(screen)
-        hero.draw(screen)
+        hero.draw(screen, camera)
+        # name.draw(screen)
+        #screen.blit(name, (hero.rect.x, hero.rect.y))
 
         for button in buttons:
             button.update(screen)
@@ -936,10 +958,10 @@ def end(time):  # окончание уровня победой
         con.commit()  # разблокировка следующего уровня
         stars_update()
         level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
-                                              WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
-                                              if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
-                                              load_image(f'pictures/{int(number) + 2}.png'),
-                                              load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
+                                             WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
+                                             if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
+                                             load_image(f'pictures/{int(number) + 2}.png'),
+                                             load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))

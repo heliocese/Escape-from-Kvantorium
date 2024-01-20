@@ -411,10 +411,12 @@ def levels():
 
     text = get_text('Выберите уровень', main_font, (WIDTH // 2, HEIGHT // 10))
     text_shadow = get_text('Выберите уровень', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1))
-
+    flag = False
     tiles = get_background(bg_image1)
     count = 0
     stars = stars_update()
+    skip_text = get_text('Смените персонажа для прохождения данного уровня', mini_font,
+                         (WIDTH // 2, HEIGHT - 40), (255, 0, 0))
     while True:
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
@@ -430,7 +432,8 @@ def levels():
         for star_group in stars:
             for star in star_group:
                 star.draw(screen)
-
+        if flag:
+            draw_text(screen, skip_text)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -461,6 +464,8 @@ def levels():
                                 intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
                             attempt()
                             new_game(level_btns.index(button))
+                        if int(number) + 1 == int(students[selected_character][0]):
+                            flag = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
@@ -894,6 +899,7 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if resume_btn.click_check(event.pos) and walls_collided:
                     new_game(level_number)
+                    attempt()
                 if home_btn.click_check(event.pos) and walls_collided:
                     main_menu()
 

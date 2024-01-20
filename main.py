@@ -207,7 +207,7 @@ def intro_maker(message, colour=(255, 255, 255)):
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
-    skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
+    skip_text = main_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
     skip_text.set_alpha(alpha)
     while True:
         screen.fill((0, 0, 0))
@@ -347,7 +347,8 @@ def main_menu():  # главное меню
     pygame.display.set_caption('Escape from Kvantorium')
 
     text = get_text('Escape from Kvantorium', main_font, (WIDTH // 2, HEIGHT // 10))
-    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1))
+    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2),
+                           (213, 214, 209))
 
     offscreen = 200
 
@@ -366,7 +367,7 @@ def main_menu():  # главное меню
         all_sprites.draw(screen)
         all_sprites.update()
 
-        draw_text(screen, text, text_shadow)
+        draw_text(screen, text_shadow, text)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -409,14 +410,16 @@ def attempt():  # подсчёт попыток
 def levels():
     pygame.display.set_caption('Escape from Kvantorium - Выбор уровня')
 
-    text = get_text('Выберите уровень', main_font, (WIDTH // 2, HEIGHT // 10))
-    text_shadow = get_text('Выберите уровень', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1))
+    text = get_text('Выберите уровень', main_font, (WIDTH // 2, HEIGHT // 10), (213, 214, 209))
+    text_shadow = get_text('Выберите уровень', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2))
     flag = False
     tiles = get_background(bg_image1)
     count = 0
     stars = stars_update()
     skip_text = get_text('Смените персонажа для прохождения данного уровня', mini_font,
-                         (WIDTH // 2, HEIGHT - 40), (255, 0, 0))
+                         (WIDTH // 2, HEIGHT - 40), (153, 153, 153))
+    skip_shadow = get_text('Смените персонажа для прохождения данного уровня', mini_font,
+                           (WIDTH // 2 - 2, HEIGHT - 40 - 2), (199, 0, 0))
     while True:
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
@@ -433,7 +436,7 @@ def levels():
             for star in star_group:
                 star.draw(screen)
         if flag:
-            draw_text(screen, skip_text)
+            draw_text(screen, skip_text, skip_shadow)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -586,16 +589,24 @@ def character_selection(character):
 def options():
     pygame.display.set_caption('Escape from Kvantorium - Настройки')
 
-    texts = [get_text('Настройки', main_font, (WIDTH // 2, HEIGHT // 10)),
-             get_text('Настройки', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1)),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 8)),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 12)),
-             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 8)),
-             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 12)),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10), (1, 1, 1)),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10), (1, 1, 1)),
-             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10), (1, 1, 1)),
-             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10), (1, 1, 1))]
+    texts = [get_text('Настройки', main_font, (WIDTH // 2, HEIGHT // 10), (213, 214, 209)),
+             get_text('Настройки', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2), ),
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
+                                                                     HEIGHT // 6 * 2 - 8), (213, 214, 209)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3,
+                                                                       HEIGHT // 6 * 2 + 12), (213, 214, 209)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
+                                                                        HEIGHT // 6 * 4 - 8), (213, 214, 209)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3,
+                                                                          HEIGHT // 6 * 4 + 12), (213, 214, 209)),
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
+                                                                     HEIGHT // 6 * 2 - 10), ),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3,
+                                                                       HEIGHT // 6 * 2 + 10)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
+                                                                        HEIGHT // 6 * 4 - 10)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3,
+                                                                          HEIGHT // 6 * 4 + 10))]
 
     buttons = [return_btn, check_btn_WASD, check_btn_ARROWS]
 

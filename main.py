@@ -454,7 +454,8 @@ def levels():
                         number = level_btns.index(button)
                         base = cur.execute("""SELECT state FROM levels
                                                 WHERE number = ?""", (int(number) + 1,)).fetchall()
-                        if base[0][0] == 'разблок':  # проверка разблокирован ли уровень
+                        # проверка разблокирован ли уровень и не взят ли персонаж котрого спасают в этом уровне
+                        if base[0][0] == 'разблок' and int(number) + 1 != int(students[selected_character][0]):
                             if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                                 intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
                                              'доделать проект, но вы не успели.', 'Бегите!'], (255, 255, 255))
@@ -548,7 +549,7 @@ def character_selection(character):
             if event.type == pygame.KEYDOWN:
                 base = cur.execute("""SELECT stars FROM levels
                                                 WHERE number = ?""", (students[character][0],)).fetchall()
-                if keys[pygame.K_RETURN] and not selected and students[character][0] == '1' or base[0][0] != '0':
+                if keys[pygame.K_RETURN] and not selected and students[character][0] == '0' or base[0][0] != '0':
                     selected_character = character
                     cur.execute(f"""UPDATE data
                                 SET character = '{character}'""")
@@ -568,7 +569,7 @@ def character_selection(character):
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if arrow_right_btn.click_check(event.pos) and right:  # стрелка вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
-                if (buttons[-1].click_check(event.pos) and not selected and students[character][0] == '1'
+                if (buttons[-1].click_check(event.pos) and not selected and students[character][0] == '0'
                         or base[0][0] != '0'):
                     selected_character = character  # если персонаж не выбран, выбираем
                     cur.execute(f"""UPDATE data

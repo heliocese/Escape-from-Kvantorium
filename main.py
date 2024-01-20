@@ -288,34 +288,19 @@ def terminate():
 
 
 def leader_board():  # вывод статистики из бд
-    pygame.display.set_caption('Statistics')
-    screen.fill((74, 71, 108))
+    pygame.display.set_caption('Escape from Kvantorium - Статистика')
+    screen.fill((133, 112, 172))
     pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
     text = cur.execute("""SELECT number, stars, time, atempts FROM levels where state = 'разблок'""").fetchall()
-    string_rendered = ''
-    text_rect = (0, 0)
     h = HEIGHT // 10
-    offscreen = 200
+    print(h)
 
-    Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
-    Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
-    Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
-    Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
-
-    # buttons_sprites = pygame.sprite.Group()
-    tiles = get_background(bg_image)
-
-    count = 0  # остановка фона меню
-    draw_backgound(tiles, int(count % 32), bg_image)
-
-    all_sprites.draw(screen)
-    all_sprites.update()
-    pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
     a = ['звёзды', 'время', 'попытки']
     string_rendered = main_font.render('  '.join(a), 1, (28, 28, 28))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, h))
     screen.blit(string_rendered, text_rect)
-    h += 40
+    pygame.draw.line(screen, (39, 36, 46), (30, 70), (WIDTH - 26, 70), 10)
+    h += 50
     for txt1 in text:  # считывние строк
         a = ''
         r = 1
@@ -334,6 +319,8 @@ def leader_board():  # вывод статистики из бд
         text_rect = string_rendered.get_rect(center=(WIDTH - 530, h))
         screen.blit(string_rendered, text_rect)
         h += 50
+    # рисуем линии-разделители
+    # pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
     while True:
         return_btn.update(screen)
         return_btn.change_colour(pygame.mouse.get_pos())
@@ -343,12 +330,10 @@ def leader_board():  # вывод статистики из бд
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if return_btn.click_check(event.pos):
                     main_menu()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main_menu()
 
-        ticks = pygame.time.get_ticks()
-        if ticks % FPS:
-            count += 0.5
-
-        screen.blit(string_rendered, text_rect)
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -483,6 +468,7 @@ def levels():
 def character_selection(character):
     global selected_character
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
+
     # получения списка кнопок
     buttons = [return_btn]
     left, right, selected = True, True, False
@@ -498,9 +484,10 @@ def character_selection(character):
     if character == selected_character:
         buttons.append(selected_btn)
         selected = True
-    elif students[character][0] != '1':
+    elif students[character][0] != '0':
         base = cur.execute("""SELECT stars FROM levels
                                 WHERE number = ?""", (students[character][0],)).fetchall()
+        print(base)
         if base[0][0] == '0':
             buttons.append(btn_lock)
             selected = False
@@ -547,36 +534,37 @@ def character_selection(character):
                 terminate()
             keys = pygame.key.get_pressed()
             if event.type == pygame.KEYDOWN:
-                base = cur.execute("""SELECT stars FROM levels
-                                                WHERE number = ?""", (students[character][0],)).fetchall()
-                if keys[pygame.K_RETURN] and not selected and students[character][0] == '0' or base[0][0] != '0':
-                    selected_character = character
-                    cur.execute(f"""UPDATE data
-                                SET character = '{character}'""")
-                    con.commit()
-                    buttons[-1] = selected_btn
-                    selected = True
+                if keys[pygame.K_RETURN]:
+                    base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
+                                       (students[character][0],)).fetchall()
+                    if not selected and (students[character][0] == '0' or base[0][0] != '0'):
+                        selected_character = character
+                        cur.execute(f"""UPDATE data
+                                        SET character = '{character}'""")
+                        con.commit()
+                        buttons[-1] = selected_btn
+                        selected = True
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
             if event.type == pygame.MOUSEBUTTONDOWN:
-                base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
-                                   (students[character][0],)).fetchall()
                 if return_btn.click_check(event.pos):
                     main_menu()
                 if arrow_left_btn.click_check(event.pos) and left:  # стрелка влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if arrow_right_btn.click_check(event.pos) and right:  # стрелка вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
-                if (buttons[-1].click_check(event.pos) and not selected and students[character][0] == '0'
-                        or base[0][0] != '0'):
-                    selected_character = character  # если персонаж не выбран, выбираем
-                    cur.execute(f"""UPDATE data
-                                    SET character = '{character}'""")
-                    con.commit()
-                    buttons[-1] = selected_btn
-                    selected = True
+                if buttons[-1].click_check(event.pos):
+                    base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
+                                       (students[character][0],)).fetchall()
+                    if not selected and (students[character][0] == '0' or base[0][0] != '0'):
+                        selected_character = character
+                        cur.execute(f"""UPDATE data
+                                        SET character = '{character}'""")
+                        con.commit()
+                        buttons[-1] = selected_btn
+                        selected = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()

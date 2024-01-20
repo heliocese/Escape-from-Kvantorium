@@ -5,14 +5,11 @@ from files.functions import Border
 
 COLOR = '#090909'
 
-vertical_borders = pygame.sprite.Group()
-
 
 class Teacher(pygame.sprite.Sprite):
-    def __init__(self, x, y, person):
+    def __init__(self, x, y):
         super().__init__()
-        self.person = person
-        pygame.time.set_timer(30, 100)
+        self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation('Иван Дмитриевич')
         self.x, self.y = x, y
         w, h = 19, 40
         self.image = pygame.Surface((w, h))
@@ -43,8 +40,7 @@ class Students(pygame.sprite.Sprite):
         self.flag = False
         self.reasons = '0'
         self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
-        #        Анимация движения вправо
-        self.stay.blit(self.image, (0, 0))  # По-умолчанию, стоим
+        self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
 
     def exit(self, h, w):  # найден выход персонажем
         h = h * 32

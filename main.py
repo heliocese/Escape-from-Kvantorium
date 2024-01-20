@@ -675,7 +675,7 @@ def new_game(level_number):
     if 'dop_character' in level[level_number]:
         person = level[level_number]['dop_character']
         if level_number == 9:
-            character = Teacher(*level[level_number]['spawn_dop'], person)
+            character = Teacher(*level[level_number]['spawn_dop'])
         else:
             character = Students(*level[level_number]['spawn_dop'], person)
         # all_sprites.add(character, hero)
@@ -789,7 +789,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     draw_new_graffiti = True
                     drawing = False
                     # pygame.mouse.set_visible(True)
-                print(event.pos)
+                print(hero.get_position())
             """if event.type == pygame.MOUSEMOTION:
                 if drawing:
                     graffiti_list[-1].update(pygame.mouse.get_pos())"""

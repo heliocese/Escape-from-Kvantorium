@@ -650,9 +650,9 @@ def new_game(level_number):
             character = Teacher(*level[level_number]['spawn_dop'], person)
         else:
             character = Students(*level[level_number]['spawn_dop'], person)
-        all_sprites.add(character, hero)
+        # all_sprites.add(character, hero)
         level_displayer(level_number, labirint, all_sprites, camera, hero, character)
-    all_sprites.add(hero)
+    # all_sprites.add(hero)
     level_displayer(level_number, labirint, all_sprites, camera, hero)
 
 

@@ -119,7 +119,7 @@ class Hero(pygame.sprite.Sprite):
                 if yvel < 0:  # если движется вверх
                     self.rect.top = p.rect.bottom  # то не движется вверх
                     self.yvel = 0  # и энергия прыжка пропадает
-        if character:
+        if isinstance(character, Students):
             if pygame.sprite.collide_rect(self, character):
                 character.flag = True
         if pygame.sprite.collide_rect(self, a):

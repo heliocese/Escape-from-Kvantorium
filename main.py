@@ -8,7 +8,7 @@ from files.functions import load_image, Object, Border, all_sprites, full_wrappe
 from files.level_generation import Labirint
 from files.hero import Hero
 from files.star import Star
-from files.data_levels import students, students_lst, level
+from files.data_levels import students, students_lst, level, spawn_teachers
 from files.camera import Camera, camera_configure
 from files.timer import Timer
 from files.graffiti import Graffiti
@@ -686,12 +686,14 @@ def new_game(level_number):
     if 'dop_character' in level[level_number]:
         person = level[level_number]['dop_character']
         if level_number == 9:
-            character = Teacher(*level[level_number]['spawn_dop'])
+            character = pygame.sprite.Group()
+            for coord in spawn_teachers:
+                teacher = Teacher(*coord)
+                character.add(teacher)
         else:
             character = Students(*level[level_number]['spawn_dop'], person)
-        # all_sprites.add(character, hero)
+        all_sprites.add(character, hero)
         level_displayer(level_number, labirint, all_sprites, camera, hero, character)
-    # all_sprites.add(hero)
     level_displayer(level_number, labirint, all_sprites, camera, hero)
 
 
@@ -709,8 +711,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     ctrl = False
     h, w = labirint.size()  # размер
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
-    if character:
-        names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
     all_sprites.add(names[:])
 
     while True:
@@ -801,9 +801,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     drawing = False
                     # pygame.mouse.set_visible(True)
                 print(hero.get_position())
-            """if event.type == pygame.MOUSEMOTION:
-                if drawing:
-                    graffiti_list[-1].update(pygame.mouse.get_pos())"""
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
@@ -824,12 +821,12 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         if character:
             if isinstance(character, Students):
                 character.move(hero.coords_list, hero.xvel)
-            screen.blit(character.image, camera.apply(character))
-
+                screen.blit(character.image, camera.apply(character))
+            else:
+                for teacher in character:
+                    teacher.move(labirint)
         timer.draw(screen)
         hero.draw(screen, camera)
-        # name.draw(screen)
-        #screen.blit(name, (hero.rect.x, hero.rect.y))
 
         for button in buttons:
             button.update(screen)

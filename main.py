@@ -867,7 +867,7 @@ def pause():
 
 
 def game_over(level_number, reason='Вас поймали'):  # проигрыш
-    pygame.display.set_caption(f'Escape from Kvantorium - game over')
+    pygame.display.set_caption(f'Escape from Kvantorium - Game Over')
 
     # texts = [get_text('Game', big_font, )]
     game_text = big_font.render('Game', 1, (28, 28, 28))
@@ -888,7 +888,9 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return
+                    main_menu()
+                if event.key == pygame.K_RETURN:
+                    main_menu()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if resume_btn.click_check(event.pos) and walls_collided:
                     new_game(level_number)
@@ -926,8 +928,8 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
 
 def end(time):  # окончание уровня победой
     global number
-    pygame.display.set_caption('Escape from Kvantorium - WIN')
-    text = 'WIN'
+    pygame.display.set_caption('Escape from Kvantorium - Победа')
+    text = 'ПОБЕДА'
     string_rendered = main_font.render(text, 1, (28, 28, 28))
     string_rendered_shadow = main_font.render(text, 1, (1, 1, 1))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
@@ -945,7 +947,6 @@ def end(time):  # окончание уровня победой
     Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
     Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
     Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
-    # buttons_sprites = pygame.sprite.Group()
     tiles = get_background(bg_image1)
     count = 0
     stars1 = []
@@ -999,15 +1000,13 @@ def end(time):  # окончание уровня победой
         con.commit()
     skip_text.set_alpha(alpha)
     while True:
-        ticks = pygame.time.get_ticks()
-        if ticks % FPS:
-            count += 0.5
-        draw_backgound(tiles, int(count % 32), bg_image_character)
-        all_sprites.draw(screen)
-        all_sprites.update()
+        count = update_and_draw_backgroud(count, tiles, bg_image_character)
         alpha += direction
-        if alpha == 0:
-            direction = 2
+        if alpha <= 0:
+            direction = 4
+        elif alpha >= 255:
+            direction = -4
+        print(alpha, direction)
         skip_text.set_alpha(alpha)
         screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
         screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))

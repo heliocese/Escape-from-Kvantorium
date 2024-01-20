@@ -292,15 +292,18 @@ def leader_board():  # вывод статистики из бд
     screen.fill((133, 112, 172))
     pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
     text = cur.execute("""SELECT number, stars, time, atempts FROM levels where state = 'разблок'""").fetchall()
-    h = HEIGHT // 10
-    print(h)
+    h = HEIGHT // 10 - 1
 
     a = ['звёзды', 'время', 'попытки']
     string_rendered = main_font.render('  '.join(a), 1, (28, 28, 28))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, h))
     screen.blit(string_rendered, text_rect)
-    pygame.draw.line(screen, (39, 36, 46), (30, 70), (WIDTH - 26, 70), 10)
+    pygame.draw.line(screen, (39, 36, 46), (30, h + 20), (WIDTH - 26, h + 20), 5)
+    pygame.draw.line(screen, (39, 36, 46), (390, 30), (390, 582), 5)
+    pygame.draw.line(screen, (39, 36, 46), (550, 30), (550, 582), 5)
+    pygame.draw.line(screen, (39, 36, 46), (200, 30), (200, 582), 5)
     h += 50
+    # pygame.draw.line(screen, (39, 36, 46), (30, h + 20), (WIDTH - 26, h + 20), 5)
     for txt1 in text:  # считывние строк
         a = ''
         r = 1
@@ -315,6 +318,8 @@ def leader_board():  # вывод статистики из бд
                 t = 6
             a += u + t * ' '
             r += 1
+        if text.index(txt1) < len(text) - 1:
+            pygame.draw.line(screen, (39, 36, 46), (30, h + 20), (WIDTH - 26, h + 20), 5)
         string_rendered = main_font.render(a, 1, (28, 28, 28))
         text_rect = string_rendered.get_rect(center=(WIDTH - 530, h))
         screen.blit(string_rendered, text_rect)

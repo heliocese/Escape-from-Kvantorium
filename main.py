@@ -347,7 +347,7 @@ def main_menu():  # главное меню
     pygame.display.set_caption('Escape from Kvantorium')
 
     text = get_text('Escape from Kvantorium', main_font, (WIDTH // 2, HEIGHT // 10))
-    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (1, 1, 1))
+    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (213, 214, 209))
 
     offscreen = 200
 
@@ -366,7 +366,7 @@ def main_menu():  # главное меню
         all_sprites.draw(screen)
         all_sprites.update()
 
-        draw_text(screen, text, text_shadow)
+        draw_text(screen, text_shadow, text)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

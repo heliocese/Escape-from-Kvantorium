@@ -51,6 +51,7 @@ empty_image = load_image('pictures/empty_btn.png')
 empty_image_ = load_image('pictures/empty_btn_.png')
 checked_image = load_image('pictures/checked_btn.png')
 checked_image_ = load_image('pictures/checked_btn_.png')
+button_lock = load_image('pictures/button_lock.png')
 
 
 def get_image(sheet, frame, line, width, height, scale):  # берём часть изображения
@@ -106,6 +107,7 @@ id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]  # id текстур уро
 # кнопки выбора меню персонажей
 select_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image, button_image1, 'Выбрать', 4)
 selected_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image2, button_image2, 'Выбрано', 4)
+btn_lock = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_lock, button_lock, '', 4)
 
 # кнопки главного меню
 button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']  # список кнопок
@@ -480,7 +482,6 @@ def levels():
 def character_selection(character):
     global selected_character
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
-
     # получения списка кнопок
     buttons = [return_btn]
     left, right, selected = True, True, False
@@ -496,11 +497,19 @@ def character_selection(character):
     if character == selected_character:
         buttons.append(selected_btn)
         selected = True
+    elif students[character][0] != '1':
+        base = cur.execute("""SELECT stars FROM levels
+                                WHERE number = ?""", (students[character][0],)).fetchall()
+        if base[0][0] == '0':
+            buttons.append(btn_lock)
+            selected = False
+        else:
+            buttons.append(select_btn)
     else:
         buttons.append(select_btn)
 
     name = get_text(character, main_font, (WIDTH // 6 * 5, HEIGHT // 6))  # имя персонажа
-    info = full_wrapper([students[character]], 23)  # информация о персонаже
+    info = full_wrapper([students[character][-1]], 23)  # информация о персонаже
     info_offsets = [25 * i - (12 * len(info)) for i in range(len(info))]  # информация находится в правой нижней части
 
     person_image = get_image(load_image(f'characters/{character}.png'), 2, 1, 48, 96, 6)
@@ -537,10 +546,12 @@ def character_selection(character):
                 terminate()
             keys = pygame.key.get_pressed()
             if event.type == pygame.KEYDOWN:
-                if keys[pygame.K_RETURN] and not selected:
+                base = cur.execute("""SELECT stars FROM levels
+                                                WHERE number = ?""", (students[character][0],)).fetchall()
+                if keys[pygame.K_RETURN] and not selected and students[character][0] == '1' or base[0][0] != '0':
                     selected_character = character
                     cur.execute(f"""UPDATE data
-                                    SET character = '{character}'""")
+                                SET character = '{character}'""")
                     con.commit()
                     buttons[-1] = selected_btn
                     selected = True
@@ -549,14 +560,17 @@ def character_selection(character):
                 if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
             if event.type == pygame.MOUSEBUTTONDOWN:
+                base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
+                                   (students[character][0],)).fetchall()
                 if return_btn.click_check(event.pos):
                     main_menu()
                 if arrow_left_btn.click_check(event.pos) and left:  # стрелка влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if arrow_right_btn.click_check(event.pos) and right:  # стрелка вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
-                if buttons[-1].click_check(event.pos) and not selected:  # если персонаж не выбран, выбираем
-                    selected_character = character
+                if (buttons[-1].click_check(event.pos) and not selected and students[character][0] == '1'
+                        or base[0][0] != '0'):
+                    selected_character = character  # если персонаж не выбран, выбираем
                     cur.execute(f"""UPDATE data
                                     SET character = '{character}'""")
                     con.commit()

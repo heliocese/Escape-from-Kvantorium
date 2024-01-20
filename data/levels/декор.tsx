@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="мебель" tilewidth="57" tileheight="37" tilecount="24" columns="0">
+<tileset version="1.10" tiledversion="1.10.2" name="мебель" tilewidth="52" tileheight="35" tilecount="27" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <transformations hflip="0" vflip="0" rotate="1" preferuntransformed="0"/>
  <tile id="18">
@@ -60,19 +60,28 @@
   <image width="52" height="26" source="decorative_objects/sign exit.png"/>
  </tile>
  <tile id="30">
-  <image width="39" height="37" source="decorative_objects/A.png"/>
+  <image width="24" height="23" source="decorative_objects/A.png"/>
  </tile>
  <tile id="31">
-  <image width="39" height="36" source="decorative_objects/W.png"/>
+  <image width="24" height="22" source="decorative_objects/W.png"/>
  </tile>
  <tile id="32">
-  <image width="39" height="36" source="decorative_objects/S.png"/>
+  <image width="24" height="22" source="decorative_objects/S.png"/>
  </tile>
  <tile id="33">
-  <image width="39" height="37" source="decorative_objects/D.png"/>
+  <image width="24" height="23" source="decorative_objects/D.png"/>
  </tile>
  <tile id="34">
-  <image width="57" height="37" source="decorative_objects/SHIFT.jpg"/>
+  <image width="35" height="23" source="decorative_objects/SHIFT.jpg"/>
+ </tile>
+ <tile id="35">
+  <image width="26" height="24" source="decorative_objects/Ctrl.png"/>
+ </tile>
+ <tile id="36">
+  <image width="26" height="24" source="decorative_objects/Q.png"/>
+ </tile>
+ <tile id="38">
+  <image width="22" height="27" source="decorative_objects/Cur.png"/>
  </tile>
  <wangsets>
   <wangset name="Безымянный набор" type="edge" tile="-1">

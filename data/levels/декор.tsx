@@ -60,28 +60,28 @@
   <image width="52" height="26" source="decorative_objects/sign exit.png"/>
  </tile>
  <tile id="30">
-  <image width="24" height="23" source="decorative_objects/A.png"/>
+  <image width="24" height="23" source="study/A.png"/>
  </tile>
  <tile id="31">
-  <image width="24" height="22" source="decorative_objects/W.png"/>
+  <image width="24" height="22" source="study/W.png"/>
  </tile>
  <tile id="32">
-  <image width="24" height="22" source="decorative_objects/S.png"/>
+  <image width="24" height="22" source="study/S.png"/>
  </tile>
  <tile id="33">
-  <image width="24" height="23" source="decorative_objects/D.png"/>
+  <image width="24" height="23" source="study/D.png"/>
  </tile>
  <tile id="34">
-  <image width="35" height="23" source="decorative_objects/SHIFT.jpg"/>
+  <image width="35" height="23" source="study/SHIFT.jpg"/>
  </tile>
  <tile id="35">
-  <image width="26" height="24" source="decorative_objects/Ctrl.png"/>
+  <image width="26" height="24" source="study/Ctrl.png"/>
  </tile>
  <tile id="36">
-  <image width="26" height="24" source="decorative_objects/Q.png"/>
+  <image width="26" height="24" source="study/Q.png"/>
  </tile>
  <tile id="38">
-  <image width="22" height="27" source="decorative_objects/Cur.png"/>
+  <image width="22" height="27" source="study/Cur.png"/>
  </tile>
  <wangsets>
   <wangset name="Безымянный набор" type="edge" tile="-1">

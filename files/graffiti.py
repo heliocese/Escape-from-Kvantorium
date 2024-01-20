@@ -1,7 +1,6 @@
 import pygame
-from files.functions import load_image
 
-# IMAGE = load_image('pictures/red_arrow.png', (255, 255, 255))
+# загружаем изображение
 IMAGE = pygame.image.load('./data/pictures/red_arrow.png')
 IMAGE.set_colorkey((255, 255, 255))
 
@@ -20,8 +19,8 @@ class Graffiti(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def update(self, mouse_pos):
-        self.rect = self.image.get_rect(center=mouse_pos)
+    def update(self, pos):
+        self.rect = self.image.get_rect(center=pos)
 
     def change_direction(self, direction):
         self.image = self.image_right if direction == 'RIGHT' else self.image_left if direction == 'LEFT' \

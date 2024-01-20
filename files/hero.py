@@ -1,7 +1,7 @@
 import pygame
 from files.data_levels import get_animation
-from files.enemy import Students
-from files.functions import Border
+from files.people import Students
+from files.functions import Border, Text
 
 
 COLOR = "#090909"
@@ -14,15 +14,14 @@ vertical_borders = pygame.sprite.Group()
 class Hero(pygame.sprite.Sprite):
     def __init__(self, x, y, person, font, reasons):
         pygame.sprite.Sprite.__init__(self)
-        self.name = person
-        self.name = font.render(self.name, True, (9, 9, 9))
-        self.name_rect = self.name.get_rect(center=(x, y))
+        self.name = Text(person, font, x + 10, y - 10, (20, 10, 30))
+        self.person = person
         self.xvel = 0
-        w, h = 19, 40
+        self.w, self.h = 19, 40
         self.coords_list = []
-        self.image = pygame.Surface((w, h))
+        self.image = pygame.Surface((self.w, self.h))
         self.image.fill(pygame.Color(COLOR))
-        self.rect = pygame.Rect(x, y, w, h)
+        self.rect = pygame.Rect(x, y, self.w, self.h)
         self.yvel = 0  # скорость вертикального перемещения
         self.onGround = False
         self.reasons = reasons
@@ -30,15 +29,15 @@ class Hero(pygame.sprite.Sprite):
         self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
         self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
 
-    def draw_name(self, screen):
-        screen.blit(self.name, self.name_rect)
+    def draw_name(self, screen, camera):
+        screen.blit(self.name, camera.apply(self.name))
 
     def update(self):
         pass
 
-    def draw(self, screen):  # Выводим себя на экран
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-        self.draw_name(screen)
+    def draw(self, screen, camera):  # Выводим себя на экран
+        screen.blit(self.image, camera.apply(self))
+        # self.draw_name(screen, camera)
 
     def move(self, left, right, up, platforms, character):
         if left:
@@ -128,3 +127,18 @@ class Hero(pygame.sprite.Sprite):
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top
+
+
+class Atom(pygame.sprite.Sprite):
+
+    def __init__(self, pos, element, font):
+        pygame.sprite.Sprite.__init__(self)
+        # We have to make a copy of the image now, because
+        # we're modifying it by blitting the text onto it.
+        self.image = pygame.Surface((25, 25))
+        textsurface = font.render(element, True, (9, 9, 11))
+        # To center the text, set the center of the textrect to
+        # the center of the image rect.
+        textrect = textsurface.get_rect(center=self.image.get_rect().center)
+        self.image.blit(textsurface, textrect)
+        self.rect = self.image.get_rect(center=pos)

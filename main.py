@@ -4,7 +4,7 @@ import sys
 import os
 from files.button import Button, CheckButton
 from files.settings import *
-from files.functions import load_image, Object, Border, all_sprites, full_wrapper
+from files.functions import load_image, Object, Border, all_sprites, full_wrapper, Text
 from files.level_generation import Labirint
 from files.hero import Hero
 from files.star import Star
@@ -12,7 +12,7 @@ from files.data_levels import students, students_lst, level
 from files.camera import Camera, camera_configure
 from files.timer import Timer
 from files.graffiti import Graffiti
-from files.enemy import Students, Teacher
+from files.people import Students, Teacher
 from files.winstar import Stars
 import sqlite3
 
@@ -29,6 +29,8 @@ clock = pygame.time.Clock()
 main_font = pygame.font.Font(None, 64)  # основной шрифт
 mini_font = pygame.font.Font(None, 32)  # маленький шрифт
 big_font = pygame.font.Font(None, 128)  # большой шрифт
+hero_font = pygame.font.Font(None, 20)  # шрифт для имён персонажей
+
 main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от краёв экрана
 
 # загрузка изображений
@@ -71,15 +73,20 @@ def draw_text(screen, *texts):
         screen.blit(text[0], text[1])
 
 
+def draw_rect(screen, rect, center):
+    rect = pygame.Rect(rect)
+    rect.center = center
+    pygame.draw.rect(screen, (200, 200, 200), rect)
+
+
 con = sqlite3.connect('data/EFK.db')
 cur = con.cursor()
 
 number = ''  # уровень
-selected_character = 'Никита'  # изначально выбранный персонаж
-
-
-# загружаем картинку персонажа
-# person_image = get_image(load_image(f'characters/{selected_character}.png'), 1, 1, 48, 96, 6)
+selected_character = cur.execute("""SELECT character FROM data""").fetchone()[0]  # изначально выбранный персонаж
+control_settings = {  # настройки управления
+    'WASD': cur.execute("""SELECT control_wasd FROM data""").fetchone()[0],
+    'ARROWS': cur.execute("""SELECT control_arrows FROM data""").fetchone()[0]}
 
 
 def storyboard():  # для раскадровки персонажей
@@ -517,6 +524,9 @@ def character_selection(character):
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_RETURN] and not selected:
                     selected_character = character
+                    cur.execute(f"""UPDATE data
+                                    SET character = '{character}'""")
+                    con.commit()
                     buttons[-1] = selected_btn
                     selected = True
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
@@ -532,6 +542,9 @@ def character_selection(character):
                     character_selection(students_lst[students_lst.index(character) + 1])
                 if buttons[-1].click_check(event.pos) and not selected:  # если персонаж не выбран, выбираем
                     selected_character = character
+                    cur.execute(f"""UPDATE data
+                                    SET character = '{character}'""")
+                    con.commit()
                     buttons[-1] = selected_btn
                     selected = True
             if event.type == pygame.KEYDOWN:
@@ -551,10 +564,10 @@ def options():
              get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 12)),
              get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 8)),
              get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 12)),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10)),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10)),
-             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10)),
-             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10))]
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10), (1, 1, 1)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10), (1, 1, 1)),
+             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 - 10), (1, 1, 1)),
+             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 4 + 10), (1, 1, 1))]
 
     buttons = [return_btn, check_btn_WASD, check_btn_ARROWS]
 
@@ -563,6 +576,9 @@ def options():
     while True:
 
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
+
+        draw_rect(screen, (100, 100, 500, 100), (WIDTH // 5 * 3, HEIGHT // 6 * 2))
+        draw_rect(screen, (100, 100, 500, 100), (WIDTH // 5 * 3, HEIGHT // 6 * 4))
 
         draw_text(screen, *texts)
 
@@ -587,16 +603,26 @@ def options():
                     if control_settings['WASD'] and control_settings['ARROWS']:
                         control_settings['WASD'] = False
                         check_btn_WASD.uncheck()
+                        cur.execute("""UPDATE data
+                                       SET control_wasd = 0""")
                     elif not control_settings['WASD']:
                         control_settings['WASD'] = True
                         check_btn_WASD.check()
+                        cur.execute("""UPDATE data
+                                       SET control_wasd = 1""")
+                    con.commit()
                 if check_btn_ARROWS.click_check(event.pos):
                     if control_settings['ARROWS'] and control_settings['WASD']:
                         control_settings['ARROWS'] = False
                         check_btn_ARROWS.uncheck()
+                        cur.execute("""UPDATE data
+                                       SET control_arrows = 0""")
                     elif not control_settings['ARROWS']:
                         control_settings['ARROWS'] = True
                         check_btn_ARROWS.check()
+                        cur.execute("""UPDATE data
+                                        SET control_arrows = 1""")
+                    con.commit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
@@ -610,7 +636,7 @@ def new_game(level_number):
     all_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, main_font, number)
+    hero = Hero(*level[level_number]['spawn'], person, hero_font, number)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
@@ -642,7 +668,12 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     drawing = False
     draw_new_graffiti = True
     ctrl = False
-    h , w = labirint.size()  # размер
+    h, w = labirint.size()  # размер
+    names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
+    if character:
+        names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
+    all_sprites.add(names[:])
+
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
         # будем использовать как фон
@@ -653,9 +684,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 terminate()
-            # if event.type == ENEMY_EVENT_TYPE:
-            # print(enemy)
-            # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
                     if draw_new_graffiti:
@@ -679,7 +707,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                             draw_new_graffiti = True
                             drawing = False
                     if drawing:
-                        pygame.mouse.set_visible(False)
+                        # pygame.mouse.set_visible(False)
                         if (keys[pygame.K_w] and control_settings['WASD']) or \
                                 (keys[pygame.K_UP] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('UP')
@@ -694,17 +722,18 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                             graffiti_list[-1].change_direction('LEFT')
                     if keys[pygame.K_q]:
                         if drawing:
-                            pygame.mouse.set_visible(True)
+                            ctrl = False
+                            # pygame.mouse.set_visible(True)
                             graffiti_list = graffiti_list[:-1]
                             draw_new_graffiti = True
                             drawing = False
                 if event.key == pygame.K_ESCAPE:
                     pause()
                 if ((keys[pygame.K_a] and control_settings['WASD']) or
-                    (keys[pygame.K_LEFT] and control_settings['ARROWS'])) and not ctrl:
+                        (keys[pygame.K_LEFT] and control_settings['ARROWS'])) and not ctrl:
                     left = True
                 if ((keys[pygame.K_d] and control_settings['WASD']) or
-                    (keys[pygame.K_RIGHT] and control_settings['ARROWS'])) and not ctrl:
+                        (keys[pygame.K_RIGHT] and control_settings['ARROWS'])) and not ctrl:
                     right = True
                 if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT] and not ctrl:
                     if pygame.key.get_pressed()[pygame.K_SPACE] or (keys[pygame.K_w] and control_settings['WASD']) or \
@@ -728,30 +757,40 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     left = right = False
                     pause()
                 if drawing:
+                    ctrl = False
                     draw_new_graffiti = True
                     drawing = False
-                    pygame.mouse.set_visible(True)
+                    # pygame.mouse.set_visible(True)
                 print(event.pos)
-            if event.type == pygame.MOUSEMOTION:
+            """if event.type == pygame.MOUSEMOTION:
                 if drawing:
-                    graffiti_list[-1].update(pygame.mouse.get_pos())
+                    graffiti_list[-1].update(pygame.mouse.get_pos())"""
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
 
         camera.update(hero)  # центризируем камеру относительно персонажа
-        if character:
-            if isinstance(character, Students):
-                character.move(hero.coords_list, hero.xvel)
-        hero.move(left, right, up, labirint.platform, character)  # передвижение
-        # enemy.move(labirint.find_path_step(enemy.get_position(), hero.get_position()))
+        hero.move(left, right, up, labirint.platform, character)  # передвижениe
+        names[0].move((hero.rect.x + 10, hero.rect.y - 5))
+        if len(names) > 1:
+            names[1].move((character.rect.x + 10, character.rect.y - 5))
+        if drawing:
+            graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
         for e in all_sprites:
             screen.blit(e.image, camera.apply(e))
 
         for graffiti in graffiti_list:
             screen.blit(graffiti.image, camera.apply(graffiti))
 
+        if character:
+            if isinstance(character, Students):
+                character.move(hero.coords_list, hero.xvel)
+            screen.blit(character.image, camera.apply(character))
+
         timer.draw(screen)
+        hero.draw(screen, camera)
+        # name.draw(screen)
+        #screen.blit(name, (hero.rect.x, hero.rect.y))
 
         for button in buttons:
             button.update(screen)
@@ -919,10 +958,10 @@ def end(time):  # окончание уровня победой
         con.commit()  # разблокировка следующего уровня
         stars_update()
         level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
-                                              WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
-                                              if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
-                                              load_image(f'pictures/{int(number) + 2}.png'),
-                                              load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
+                                             WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
+                                             if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
+                                             load_image(f'pictures/{int(number) + 2}.png'),
+                                             load_image(f'pictures/{int(number) + 2}_.png'), None, WIDTH // 240)
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))

@@ -10,7 +10,7 @@ class Timer:
         self.text = self.font.render(f'Время {self.minutes}:{self.seconds}', True, (9, 9, 9))
         self.rect = self.text.get_rect(center=(x, y))
 
-    def pauses(self):
+    def pauses(self):  # остановка таймера, для запоминания времени
         self.pause = True
 
     def draw(self, screen):

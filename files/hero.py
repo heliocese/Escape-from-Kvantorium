@@ -91,12 +91,12 @@ class Hero(pygame.sprite.Sprite):
                     character.stay.blit(character.image, (0, 0))
 
     def exit(self, h, w, prmt=True):  # найден выход персонажем
-        h *= 32
-        w *= 32
-        p = Border(w, 0, w, h)
+        h *= 32  # высота всей карты
+        w *= 32  # ширина всей карты
+        p = Border(w, 0, w, h)  # бордюр для выхода
         if pygame.sprite.collide_rect(self, p):
             self.rect.right = p.rect.left
-            if prmt:
+            if prmt:  # запрет на выход без персонажа в уровнях спасения
                 return True
         return False
 
@@ -122,7 +122,7 @@ class Hero(pygame.sprite.Sprite):
         if isinstance(character, Students):
             if pygame.sprite.collide_rect(self, character):
                 character.flag = True
-        if pygame.sprite.collide_rect(self, a):
+        if pygame.sprite.collide_rect(self, a):  # запрет на выход из карты через вход
             self.rect.left = a.rect.right
 
     def get_position(self):
@@ -133,12 +133,8 @@ class Atom(pygame.sprite.Sprite):
 
     def __init__(self, pos, element, font):
         pygame.sprite.Sprite.__init__(self)
-        # We have to make a copy of the image now, because
-        # we're modifying it by blitting the text onto it.
         self.image = pygame.Surface((25, 25))
         textsurface = font.render(element, True, (9, 9, 11))
-        # To center the text, set the center of the textrect to
-        # the center of the image rect.
         textrect = textsurface.get_rect(center=self.image.get_rect().center)
         self.image.blit(textsurface, textrect)
         self.rect = self.image.get_rect(center=pos)

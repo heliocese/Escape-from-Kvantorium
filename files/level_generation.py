@@ -9,8 +9,8 @@ class Labirint:
     # b - айди клетки выхода
     def __init__(self, filename, a, b):
         self.map = pytmx.load_pygame(f'{maps}/{filename}')
-        self.height = self.map.height
-        self.width = self.map.width
+        self.height = self.map.height  # высота
+        self.width = self.map.width  # ширина
         self.tile_size = self.map.tilewidth
         self.free_tiles = a
         self.finish_tile = b

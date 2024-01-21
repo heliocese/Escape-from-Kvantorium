@@ -126,10 +126,10 @@ arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_lef
 # кнопки для уровней
 level_btns = []
 
-for i in range(1, 11):
+for i in range(1, 11):  # список кнопок уровней
     bases = cur.execute("""SELECT state FROM levels
                         WHERE number = ?""", (str(i),)).fetchall()
-    if bases[0][0] == 'разблок':
+    if bases[0][0] == 'разблок':  # изменеие картинки если уровень не доступен
         level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
                                  HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
                                  load_image(f'pictures/{i}.png'),
@@ -149,7 +149,7 @@ check_btn_ARROWS = CheckButton(WIDTH // 5, HEIGHT // 6 * 4, empty_image, empty_i
 def stars_update():  # обновление звездочек в меню
     a = 1
     star = []
-    for button in level_btns:
+    for button in level_btns:  # список звезд рядом с уровнем
         base = cur.execute("""SELECT stars FROM levels
                         WHERE number = ?""", (str(a),)).fetchall()
         if base == [('0',)]:
@@ -234,7 +234,7 @@ def intro_maker(message, colour=(255, 255, 255)):
         text = font.render(messages[cur_message][0:count // speed], True, colour)
         text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[cur_message]))
 
-        screen.blit(text, text_rect)
+        screen.blit(text, text_rect)  # текст к уровню
 
         alpha += direction
 
@@ -243,7 +243,7 @@ def intro_maker(message, colour=(255, 255, 255)):
         elif alpha == 100:
             direction = -2
 
-        skip_text.set_alpha(alpha)
+        skip_text.set_alpha(alpha)  # мигающий текст
 
         screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
 
@@ -298,6 +298,7 @@ def leader_board():  # вывод статистики из бд
     string_rendered = main_font.render('  '.join(a), 1, (28, 28, 28))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, h))
     screen.blit(string_rendered, text_rect)
+    # вырисовка таблицы
     pygame.draw.line(screen, (39, 36, 46), (30, h + 20), (WIDTH - 26, h + 20), 5)
     pygame.draw.line(screen, (39, 36, 46), (390, 30), (390, 582), 5)
     pygame.draw.line(screen, (39, 36, 46), (550, 30), (550, 582), 5)
@@ -305,10 +306,10 @@ def leader_board():  # вывод статистики из бд
     h += 50
     for txt1 in text:  # считывние строк
         a = ''
-        r = 1
+        r = 1  # нумерация
         for u in txt1:
             if r == 1:
-                t = 8
+                t = 8  # количество пробелов между состовляющими таблицы
             elif r == 2:
                 t = 11
             elif r == 3:
@@ -372,16 +373,12 @@ def main_menu():  # главное меню
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main_menu_buttons['Играть'].click_check(event.pos):
-                    print('Играй')
                     levels()
                 if main_menu_buttons['Выбор персонажа'].click_check(event.pos):
-                    print('Выбери персонажа')
                     character_selection(selected_character)
                 if main_menu_buttons['Статистика'].click_check(event.pos):
-                    print('Смотри статистику')
                     leader_board()
                 if main_menu_buttons['Настройки'].click_check(event.pos):
-                    print('Настрой себя')
                     options()
                 if main_menu_buttons['Выход'].click_check(event.pos):
                     terminate()
@@ -398,6 +395,7 @@ def attempt():  # подсчёт попыток
     base = cur.execute("""SELECT atempts FROM levels
                         WHERE number = ?""", (int(number) + 1,)).fetchall()
     base = base[0][0]
+    # прибавление попыток
     cur.execute("""UPDATE levels
             SET atempts = ?
             WHERE number = ?""", (int(base) + 1, int(number) + 1)).fetchall()
@@ -413,7 +411,7 @@ def levels():
     flag = False
     tiles = get_background(bg_image_character)
     count = 0
-    stars = stars_update()
+    stars = stars_update()  # обновление списка звёзд
     skip_text = get_text('Смените персонажа для прохождения данного уровня', mini_font,
                          (WIDTH // 2, HEIGHT - 40), (153, 153, 153))
     skip_shadow = get_text('Смените персонажа для прохождения данного уровня', mini_font,
@@ -433,7 +431,7 @@ def levels():
         for star_group in stars:
             for star in star_group:
                 star.draw(screen)
-        if flag:
+        if flag:  # ошибка при неправильном персонаже
             draw_text(screen, skip_text, skip_shadow)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -444,7 +442,6 @@ def levels():
                 for button in level_btns:
                     if button.click_check(event.pos):
                         global number
-                        print('level' + str(level_btns.index(button) + 1))
                         number = level_btns.index(button)
                         base = cur.execute("""SELECT state FROM levels
                                                 WHERE number = ?""", (int(number) + 1,)).fetchall()
@@ -463,8 +460,8 @@ def levels():
                                 intro_maker(['Спаси своего друга Ваню'], (255, 255, 255))
                             elif level_btns.index(button) + 1 == 10:
                                 intro_maker(['БЕГИ!', 'БEГИ!', 'БЕГИ!'], (255, 0, 0))
-                            attempt()
-                            new_game(level_btns.index(button))
+                            attempt()  # прибавление попыток
+                            new_game(level_btns.index(button))  # открытие уровня
                         if int(number) + 1 == int(students[selected_character][0]):
                             flag = True
             if event.type == pygame.KEYDOWN:
@@ -495,13 +492,13 @@ def character_selection(character):
     if character == selected_character:
         buttons.append(selected_btn)
         selected = True
-    elif students[character][0] != '0':
+    elif students[character][0] != '0':  # проверка открыт ли персонаж
         base = cur.execute("""SELECT stars FROM levels
                                 WHERE number = ?""", (students[character][0],)).fetchall()
-        if base[0][0] == '0':
+        if base[0][0] == '0':   # блокировка персонажа
             buttons.append(btn_lock)
             selected = False
-        else:
+        else:   # разблокировка персонажа, если он спасен
             buttons.append(select_btn)
     else:
         buttons.append(select_btn)
@@ -545,8 +542,10 @@ def character_selection(character):
             keys = pygame.key.get_pressed()
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_RETURN]:
+                    # получаем кол-во звезд за уровень
                     base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
                                        (students[character][0],)).fetchall()
+                    # проверка открыт ли персонаж
                     if not selected and (students[character][0] == '0' or base[0][0] != '0'):
                         selected_character = character
                         cur.execute(f"""UPDATE data
@@ -566,8 +565,10 @@ def character_selection(character):
                 if arrow_right_btn.click_check(event.pos) and right:  # стрелка вправо
                     character_selection(students_lst[students_lst.index(character) + 1])
                 if buttons[-1].click_check(event.pos):
+                    # кол-во звёзд за уровень
                     base = cur.execute("""SELECT stars FROM levels WHERE number = ?""",
                                        (students[character][0],)).fetchall()
+                    # проверка открыт ли персонаж
                     if not selected and (students[character][0] == '0' or base[0][0] != '0'):
                         selected_character = character
                         cur.execute(f"""UPDATE data
@@ -706,7 +707,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     ctrl = False
     h, w = labirint.size()  # размер
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
-    print(level_number)
     if character and level_number != 9:
         names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
     elif character:
@@ -811,7 +811,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         elif len(names) > 1:
             teachers = list(character)
             for j in range(len(teachers)):
-                print(teachers[j])
                 names[j + 1].move((teachers[j].rect.x + 10, teachers[j].rect.y - 5))
         if drawing:
             graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
@@ -839,15 +838,16 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
             button.update(screen)
             button.change_colour(pygame.mouse.get_pos())
 
-        if level[number]['one'] <= timer.get_time():
+        if level[number]['one'] <= timer.get_time():  # конец игры по окончанию времени
             game_over(level_number, 'Время кончилось')
         if str(number) in '1468' and character.exit(h, w):  # проверка пройден ли уровень с персонажем
             hero.exit(h, w, False)
             timer.pauses()
             end(timer.get_time())
+        # запрет на выход из уровня спасения без персонажа
         elif str(number) in '1468' and hero.exit(h, w) and not character.exit(h, w):
             hero.exit(h, w, False)
-        elif hero.exit(h, w) and str(number) in '023579':  # если игрок дошел до выхода
+        elif hero.exit(h, w) and str(number) in '023579':  # если игрок дошел до выхода в обычном уровне
             timer.pauses()
             end(timer.get_time())
         pygame.display.flip()  # обновляем экран
@@ -956,15 +956,14 @@ def end(time):  # окончание уровня победой
     screen.blit(string_rendered, text_rect)
     seconds = '0' + str(time % 60) if time % 60 < 10 else str(time % 60)
     minutes = '0' + str(time // 60) if time // 60 < 10 else str(time // 60)
-    text1 = 'YOUR TIME: ' + minutes + ':' + seconds
+    text1 = 'YOUR TIME: ' + minutes + ':' + seconds  # вывод времени
     string_rendern = main_font.render(text1, 1, (28, 28, 28))
     string_rendern_shadow = main_font.render(text1, 1, (1, 1, 1))
     text_rect1 = string_rendern.get_rect(center=(WIDTH // 2, 175))
     screen.blit(string_rendern, text_rect1)
-    print(text1)
     tiles = get_background(bg_image_character)
     count = 0
-    stars1 = []
+    stars1 = []  # список вставленных звёзд за прохождение
     if time <= level[number]['three']:  # выставление звёзд
         stars1.append([Stars(star_active, 'left', 480, 300),
                        Stars(star_active, 'right', 480, 300),
@@ -986,16 +985,17 @@ def end(time):  # окончание уровня победой
     if sp > int(base[0][0]):  # изменение количества звезд
         sp1 = base
         sp1[0] = tuple(str(sp))
-        print(sp1)
         cur.execute("""UPDATE levels
         SET stars = ?
         WHERE number = ?""", (sp, int(number) + 1)).fetchall()
         con.commit()
+        # разблокировка следующего уровня через бд
         cur.execute("""UPDATE levels  
                 SET state = 'разблок'
                 WHERE number = ?""", (str(int(number) + 2),)).fetchall()
-        con.commit()  # разблокировка следующего уровня
+        con.commit()
         stars_update()
+        # изменение кол-ва звезд для окна выбера уровня
         level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
                                              WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
                                              if (int(number) + 2) < 6 else HEIGHT // 3 * 2,
@@ -1004,20 +1004,21 @@ def end(time):  # окончание уровня победой
     alpha, direction = 0, 2
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы перейти к выбору уровня',
                                  True, (0, 0, 0))
+    # сравнение времени в бд и данного
     base = cur.execute("""SELECT time FROM levels
                 WHERE number = ?""", (int(number) + 1,)).fetchall()
-    base1 = int(base[0][0].split(':')[0])
-    base2 = int(base[0][0].split(':')[1])
-    if base1 * 60 + base2 > time or base1 * 60 + base2 == 0:  # изменение времени
+    base1 = int(base[0][0].split(':')[0])  # минуты
+    base2 = int(base[0][0].split(':')[1])  # секунды
+    if base1 * 60 + base2 > time or base1 * 60 + base2 == 0:  # изменение времени елси оно меньше
         cur.execute("""UPDATE levels
                 SET time = ?
                 WHERE number = ?""", (minutes + ':' + seconds, int(number) + 1)).fetchall()
-        con.commit()
+        con.commit()  # изменение в бд
     skip_text.set_alpha(alpha)
     while True:
         count = update_and_draw_backgroud(count, tiles, bg_image_character)
         alpha += direction
-        if alpha <= 0:
+        if alpha <= 0:  # мигание надписи
             direction = 4
         elif alpha >= 255:
             direction = -4

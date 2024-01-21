@@ -19,8 +19,8 @@ class Star(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=(button.rect.x + button.image.get_width() * 0.7,
                                                     button.rect.y + button.image.get_height() * 1.2))
 
-    def draw(self, screen):
+    def draw(self, screen):  # рисование звезд
         screen.blit(self.image, self.rect)
 
-    def activate(self):
+    def activate(self):  # желтая звезда
         self.image = self.active_image

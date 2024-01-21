@@ -54,8 +54,8 @@ class Students(pygame.sprite.Sprite):
         self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
 
     def exit(self, h, w):  # найден выход персонажем
-        h = h * 32
-        w = w * 32 - 2
+        h = h * 32  # высота уровня
+        w = w * 32 - 2  # ширина уровня
         p = Border(w, 0, w, h)
         if pygame.sprite.collide_rect(self, p):
             return True

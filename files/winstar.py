@@ -1,7 +1,7 @@
 import pygame
 
 
-class Stars(pygame.sprite.Sprite):
+class Stars(pygame.sprite.Sprite):  # звёзды в конце уровня
     def __init__(self, active_image, position, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.active_image = pygame.transform.scale(active_image, (int(active_image.get_width() * 10),
@@ -14,5 +14,5 @@ class Stars(pygame.sprite.Sprite):
         elif position == 'right':
             self.rect = self.image.get_rect(center=(x + 170, y))
 
-    def draw(self, screen):
+    def draw(self, screen):  # рисование звезд
         screen.blit(self.image, self.rect)

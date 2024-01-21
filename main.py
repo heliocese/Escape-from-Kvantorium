@@ -69,15 +69,15 @@ def get_text(text, font, coords, colour=(28, 28, 28)):
     return text_rendered, text_rect
 
 
-def draw_text(screen, *texts):
+def draw_text(surface, *texts):
     for text in texts:
-        screen.blit(text[0], text[1])
+        surface.blit(text[0], text[1])
 
 
-def draw_rect(screen, rect, center):
+def draw_rect(surface, rect, center):
     rect = pygame.Rect(rect)
     rect.center = center
-    pygame.draw.rect(screen, (200, 200, 200), rect)
+    pygame.draw.rect(surface, (200, 200, 200), rect)
 
 
 con = sqlite3.connect('data/EFK.db')
@@ -203,7 +203,7 @@ for _ in range(10):  # создаём 10 объектов со случайны�
 def intro_maker(message, colour=(255, 255, 255)):
     messages = full_wrapper(message, WIDTH // 16)
     cur_message = 0
-    message_offsets = [50 * i for i in range(len(messages))]
+    message_offsets = [50 * l for l in range(len(messages))]
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
@@ -346,8 +346,7 @@ def main_menu():  # главное меню
     pygame.display.set_caption('Escape from Kvantorium')
 
     text = get_text('Escape from Kvantorium', main_font, (WIDTH // 2, HEIGHT // 10))
-    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2),
-                           (213, 214, 209))
+    text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (213, 214, 209))
 
     offscreen = 200
 
@@ -799,7 +798,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     ctrl = False
                     draw_new_graffiti = True
                     drawing = False
-                print(hero.get_position())
 
         if labirint.is_free(hero.get_position()):
             hero.onGround = False
@@ -810,8 +808,10 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         if len(names) > 1 and level_number != 9:
             names[1].move((character.rect.x + 10, character.rect.y - 5))
         elif len(names) > 1:
-            for elem in character:
-                names[1].move((elem.rect.x + 10, elem.rect.y - 5))
+            teachers = list(character)
+            for j in range(len(teachers)):
+                print(teachers[j])
+                names[j + 1].move((teachers[j].rect.x + 10, teachers[j].rect.y - 5))
         if drawing:
             graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
         for e in all_sprites:
@@ -885,15 +885,14 @@ def pause():
 
 
 def game_over(level_number, reason='Вас поймали'):  # проигрыш
-    pygame.display.set_caption(f'Escape from Kvantorium - Game Over')
+    pygame.display.set_caption(f'Escape from Kvantorium - Game Over')  # изменение названия окна
 
-    # texts = [get_text('Game', big_font, )]
-    game_text = big_font.render('Game', 1, (28, 28, 28))
-    game_text_shadow = big_font.render('Game', 1, (1, 1, 1))
+    game_text = big_font.render('Game', 1, (28, 28, 28))  # создаём текст для отрисовки
+    game_text_shadow = big_font.render('Game', 1, (213, 214, 209))  # создаём тень текста для отрисовки
     over_text = big_font.render('Over', 1, (28, 28, 28))
-    over_text_shadow = big_font.render('Over', 1, (1, 1, 1))
+    over_text_shadow = big_font.render('Over', 1, (213, 214, 209))
     reason_text = main_font.render(reason, 1, (28, 28, 28))
-    reason_text_shadow = main_font.render(reason, 1, (1, 1, 1))
+    reason_text_shadow = main_font.render(reason, 1, (213, 214, 209))
 
     tiles_left = tiles_right = get_background(bg_image_game_over)
     walls_collided = False
@@ -901,6 +900,31 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
     count = 0
 
     while True:
+        screen.fill((0, 0, 0))  # закрашиваем фон чёрным
+
+        if count < WIDTH // 2:
+            count += 7
+        else:
+            count = WIDTH // 2
+            walls_collided = True
+
+        # отрисовываем задний план, движущийся с двух сторон
+        draw_game_over_background(tiles_left, WIDTH - count, bg_image_game_over)
+        draw_game_over_background(tiles_right, -WIDTH + count, bg_image_game_over)
+
+        screen.blit(game_text_shadow, game_text.get_rect(center=(-WIDTH // 7 + count + 2, HEIGHT // 7 + 2)))
+        screen.blit(over_text_shadow, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count + 2, HEIGHT // 7 + 2)))
+        screen.blit(game_text, game_text.get_rect(center=(-WIDTH // 7 + count, HEIGHT // 7)))
+        screen.blit(over_text, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count, HEIGHT // 7)))
+
+        if walls_collided:
+            screen.blit(reason_text_shadow, game_text.get_rect(center=(WIDTH // 2 + 2 - 25, HEIGHT // 7 * 2 + 2)))
+            screen.blit(reason_text, game_text.get_rect(center=(WIDTH // 2 - 25, HEIGHT // 7 * 2)))
+            home_btn.update(screen)
+            home_btn.change_colour(pygame.mouse.get_pos())
+            resume_btn.update(screen)
+            resume_btn.change_colour(pygame.mouse.get_pos())
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -916,29 +940,6 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
                 if home_btn.click_check(event.pos) and walls_collided:
                     main_menu()
 
-        screen.fill((0, 0, 0))
-
-        if count < WIDTH // 2:
-            count += 7
-        else:
-            count = WIDTH // 2
-            walls_collided = True
-
-        draw_game_over_background(tiles_left, WIDTH - count, bg_image_game_over)
-        draw_game_over_background(tiles_right, -WIDTH + count, bg_image_game_over)
-
-        screen.blit(game_text_shadow, game_text.get_rect(center=(-WIDTH // 7 + count + 2, HEIGHT // 7 + 2)))
-        screen.blit(over_text_shadow, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count + 2, HEIGHT // 7 + 2)))
-        screen.blit(game_text, game_text.get_rect(center=(-WIDTH // 7 + count, HEIGHT // 7)))
-        screen.blit(over_text, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count, HEIGHT // 7)))
-
-        if walls_collided:
-            screen.blit(reason_text_shadow, game_text.get_rect(center=(WIDTH // 2 + 2, HEIGHT // 7 * 2 + 2)))
-            screen.blit(reason_text, game_text.get_rect(center=(WIDTH // 2, HEIGHT // 7 * 2)))
-            home_btn.update(screen)
-            home_btn.change_colour(pygame.mouse.get_pos())
-            resume_btn.update(screen)
-            resume_btn.change_colour(pygame.mouse.get_pos())
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -951,7 +952,6 @@ def end(time):  # окончание уровня победой
     string_rendered_shadow = main_font.render(text, 1, (1, 1, 1))
     text_rect = string_rendered.get_rect(center=(WIDTH // 2, HEIGHT // 10))
     screen.blit(string_rendered, text_rect)
-    offscreen = 200
     seconds = '0' + str(time % 60) if time % 60 < 10 else str(time % 60)
     minutes = '0' + str(time // 60) if time // 60 < 10 else str(time // 60)
     text1 = 'YOUR TIME: ' + minutes + ':' + seconds

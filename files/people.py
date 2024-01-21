@@ -9,6 +9,7 @@ COLOR = '#090909'
 class Teacher(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
+        self.person = 'Иван Дмитриевич'
         _, self.right, self.left, _, _, self.stay = get_animation('Иван Дмитриевич', (21, 43))
         self.x, self.y = x, y
         w, h = 19, 40

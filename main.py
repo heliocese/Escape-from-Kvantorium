@@ -4,7 +4,7 @@ import sys
 import os
 from files.button import Button, CheckButton
 from files.settings import *
-from files.functions import load_image, Object, Border, all_sprites, full_wrapper, Text
+from files.functions import load_image, Object, Border, full_wrapper, Text
 from files.level_generation import Labirint
 from files.hero import Hero
 from files.star import Star
@@ -19,11 +19,11 @@ import sqlite3
 pygame.init()  # инициализация pygame
 
 pygame.display.set_caption('Проект')  # изменение названия окна
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  # установка размеров экрана
+screen = pygame.display.set_mode((WIDTH, HEIGHT))  # создание общего холста, установка размеров экрана
 icon = load_image('pictures/kvantorium_logo.png')  # добавление иконки окна
 pygame.display.set_icon(icon)  # использвание нашей иконки вместо стандартной
 
-clock = pygame.time.Clock()
+clock = pygame.time.Clock()  # для учёта времени
 
 # создание шрифтов
 main_font = pygame.font.Font(None, 64)  # основной шрифт
@@ -35,8 +35,7 @@ main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от кр�
 
 # загрузка изображений
 bg_image = load_image('pictures/pattern6.png')  # для заднего плана главного меню
-# bg_image1 = load_image('pictures/pattern13.png')
-bg_image_character = load_image('pictures/pattern9.png')
+bg_image_character = load_image('pictures/pattern9.png')  # для меню уровней, настроек, выбора персонажа
 bg_image_game_over = load_image('pictures/pattern16.png')  # для заднего плана экрана 'Game Over'
 button_image = load_image('pictures/button1.png')
 button_image1 = load_image('pictures/button2.png')
@@ -80,8 +79,8 @@ def draw_rect(surface, rect, center):  # отрисовка прямоуголь
     pygame.draw.rect(surface, (200, 200, 200), rect)
 
 
-con = sqlite3.connect('data/EFK.db')
-cur = con.cursor()
+con = sqlite3.connect('data/EFK.db')  # подключение таблицы
+cur = con.cursor()  # создание курсора для работы с таблицей
 
 number = ''  # уровень
 selected_character = cur.execute("""SELECT character FROM data""").fetchone()[0]  # изначально выбранный персонаж
@@ -89,25 +88,9 @@ control_settings = {  # настройки управления
     'WASD': cur.execute("""SELECT control_wasd FROM data""").fetchone()[0],
     'ARROWS': cur.execute("""SELECT control_arrows FROM data""").fetchone()[0]}
 
-
-def storyboard():  # для раскадровки персонажей
-    frame_and_line = [(2, 1, '_0.png'), (1, 2, '_rl2.png'), (3, 2, '_rl3.png'), (7, 2, '_rl1.png'), (9, 2, '_rl4.png'),
-                      (1, 3, '_rr2.png'), (3, 3, '_rr3.png'), (7, 3, '_rr4.png'), (9, 3, '_rr1.png')]
-    for char in ['Илья']:  # список персонажей для раскадровки
-        for f in frame_and_line:
-            char_sheet = load_image(f'characters/{char}.png')
-            image = get_image(char_sheet, f[0], f[1], 48, 96, 1)
-            image = image.subsurface((8, 24, 32, 70))
-            pygame.image.save(image, f'data/characters/animation/{char + f[2]}')
-
-
 id_texture = [*range(1, 12), 16, 17, 19, 28, 29, 30]  # id текстур уровней
 
-# создание экземпляров кнопки
-# кнопки выбора меню персонажей
-select_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image, button_image1, 'Выбрать', 4)
-selected_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image2, button_image2, 'Выбрано', 4)
-btn_lock = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_lock, button_lock, '', 4)
+# создание кнопок
 
 # кнопки главного меню
 button_list = ['Играть', 'Выбор персонажа', 'Статистика', 'Настройки', 'Выход']  # список кнопок
@@ -119,7 +102,12 @@ for i in range(len(button_list)):
 return_btn = Button(main_offset, main_offset, load_image('pictures/return_btn.png'),
                     load_image('pictures/return_btn_.png'))  # кнопка возврата
 
-# кнопки вправо и влево
+# кнопки выбора меню персонажей
+select_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image, button_image1, 'Выбрать', 4)
+selected_btn = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_image2, button_image2, 'Выбрано', 4)
+btn_lock = Button(WIDTH // 6 * 2, HEIGHT - main_offset, button_lock, button_lock, '', 4)
+
+# кнопки вправо и влево для меню персонажей
 arrow_right_btn = Button(WIDTH // 6 * 4 - main_offset, HEIGHT - main_offset, arrow_right, arrow_right_)
 arrow_left_btn = Button(main_offset, HEIGHT - main_offset, arrow_left, arrow_left_)
 
@@ -129,7 +117,7 @@ level_btns = []
 for i in range(1, 11):  # список кнопок уровней
     bases = cur.execute("""SELECT state FROM levels
                         WHERE number = ?""", (str(i),)).fetchall()
-    if bases[0][0] == 'разблок':  # изменеие картинки если уровень не доступен
+    if bases[0][0] == 'разблок':  # изменение картинки если уровень недоступен
         level_btns.append(Button(WIDTH // 6 * 5 if (i % 5) == 0 else WIDTH // 6 * (i % 5),
                                  HEIGHT // 3 if i < 6 else HEIGHT // 3 * 2,
                                  load_image(f'pictures/{i}.png'),
@@ -140,6 +128,7 @@ for i in range(1, 11):  # список кнопок уровней
                                  load_image('pictures/locked_btn.png'),
                                  load_image('pictures/locked_btn.png'), None, WIDTH // 240))
 
+# кнопки настроек
 check_btn_WASD = CheckButton(WIDTH // 5, HEIGHT // 6 * 2, empty_image, empty_image_, checked_image, checked_image_,
                              control_settings['WASD'], 4)
 check_btn_ARROWS = CheckButton(WIDTH // 5, HEIGHT // 6 * 4, empty_image, empty_image_, checked_image, checked_image_,
@@ -194,19 +183,28 @@ for file in os.listdir('data/levels/decorative_objects'):
     if file[-3:] != 'jpg' and file != 'sign exit.png' and file != 'фон.png':  # не используем неподходящие картинки
         objects.append(file)
 
+all_sprites = pygame.sprite.Group()  # группа для отрисовки объектов и барьеров главного меню
+offscreen = 200  # насколько граница
+
+# создаём барьеры
+Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen, all_sprites)  # - верхний
+Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen, all_sprites)  # - нижний
+Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen, all_sprites)  # | левый
+Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen, all_sprites)  # | правый
+
 for _ in range(10):  # создаём 10 объектов со случайными начальными координатами
     Object(load_image(f'levels/decorative_objects/{random.choice(objects)}'),
-           random.choice(coords_x), random.choice(coords_y))
+           random.choice(coords_x), random.choice(coords_y), all_sprites)
 
 
 # заставки к уровням
 def intro_maker(message, colour=(255, 255, 255)):
-    messages = full_wrapper(message, WIDTH // 16)
+    messages = full_wrapper(message, WIDTH // 16)  # создание строк для отдельной отрисовки
     cur_message = 0
-    message_offsets = [50 * n for n in range(len(messages))]
+    message_offsets = [50 * n for n in range(len(messages))]  # создание сдвигов строк относительно центра
     alpha, direction = 0, 2
-    font = pygame.font.Font(None, 32)
     count, speed = 0, 3
+    # подсказка пользователю
     skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
     skip_text.set_alpha(alpha)
     while True:
@@ -228,10 +226,10 @@ def intro_maker(message, colour=(255, 255, 255)):
         elif cur_message < len(messages) - 1:
             count = 0
             cur_message += 1
-            for i in range(len(message_offsets)):
-                message_offsets[i] -= 25
+            for q in range(len(message_offsets)):
+                message_offsets[q] -= 25
 
-        text = font.render(messages[cur_message][0:count // speed], True, colour)
+        text = mini_font.render(messages[cur_message][0:count // speed], True, colour)
         text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + message_offsets[cur_message]))
 
         screen.blit(text, text_rect)  # текст к уровню
@@ -255,28 +253,27 @@ def intro_maker(message, colour=(255, 255, 255)):
 def get_background(image):
     tiles = []
     width, height = image.get_width(), image.get_height()
-    for i in range(WIDTH // width + 2):
-        for j in range(HEIGHT // height + 2):
-            tiles.append((i * width, j * height))
+    for x in range(WIDTH // width + 2):
+        for y in range(HEIGHT // height + 2):
+            tiles.append((x * width, y * height))
     return tiles
 
 
-# отрисовка заднего плана
+# отрисовка динамичного заднего плана со сдвигом влево вверх
 def draw_backgound(tiles, offset, image):
     for tile in tiles:
         screen.blit(image, (tile[0] - offset, tile[1] - offset))
 
 
-def update_and_draw_backgroud(count, tiles, image):
+def update_and_draw_backgroud(count, tiles, image):  # отрисовка динамичного заднего плана с подсчётом сдвига
     if pygame.time.get_ticks() % FPS:
         count += 0.5
-
     draw_backgound(tiles, int(count % 32), image)
 
     return count
 
 
-def draw_game_over_background(tiles, offset, image):
+def draw_game_over_background(tiles, offset, image):  # отрисовка заднего плана с боковой стороны
     for tile in tiles:
         screen.blit(image, (tile[0] - offset, tile[1]))
 
@@ -287,8 +284,8 @@ def terminate():
     sys.exit()
 
 
-def leader_board():  # вывод статистики из бд
-    pygame.display.set_caption('Escape from Kvantorium - Статистика')
+def leader_board():  # вывод статистики из БД
+    pygame.display.set_caption('Escape from Kvantorium - Статистика')  # изменение названия окна
     screen.fill((133, 112, 172))
     pygame.draw.rect(screen, (255, 255, 255), (30, 30, 905, 553))
     text = cur.execute("""SELECT number, stars, time, atempts FROM levels where state = 'разблок'""").fetchall()
@@ -324,74 +321,66 @@ def leader_board():  # вывод статистики из бд
         text_rect = string_rendered.get_rect(center=(WIDTH - 530, h))
         screen.blit(string_rendered, text_rect)
         h += 50
-    # рисуем линии-разделители
-    # pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
     while True:
         return_btn.update(screen)
         return_btn.change_colour(pygame.mouse.get_pos())
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
+        for event in pygame.event.get():  # обработка действий пользователя
+            if event.type == pygame.QUIT:  # при закрытии окна
+                terminate()  # завершаем программу
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if return_btn.click_check(event.pos):
+                if return_btn.click_check(event.pos):  # проверка на клик по кнопке возврата
                     main_menu()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
 
-        pygame.display.flip()
-        clock.tick(FPS)
+        pygame.display.flip()  # обновление экрана
+        clock.tick(FPS)  # временная задержка
 
 
 def main_menu():  # главное меню
-    pygame.display.set_caption('Escape from Kvantorium')
+    pygame.display.set_caption('Escape from Kvantorium')  # изменение названия окна
 
-    text = get_text('Escape from Kvantorium', main_font, (WIDTH // 2, HEIGHT // 10))
+    text = get_text('Escape from Kvantorium', main_font, (WIDTH // 2, HEIGHT // 10))  # создание текста для отображения
     text_shadow = get_text('Escape from Kvantorium', main_font, (WIDTH // 2 + 2, HEIGHT // 10 + 2), (213, 214, 209))
-
-    offscreen = 200
-
-    Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
-    Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
-    Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
-    Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
 
     tiles = get_background(bg_image)
     count = 0
+    while True:  # главный цикл
 
-    while True:
+        count = update_and_draw_backgroud(count, tiles, bg_image)  # отрисовка динамичного заднего плана
 
-        count = update_and_draw_backgroud(count, tiles, bg_image)
+        all_sprites.draw(screen)  # отрисовка объектов и барьеров
+        all_sprites.update()  # передвижение объектов
 
-        all_sprites.draw(screen)
-        all_sprites.update()
+        draw_text(screen, text_shadow, text)  # отрисовка текста
 
-        draw_text(screen, text_shadow, text)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
+        for event in pygame.event.get():  # обработка действий пользователя
+            if event.type == pygame.QUIT:  # при закрытии окна
+                terminate()  # завершаем программу
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if main_menu_buttons['Играть'].click_check(event.pos):
-                    levels()
+                if main_menu_buttons['Играть'].click_check(event.pos):  # проверка на клик по кнопке возврата
+                    levels()  # открываем меню уровней
+                # проверка на клик по кнопке выбора персонажа
                 if main_menu_buttons['Выбор персонажа'].click_check(event.pos):
-                    character_selection(selected_character)
-                if main_menu_buttons['Статистика'].click_check(event.pos):
-                    leader_board()
-                if main_menu_buttons['Настройки'].click_check(event.pos):
-                    options()
-                if main_menu_buttons['Выход'].click_check(event.pos):
-                    terminate()
+                    character_selection(selected_character)  # открываем меню выбора персонажа
+                if main_menu_buttons['Статистика'].click_check(event.pos):  # проверка на клик по кнопке статистики
+                    leader_board()  # открываем статистику
+                if main_menu_buttons['Настройки'].click_check(event.pos):  # проверка на клик по кнопке настроек
+                    options()  # открываем настройки
+                if main_menu_buttons['Выход'].click_check(event.pos):  # проверка на клик по кнопке выхода
+                    terminate()  # завершаем программу
 
-        for button in main_menu_buttons:
+        for button in main_menu_buttons:  # отрисовываем каждую из кнопок и меняем цвет, если на ней курсор
             main_menu_buttons[button].update(screen)
             main_menu_buttons[button].change_colour(pygame.mouse.get_pos())
 
-        pygame.display.flip()
-        clock.tick(FPS)
+        pygame.display.flip()  # обновление экрана
+        clock.tick(FPS)  # временная задержка
 
 
 def attempt():  # подсчёт попыток
+    global number
     base = cur.execute("""SELECT atempts FROM levels
                         WHERE number = ?""", (int(number) + 1,)).fetchall()
     base = base[0][0]
@@ -402,9 +391,8 @@ def attempt():  # подсчёт попыток
     con.commit()
 
 
-# меню уровней
-def levels():
-    pygame.display.set_caption('Escape from Kvantorium - Выбор уровня')
+def levels():  # меню уровней
+    pygame.display.set_caption('Escape from Kvantorium - Выбор уровня')  # изменение названия окна
 
     text = get_text('Выберите уровень', main_font, (WIDTH // 2, HEIGHT // 10), (213, 214, 209))
     text_shadow = get_text('Выберите уровень', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2))
@@ -413,7 +401,7 @@ def levels():
     count = 0
     stars = stars_update()  # обновление списка звёзд
     skip_text = get_text('Смените персонажа для прохождения данного уровня', mini_font,
-                         (WIDTH // 2, HEIGHT - 40), (153, 153, 153))
+                         (WIDTH // 2, HEIGHT - 40), (49, 1, 1))
     skip_shadow = get_text('Смените персонажа для прохождения данного уровня', mini_font,
                            (WIDTH // 2 - 2, HEIGHT - 40 - 2), (199, 0, 0))
     while True:
@@ -445,7 +433,7 @@ def levels():
                         number = level_btns.index(button)
                         base = cur.execute("""SELECT state FROM levels
                                                 WHERE number = ?""", (int(number) + 1,)).fetchall()
-                        # проверка разблокирован ли уровень и не взят ли персонаж котрого спасают в этом уровне
+                        # проверка, разблокирован ли уровень и не взят ли персонаж, которого спасают на этом уровне
                         if base[0][0] == 'разблок' and int(number) + 1 != int(students[selected_character][0]):
                             if level_btns.index(button) + 1 == 1:  # проверка какой уровень
                                 intro_maker(['Вы задержались допоздна в Кванториуме, пытаясь успеть '
@@ -472,9 +460,8 @@ def levels():
         clock.tick(FPS)
 
 
-# меню выбора персонажей
-def character_selection(character):
-    global selected_character
+def character_selection(character):  # меню выбора персонажей
+    global selected_character  # получение выбранного персонажа извне
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
 
     # получения списка кнопок
@@ -505,7 +492,8 @@ def character_selection(character):
 
     name = get_text(character, main_font, (WIDTH // 6 * 5, HEIGHT // 6))  # имя персонажа
     info = full_wrapper([students[character][-1]], 23)  # информация о персонаже
-    info_offsets = [25 * i - (12 * len(info)) for i in range(len(info))]  # информация находится в правой нижней части
+    # информация находится в правой нижней части экрана
+    info_offsets = [25 * offset - (12 * len(info)) for offset in range(len(info))]
 
     person_image = get_image(load_image(f'characters/{character}.png'), 2, 1, 48, 96, 6)
 
@@ -584,19 +572,11 @@ def character_selection(character):
         clock.tick(FPS)
 
 
-def options():
+def options():  # настройки
     pygame.display.set_caption('Escape from Kvantorium - Настройки')
 
     texts = [get_text('Настройки', main_font, (WIDTH // 2, HEIGHT // 10), (213, 214, 209)),
-             get_text('Настройки', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2), ),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
-                                                                     HEIGHT // 6 * 2 - 8), (213, 214, 209)),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3,
-                                                                       HEIGHT // 6 * 2 + 12), (213, 214, 209)),
-             get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
-                                                                        HEIGHT // 6 * 4 - 8), (213, 214, 209)),
-             get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3,
-                                                                          HEIGHT // 6 * 4 + 12), (213, 214, 209)),
+             get_text('Настройки', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2)),
              get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10)),
              get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10)),
              get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
@@ -666,18 +646,17 @@ def options():
         clock.tick(FPS)
 
 
-def new_game(level_number):
-    global number
-    all_sprites = pygame.sprite.Group()
+def new_game(level_number):  # загрузка нужных компонентов для запуска уровня
+    level_sprites = pygame.sprite.Group()
     labirint = Labirint(level[level_number]['level_map'], id_texture, 18)
     person = selected_character
-    hero = Hero(*level[level_number]['spawn'], person, hero_font, number)
+    hero = Hero(*level[level_number]['spawn'], person, hero_font)
 
     total_level_width = labirint.width * 32  # Высчитываем фактическую ширину уровня
     total_level_height = labirint.height * 32  # высоту
 
     camera = Camera(camera_configure, total_level_width, total_level_height)
-    all_sprites.add(labirint.sprites)
+    level_sprites.add(labirint.sprites)
 
     if 'dop_character' in level[level_number]:
         person = level[level_number]['dop_character']
@@ -688,13 +667,12 @@ def new_game(level_number):
                 character.add(teacher)
         else:
             character = Students(*level[level_number]['spawn_dop'], person)
-        all_sprites.add(character)
-        level_displayer(level_number, labirint, all_sprites, camera, hero, character)
-    level_displayer(level_number, labirint, all_sprites, camera, hero)
+        level_sprites.add(character)
+        level_displayer(level_number, labirint, level_sprites, camera, hero, character)
+    level_displayer(level_number, labirint, level_sprites, camera, hero)
 
 
-# отображает уровень
-def level_displayer(level_number, labirint, all_sprites, camera, hero, character=None):
+def level_displayer(level_number, labirint, sprites, camera, hero, character=None):  # отображение уровня
     global number
     pygame.display.set_caption(f'Escape from Kvantorium - {level_number + 1} уровень')
     left = right = up = False
@@ -813,7 +791,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 names[j + 1].move((teachers[j].rect.x + 10, teachers[j].rect.y - 5))
         if drawing:
             graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
-        for e in all_sprites:
+        for e in sprites:
             screen.blit(e.image, camera.apply(e))
 
         for graffiti in graffiti_list:
@@ -829,7 +807,8 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     if pygame.sprite.collide_rect(hero, teacher):
                         game_over(level_number)
                     teacher.move(labirint)
-        for name in names:
+
+        for name in names:  # выводим имена
             screen.blit(name.image, camera.apply(name))
 
         timer.draw(screen)
@@ -855,8 +834,7 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         clock.tick(FPS)
 
 
-# пауза в уровне
-def pause():
+def pause():  # пауза на уровне
     pygame.display.set_caption(f'Escape from Kvantorium - пауза')
     buttons = [home_btn, resume_btn]
 
@@ -1042,5 +1020,5 @@ def end(time):  # окончание уровня победой
         clock.tick(FPS)
 
 
-if __name__ == '__main__':
-    main_menu()
+if __name__ == '__main__':  # если файл не используется как модуль
+    main_menu()  # запуск главного меню

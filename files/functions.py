@@ -5,6 +5,7 @@ import random
 import textwrap
 
 
+# загрузка изображения и обрезка заднего плана
 def load_image(name, colorkey=None):
     fullname = os.path.join('./data', name)
     # если файл не существует, то выходим
@@ -22,52 +23,56 @@ def load_image(name, colorkey=None):
     return image
 
 
-all_sprites = pygame.sprite.Group()
+# группы спрайтов для вертикальных и горизонтальных барьеров
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 
 
+# объект летающий в главном меню
 class Object(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__(all_sprites)
+    def __init__(self, image, x, y, *groups):
+        super().__init__(*groups)
+        # изображение
         self.image = pygame.transform.scale(image,
                                             (int(image.get_width() * 2),
                                              int(image.get_height() * 2)))
         self.rect = self.image.get_rect(center=(x, y))
-        self.vx = random.randint(-5, 5)
-        self.vy = random.randrange(-5, 5)
-        self.count = 0
+        self.vx = random.randint(-5, 5)  # случайно заданное направление по оси x
+        self.vy = random.randrange(-5, 5)  # случайно заданное направление по оси y
 
     def update(self):
-        self.rect = self.rect.move(self.vx, self.vy)
-        if pygame.sprite.spritecollideany(self, horizontal_borders):
-            self.vy = -self.vy
-        if pygame.sprite.spritecollideany(self, vertical_borders):
-            self.vx = -self.vx
+        self.rect = self.rect.move(self.vx, self.vy)  # движение по направлению
+        if pygame.sprite.spritecollideany(self, horizontal_borders):  # соприкосновение с горизонтальным барьером
+            self.vy = -self.vy  # направление по оси y меняется на противоположное
+        if pygame.sprite.spritecollideany(self, vertical_borders):  # соприкосновение с вертикальным барьером
+            self.vx = -self.vx  # направление по оси x меняется на противоположное
 
 
+# класс барьера для объектов
 class Border(pygame.sprite.Sprite):
     # строго вертикальный или строго горизонтальный отрезок
-    def __init__(self, x1, y1, x2, y2):
-        super().__init__(all_sprites)
+    def __init__(self, x1, y1, x2, y2, *groups):
+        super().__init__(*groups)
         if x1 == x2:  # вертикальная стенка
-            self.add(vertical_borders)
-            self.image = pygame.Surface([1, y2 - y1])
-            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
+            self.add(vertical_borders)  # добавление барьера в группу вертикальных
+            self.image = pygame.Surface([1, y2 - y1])  # создание изображения
+            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)  # создание границ
         else:  # горизонтальная стенка
-            self.add(horizontal_borders)
-            self.image = pygame.Surface([x2 - x1, 1])
-            self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
+            self.add(horizontal_borders)  # добавление барьера в группу горизонтальных
+            self.image = pygame.Surface([x2 - x1, 1])  # создание изображения
+            self.rect = pygame.Rect(x1, y1, x2 - x1, 1)  # создание границ
 
 
+# разбивка текста на несколько строк до определённой длины
 def wrap(text, length):
     return textwrap.wrap(text, length)
 
 
+# разбивка нескольких текстов на строки до определённой длины
 def full_wrapper(text, length):
     new_text = []
-    for string in text:
-        wrapped_string = wrap(string, length)
+    for string in text:  # проходимся по каждому строке текстов
+        wrapped_string = wrap(string, length)  # оборачиваем строку
         if len(wrapped_string) > 1:
             if text.index(string) < len(text) - 1:
                 text[text.index(string) + 1] = ''.join(wrapped_string[1:]) + ' ' + text[text.index(string) + 1]
@@ -83,7 +88,6 @@ def full_wrapper(text, length):
 class Text(pygame.sprite.Sprite):
     def __init__(self, text, font, x, y, colour, *groups):
         super().__init__(*groups)
-
         self.image = font.render(text, True, colour)
         self.rect = self.image.get_rect(center=(x, y))
 
@@ -92,7 +96,3 @@ class Text(pygame.sprite.Sprite):
 
     def move(self, pos):
         self.rect = self.image.get_rect(center=pos)
-        """self.image = pygame.Surface(size)
-        self.image.blit(self.text, self.text.get_rect(center=self.image.get_rect().center))
-        self.rect = self.image.get_rect(center=(x, y))
-"""

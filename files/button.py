@@ -1,42 +1,44 @@
 import pygame
 
 
+# класс кнопки
 class Button(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, second_image, text=None, scale=2):
+    def __init__(self, x, y, image, image_, text=None, scale=2):
         pygame.sprite.Sprite.__init__(self)
         # основное изображение
         self.image = pygame.transform.scale(image,
                                             (int(image.get_width() * scale),
                                              int(image.get_height() * scale)))
-        # избражение используещееся при наведении на кнопку
-        self.second_image = pygame.transform.scale(second_image,
-                                                   (int(image.get_width() * scale),
-                                                    int(image.get_height() * scale)))
+        # избражение, использующееся при наведении на кнопку
+        self.image_ = pygame.transform.scale(image_,
+                                             (int(image.get_width() * scale),
+                                              int(image.get_height() * scale)))
         self.rect = self.image.get_rect(center=(x, y))
         self.cur_image = self.image
         self.is_text = False
-        if text:
+        if text:  # проверка на присутствие текста на кнопке
             self.is_text = True
             self.text = text
             font = pygame.font.Font(None, 36)
             self.text = font.render(self.text, True, (0, 0, 15))
             self.text_rect = self.text.get_rect(center=(x, y))
 
-    def update(self, screen):
+    def update(self, screen):  # отрисовка кнопки
         screen.blit(self.cur_image, self.rect)
         if self.is_text:
             screen.blit(self.text, self.text_rect)
 
-    def click_check(self, pos):
+    def click_check(self, pos):  # проверка на попадание по кнопке
         return self.rect.collidepoint(pos)
 
-    def change_colour(self, pos):
+    def change_colour(self, pos):  # смена цвета при наведении на кнопку мышью
         if self.rect.collidepoint(pos):
-            self.cur_image = self.second_image
+            self.cur_image = self.image_
         else:
             self.cur_image = self.image
 
 
+# класс кнопки, у которой два сотояния: отмечена и не отмечена
 class CheckButton(Button):
     def __init__(self, x, y, unchecked_image, unchecked_image_, checked_image, checked_image_, is_checked=False,
                  scale=2):
@@ -72,7 +74,7 @@ class CheckButton(Button):
             else:
                 self.cur_image = self.unchecked_image
 
-    def check(self):
+    def check(self):  # отметить кнопку
         self.is_checked = True
 
     def uncheck(self):

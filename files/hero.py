@@ -1,7 +1,7 @@
 import pygame
 from files.data_levels import get_animation
 from files.people import Students
-from files.functions import Border, Text
+from files.functions import Text
 
 
 COLOR = "#090909"
@@ -11,8 +11,19 @@ JUMP_POWER = 10
 vertical_borders = pygame.sprite.Group()
 
 
+# класс барьера
+class Border(pygame.sprite.Sprite):
+    # строго вертикальный или строго горизонтальный отрезок
+    def __init__(self, x1, y1, x2, y2, *groups):
+        super().__init__(*groups)
+        if x1 == x2:  # вертикальная стенка
+            self.add(vertical_borders)
+            self.image = pygame.Surface([1, y2 - y1])
+            self.rect = pygame.Rect(x1, y1, 1, y2 - y1)
+
+
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, x, y, person, font, reasons):
+    def __init__(self, x, y, person, font):
         pygame.sprite.Sprite.__init__(self)
         self.name = Text(person, font, x + 10, y - 10, (20, 10, 30))
         self.person = person
@@ -24,7 +35,6 @@ class Hero(pygame.sprite.Sprite):
         self.rect = pygame.Rect(x, y, self.w, self.h)
         self.yvel = 0  # скорость вертикального перемещения
         self.onGround = False
-        self.reasons = reasons
         self.image.set_colorkey(pygame.Color(COLOR))  # делаем фон прозрачным
         self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation(person)
         self.stay.blit(self.image, (0, 0))  # По умолчанию, стоим
@@ -127,14 +137,3 @@ class Hero(pygame.sprite.Sprite):
 
     def get_position(self):
         return self.rect.x, self.rect.y, self.rect.right - self.rect.left,  self.rect.bottom - self.rect.top
-
-
-class Atom(pygame.sprite.Sprite):
-
-    def __init__(self, pos, element, font):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((25, 25))
-        textsurface = font.render(element, True, (9, 9, 11))
-        textrect = textsurface.get_rect(center=self.image.get_rect().center)
-        self.image.blit(textsurface, textrect)
-        self.rect = self.image.get_rect(center=pos)

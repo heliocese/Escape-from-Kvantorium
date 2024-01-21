@@ -11,7 +11,7 @@ class Teacher(pygame.sprite.Sprite):
         super().__init__()
         _, self.right, self.left, _, _, self.stay = get_animation('Иван Дмитриевич', (21, 43))
         self.x, self.y = x, y
-        w, h = 19, 40
+        w, h = 21, 43
         self.speed = 3
         self.image = pygame.Surface((w, h))
         self.image.fill(pygame.Color(COLOR))

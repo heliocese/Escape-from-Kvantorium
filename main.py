@@ -709,9 +709,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
     if character and level_number != 9:
         names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
-    elif character:
-        for elem in character:
-            names.append(Text('Иван Дмитриевич', hero_font, elem.rect.x, elem.rect.y, (25, 25, 25)))
     all_sprites.add(names[:])
 
     while True:

@@ -820,7 +820,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         if character:
             if isinstance(character, Students):
                 character.move(hero.coords_list, hero.xvel)
-                screen.blit(character.image, camera.apply(character))
             else:
                 for teacher in character:
                     if pygame.sprite.collide_rect(hero, teacher):

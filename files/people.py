@@ -22,19 +22,18 @@ class Teacher(pygame.sprite.Sprite):
     def get_position(self):
         return self.x, self.y, 19, 40
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
     def move(self, labirint):
-        print(self.speed)
-        if self.speed == 3:
+        self.image.fill(pygame.Color(COLOR))
+        if self.speed > 0:
+            self.right.blit(self.image, (0, 0))
             if (labirint.get_tile_id((self.rect.x + 32, self.rect.y - 16)) not in labirint.free_tiles or
                     labirint.get_tile_id((self.rect.x, self.rect.y + 50)) in labirint.free_tiles):
-                self.speed = -3
-        elif self.speed == -3:
+                self.speed *= -1
+        elif self.speed < 0:
+            self.left.blit(self.image, (0, 0))
             if (labirint.get_tile_id((self.rect.x, self.rect.y - 16)) not in labirint.free_tiles or
                     labirint.get_tile_id((self.rect.x, self.rect.y + 50)) in labirint.free_tiles):
-                self.speed = 3
+                self.speed *= -1
         self.rect.x += self.speed
 
 

@@ -34,10 +34,10 @@ hero_font = pygame.font.Font(None, 20)  # шрифт для имён персо�
 main_offset = (WIDTH + HEIGHT) // 31  # основной отступ от краёв экрана
 
 # загрузка изображений
-bg_image = load_image('pictures/pattern6.png')
-bg_image1 = load_image('pictures/pattern13.png')
+bg_image = load_image('pictures/pattern6.png')  # для заднего плана главного меню
+# bg_image1 = load_image('pictures/pattern13.png')
 bg_image_character = load_image('pictures/pattern9.png')
-bg_image_game_over = load_image('pictures/pattern16.png')
+bg_image_game_over = load_image('pictures/pattern16.png')  # для заднего плана экрана 'Game Over'
 button_image = load_image('pictures/button1.png')
 button_image1 = load_image('pictures/button2.png')
 button_image2 = load_image('pictures/button3.png')
@@ -54,27 +54,27 @@ checked_image_ = load_image('pictures/checked_btn_.png')
 button_lock = load_image('pictures/button_lock.png')
 
 
-def get_image(sheet, frame, line, width, height, scale):  # берём часть изображения
-    image = pygame.Surface((width, height)).convert_alpha()
-    image.blit(sheet, (0, 0), (width * (frame - 1), height * (line - 1), width, height))
-    image = pygame.transform.scale(image, (width * scale, height * scale))
+def get_image(sheet, frame, line, width, height, scale):  # обрезание изображения
+    image = pygame.Surface((width, height)).convert_alpha()  # создание пустого изображения
+    image.blit(sheet, (0, 0), (width * (frame - 1), height * (line - 1), width, height))  # берём часть изображения
+    image = pygame.transform.scale(image, (width * scale, height * scale))  # увеличиваем масштам изображения
     image.set_colorkey((9, 9, 9))  # убираем задний фон
-    return image
+    return image  # возвращаем полученное изображение
 
 
-def get_text(text, font, coords, colour=(28, 28, 28)):
+def get_text(text, font, coords, colour=(28, 28, 28)):  # создание текста для отрисовки
     text_rendered = font.render(text, 1, colour)
     text_rect = text_rendered.get_rect(center=coords)
 
     return text_rendered, text_rect
 
 
-def draw_text(surface, *texts):
+def draw_text(surface, *texts):  # отрисовка текстов
     for text in texts:
         surface.blit(text[0], text[1])
 
 
-def draw_rect(surface, rect, center):
+def draw_rect(surface, rect, center):  # отрисовка прямоугольника
     rect = pygame.Rect(rect)
     rect.center = center
     pygame.draw.rect(surface, (200, 200, 200), rect)
@@ -711,7 +711,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     elif character:
         for teacher in character:
             names.append(Text(teacher.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
-    all_sprites.add(names[:])
 
     while True:
         bg = pygame.Surface((WIDTH, HEIGHT))  # Создание видимой поверхности
@@ -830,6 +829,8 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     if pygame.sprite.collide_rect(hero, teacher):
                         game_over(level_number)
                     teacher.move(labirint)
+        for name in names:
+            screen.blit(name.image, camera.apply(name))
 
         timer.draw(screen)
         hero.draw(screen, camera)

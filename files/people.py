@@ -42,6 +42,7 @@ class Students(pygame.sprite.Sprite):
     def __init__(self, x, y, person):
         super().__init__()
         self.person = person
+        self.difference = None
         self.x, self.y = x, y
         w, h = 19, 40
         self.image = pygame.Surface((w, h))

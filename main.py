@@ -203,7 +203,7 @@ for _ in range(10):  # создаём 10 объектов со случайны�
 def intro_maker(message, colour=(255, 255, 255)):
     messages = full_wrapper(message, WIDTH // 16)
     cur_message = 0
-    message_offsets = [50 * l for l in range(len(messages))]
+    message_offsets = [50 * n for n in range(len(messages))]
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
@@ -411,7 +411,7 @@ def levels():
     text = get_text('Выберите уровень', main_font, (WIDTH // 2, HEIGHT // 10), (213, 214, 209))
     text_shadow = get_text('Выберите уровень', main_font, (WIDTH // 2 - 2, HEIGHT // 10 - 2))
     flag = False
-    tiles = get_background(bg_image1)
+    tiles = get_background(bg_image_character)
     count = 0
     stars = stars_update()
     skip_text = get_text('Смените персонажа для прохождения данного уровня', mini_font,
@@ -515,7 +515,7 @@ def character_selection(character):
     info_list = [get_text(line, mini_font, (WIDTH // 6 * 5, HEIGHT // 6 * 4 + info_offsets[info.index(line)]))
                  for line in info]
 
-    tiles = get_background(bg_image1)
+    tiles = get_background(bg_image_character)
     count = 0
 
     while True:
@@ -705,8 +705,12 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     ctrl = False
     h, w = labirint.size()  # размер
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
+    print(level_number)
     if character and level_number != 9:
         names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
+    elif character:
+        for teacher in character:
+            names.append(Text(teacher.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
     all_sprites.add(names[:])
 
     while True:
@@ -819,14 +823,13 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         if character:
             if isinstance(character, Students):
                 character.move(hero.coords_list, hero.xvel)
+                screen.blit(character.image, camera.apply(character))
             else:
                 for teacher in character:
+                    screen.blit(teacher.image, camera.apply(teacher))
                     if pygame.sprite.collide_rect(hero, teacher):
                         game_over(level_number)
                     teacher.move(labirint)
-
-        for teacher in character:
-            screen.blit(teacher.image, camera.apply(teacher))
 
         timer.draw(screen)
         hero.draw(screen, camera)
@@ -958,7 +961,7 @@ def end(time):  # окончание уровня победой
     text_rect1 = string_rendern.get_rect(center=(WIDTH // 2, 175))
     screen.blit(string_rendern, text_rect1)
     print(text1)
-    tiles = get_background(bg_image1)
+    tiles = get_background(bg_image_character)
     count = 0
     stars1 = []
     if time <= level[number]['three']:  # выставление звёзд

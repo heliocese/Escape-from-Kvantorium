@@ -207,7 +207,7 @@ def intro_maker(message, colour=(255, 255, 255)):
     alpha, direction = 0, 2
     font = pygame.font.Font(None, 32)
     count, speed = 0, 3
-    skip_text = main_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
+    skip_text = mini_font.render('Нажмите ЛЮБУЮ клавишу, чтобы продолжить', True, (255, 255, 255))
     skip_text.set_alpha(alpha)
     while True:
         screen.fill((0, 0, 0))
@@ -303,7 +303,6 @@ def leader_board():  # вывод статистики из бд
     pygame.draw.line(screen, (39, 36, 46), (550, 30), (550, 582), 5)
     pygame.draw.line(screen, (39, 36, 46), (200, 30), (200, 582), 5)
     h += 50
-    # pygame.draw.line(screen, (39, 36, 46), (30, h + 20), (WIDTH - 26, h + 20), 5)
     for txt1 in text:  # считывние строк
         a = ''
         r = 1
@@ -500,7 +499,6 @@ def character_selection(character):
     elif students[character][0] != '0':
         base = cur.execute("""SELECT stars FROM levels
                                 WHERE number = ?""", (students[character][0],)).fetchall()
-        print(base)
         if base[0][0] == '0':
             buttons.append(btn_lock)
             selected = False
@@ -599,10 +597,8 @@ def options():
                                                                         HEIGHT // 6 * 4 - 8), (213, 214, 209)),
              get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3,
                                                                           HEIGHT // 6 * 4 + 12), (213, 214, 209)),
-             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
-                                                                     HEIGHT // 6 * 2 - 10), ),
-             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3,
-                                                                       HEIGHT // 6 * 2 + 10)),
+             get_text('WASD для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 - 10)),
+             get_text('CTRL + WASD для создания граффити', mini_font, (WIDTH // 5 * 3, HEIGHT // 6 * 2 + 10)),
              get_text('СТРЕЛКИ для передвижения + ПРОБЕЛ,', mini_font, (WIDTH // 5 * 3,
                                                                         HEIGHT // 6 * 4 - 10)),
              get_text('CTRL + СТРЕЛКИ для создания граффити', mini_font, (WIDTH // 5 * 3,
@@ -711,6 +707,11 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     ctrl = False
     h, w = labirint.size()  # размер
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
+    if character and level_number != 9:
+        names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
+    elif character:
+        for elem in character:
+            names.append(Text(elem.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
     all_sprites.add(names[:])
 
     while True:
@@ -762,7 +763,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     if keys[pygame.K_q]:
                         if drawing:
                             ctrl = False
-                            # pygame.mouse.set_visible(True)
                             graffiti_list = graffiti_list[:-1]
                             draw_new_graffiti = True
                             drawing = False
@@ -799,7 +799,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                     ctrl = False
                     draw_new_graffiti = True
                     drawing = False
-                    # pygame.mouse.set_visible(True)
                 print(hero.get_position())
 
         if labirint.is_free(hero.get_position()):
@@ -808,8 +807,11 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         camera.update(hero)  # центризируем камеру относительно персонажа
         hero.move(left, right, up, labirint.platform, character)  # передвижениe
         names[0].move((hero.rect.x + 10, hero.rect.y - 5))
-        if len(names) > 1:
+        if len(names) > 1 and level_number != 9:
             names[1].move((character.rect.x + 10, character.rect.y - 5))
+        elif len(names) > 1:
+            for elem in character:
+                names[1].move((elem.rect.x + 10, elem.rect.y - 5))
         if drawing:
             graffiti_list[-1].update((hero.get_position()[0] + hero.w // 2, hero.get_position()[1]))
         for e in all_sprites:
@@ -922,8 +924,6 @@ def game_over(level_number, reason='Вас поймали'):  # проигрыш
         draw_game_over_background(tiles_left, WIDTH - count, bg_image_game_over)
         draw_game_over_background(tiles_right, -WIDTH + count, bg_image_game_over)
 
-        # draw_text(screen, *texts)
-
         screen.blit(game_text_shadow, game_text.get_rect(center=(-WIDTH // 7 + count + 2, HEIGHT // 7 + 2)))
         screen.blit(over_text_shadow, game_text.get_rect(center=(WIDTH + WIDTH // 7 - count + 2, HEIGHT // 7 + 2)))
         screen.blit(game_text, game_text.get_rect(center=(-WIDTH // 7 + count, HEIGHT // 7)))
@@ -957,10 +957,6 @@ def end(time):  # окончание уровня победой
     text_rect1 = string_rendern.get_rect(center=(WIDTH // 2, 175))
     screen.blit(string_rendern, text_rect1)
     print(text1)
-    Border(-offscreen, -offscreen, WIDTH + offscreen, -offscreen)  # - верхний
-    Border(-offscreen, HEIGHT + offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # - нижний
-    Border(-offscreen, -offscreen, -offscreen, HEIGHT + offscreen)  # | левый
-    Border(WIDTH + offscreen, -offscreen, WIDTH + offscreen, HEIGHT + offscreen)  # | правый
     tiles = get_background(bg_image1)
     count = 0
     stars1 = []
@@ -1020,7 +1016,6 @@ def end(time):  # окончание уровня победой
             direction = 4
         elif alpha >= 255:
             direction = -4
-        print(alpha, direction)
         skip_text.set_alpha(alpha)
         screen.blit(skip_text, skip_text.get_rect(center=(WIDTH // 2, HEIGHT * 0.8)))
         screen.blit(string_rendered_shadow, (text_rect.x + 2, text_rect.y + 2))

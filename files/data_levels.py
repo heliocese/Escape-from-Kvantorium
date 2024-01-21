@@ -40,7 +40,7 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 30, 'two':
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'dop_character': 'Иван',
              'spawn_dop': (576, 40), 'three': 160, 'two': 200, 'one': 240}}
 
-spawn_teachers = [(275, 152), (1591, 536), (2496, 1016), (1345, 1016), (1394, 1592), (856, 1976)]
+spawn_teachers = [(275, 150), (1591, 534), (2496, 1014), (1345, 1014), (1394, 1590), (856, 1974)]
 
 
 def get_animation(person, scale=(19, 40)):

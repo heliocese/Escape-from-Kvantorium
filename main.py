@@ -707,9 +707,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
     names = [Text(hero.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25))]
     if character and level_number != 9:
         names.append(Text(character.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
-    elif character:
-        for elem in character:
-            names.append(Text(elem.person, hero_font, hero.rect.x, hero.rect.y, (25, 25, 25)))
     all_sprites.add(names[:])
 
     while True:
@@ -822,7 +819,6 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
         if character:
             if isinstance(character, Students):
                 character.move(hero.coords_list, hero.xvel)
-                screen.blit(character.image, camera.apply(character))
             else:
                 for teacher in character:
                     if pygame.sprite.collide_rect(hero, teacher):

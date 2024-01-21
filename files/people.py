@@ -9,9 +9,9 @@ COLOR = '#090909'
 class Teacher(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.delay, self.right, self.left, self.jump_right, self.jump_left, self.stay = get_animation('Иван Дмитриевич')
+        _, self.right, self.left, _, _, self.stay = get_animation('Иван Дмитриевич', (21, 43))
         self.x, self.y = x, y
-        w, h = 19, 40
+        w, h = 23, 46
         self.speed = 3
         self.image = pygame.Surface((w, h))
         self.image.fill(pygame.Color(COLOR))
@@ -22,19 +22,18 @@ class Teacher(pygame.sprite.Sprite):
     def get_position(self):
         return self.x, self.y, 19, 40
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
     def move(self, labirint):
-        print(self.speed)
-        if self.speed == 3:
-            if (labirint.get_tile_id((self.rect.x + 32, self.rect.y - 16)) not in labirint.free_tiles or
-                    labirint.get_tile_id((self.rect.x, self.rect.y + 50)) in labirint.free_tiles):
-                self.speed = -3
-        elif self.speed == -3:
+        self.image.fill(pygame.Color(COLOR))
+        if self.speed > 0:
+            self.right.blit(self.image, (0, 0))
+            if (labirint.get_tile_id((self.rect.right, self.rect.y - 16)) not in labirint.free_tiles or
+                    labirint.get_tile_id((self.rect.right, self.rect.bottom)) in labirint.free_tiles):
+                self.speed *= -1
+        elif self.speed < 0:
+            self.left.blit(self.image, (0, 0))
             if (labirint.get_tile_id((self.rect.x, self.rect.y - 16)) not in labirint.free_tiles or
                     labirint.get_tile_id((self.rect.x, self.rect.y + 50)) in labirint.free_tiles):
-                self.speed = 3
+                self.speed *= -1
         self.rect.x += self.speed
 
 

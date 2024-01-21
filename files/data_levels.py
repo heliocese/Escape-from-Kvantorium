@@ -40,10 +40,10 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 30, 'two':
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'dop_character': 'Иван',
              'spawn_dop': (576, 40), 'three': 160, 'two': 200, 'one': 240}}
 
-spawn_teachers = [(300, 56)]
+spawn_teachers = [(275, 152), (1591, 536), (2496, 1016), (1345, 1016), (1394, 1592), (856, 1976)]
 
 
-def get_animation(person):
+def get_animation(person, scale=(19, 40)):
     data = 'data/characters/animation/'
 
     delay = 80  # скорость смены кадров
@@ -59,26 +59,26 @@ def get_animation(person):
     for a in right:
         anim.append((a, delay))
     anim_right = pyganim.PygAnimation(anim)
-    anim_right.scale((19, 40))
+    anim_right.scale(scale)
     anim_right.play()
     #        Анимация движения влево
     anim = []
     for a in left:
         anim.append((a, delay))
     anim_left = pyganim.PygAnimation(anim)
-    anim_left.scale((19, 40))
+    anim_left.scale(scale)
     anim_left.play()
 
     anim_stay = pyganim.PygAnimation(stay)
     anim_stay.play()
-    anim_stay.scale((19, 40))
+    anim_stay.scale(scale)
 
     anim_jump_left = pyganim.PygAnimation(jump_left)
-    anim_jump_left.scale((19, 40))
+    anim_jump_left.scale(scale)
     anim_jump_left.play()
 
     anim_jump_right = pyganim.PygAnimation(jump_right)
-    anim_jump_right.scale((19, 40))
+    anim_jump_right.scale(scale)
     anim_jump_right.play()
 
     return delay, anim_right, anim_left, anim_jump_right, anim_jump_left, anim_stay

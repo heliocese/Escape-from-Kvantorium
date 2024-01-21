@@ -824,7 +824,10 @@ def level_displayer(level_number, labirint, all_sprites, camera, hero, character
                 screen.blit(character.image, camera.apply(character))
             else:
                 for teacher in character:
+                    if pygame.sprite.collide_rect(hero, teacher):
+                        game_over(level_number)
                     teacher.move(labirint)
+
         timer.draw(screen)
         hero.draw(screen, camera)
 

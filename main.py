@@ -667,7 +667,6 @@ def new_game(level_number):  # загрузка нужных компонент�
                 character.add(teacher)
         else:
             character = Students(*level[level_number]['spawn_dop'], person)
-        level_sprites.add(character)
         level_displayer(level_number, labirint, level_sprites, camera, hero, character)
     level_displayer(level_number, labirint, level_sprites, camera, hero)
 

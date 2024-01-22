@@ -63,3 +63,5 @@
    - PyTMX
 2. Приложение для создания карт для уровней и тайлов Tiled
 3. [Сайт](https://cazwolf.itch.io/pixel-charagen) для генерации спрайтов персонажей 
+
+### Презентация проекта [тут](https://docs.google.com/presentation/d/1bFD3BC0bQLDeB8eIRH_UgpcpUt9vqGuovFbG7lF2UFo/edit#slide=id.g2ad891f9fa4_1_9)

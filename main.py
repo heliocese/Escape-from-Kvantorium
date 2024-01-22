@@ -968,10 +968,11 @@ def end(time):  # окончание уровня победой
         WHERE number = ?""", (sp, int(number) + 1)).fetchall()
         con.commit()
         # разблокировка следующего уровня через бд
-        cur.execute("""UPDATE levels  
-                SET state = 'разблок'
-                WHERE number = ?""", (str(int(number) + 2),)).fetchall()
-        con.commit()
+        if int(number) != 9:
+            cur.execute("""UPDATE levels  
+                        SET state = 'разблок'
+                        WHERE number = ?""", (str(int(number) + 2),)).fetchall()
+            con.commit()
         stars_update()
         # изменение кол-ва звезд для окна выбера уровня
         level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else

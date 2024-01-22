@@ -463,7 +463,10 @@ def levels():  # меню уровней
 def character_selection(character):  # меню выбора персонажей
     global selected_character  # получение выбранного персонажа извне
     pygame.display.set_caption('Escape from Kvantorium - Выбор персонажа')
-
+    flag = False
+    a = 'Откроется на ' + students[character][0] + ' уровне'
+    text = get_text(a, mini_font, (WIDTH // 6 * 2 + 2, HEIGHT - 100), (0, 0, 0))
+    shadow = get_text(a, mini_font, (WIDTH // 6 * 2, HEIGHT - 100), (199, 0, 0))
     # получения списка кнопок
     buttons = [return_btn]
     left, right, selected = True, True, False
@@ -484,11 +487,13 @@ def character_selection(character):  # меню выбора персонаже�
                                 WHERE number = ?""", (students[character][0],)).fetchall()
         if base[0][0] == '0':   # блокировка персонажа
             buttons.append(btn_lock)
+            flag = True
             selected = False
         else:   # разблокировка персонажа, если он спасен
             buttons.append(select_btn)
     else:
         buttons.append(select_btn)
+        flag = False
 
     name = get_text(character, main_font, (WIDTH // 6 * 5, HEIGHT // 6))  # имя персонажа
     info = full_wrapper([students[character][-1]], 23)  # информация о персонаже
@@ -519,7 +524,8 @@ def character_selection(character):  # меню выбора персонаже�
 
         # отрисовываем картинку персонажа
         screen.blit(person_image, person_image.get_rect(center=(WIDTH // 6 * 2, HEIGHT // 2 - HEIGHT * 0.1)))
-
+        if flag:
+            draw_text(screen, text, shadow)
         # рисуем линии-разделители
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, 0), (WIDTH // 6 * 4, HEIGHT), 10)
         pygame.draw.line(screen, (39, 36, 46), (WIDTH // 6 * 4, HEIGHT // 3), (WIDTH, HEIGHT // 3), 10)
@@ -541,6 +547,7 @@ def character_selection(character):  # меню выбора персонаже�
                         con.commit()
                         buttons[-1] = selected_btn
                         selected = True
+                        flag = False
                 if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and left:  # переходим на кнопку a или стрелку влево
                     character_selection(students_lst[students_lst.index(character) - 1])
                 if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and right:  # переходим на кнопку d или стрелку вправо
@@ -564,6 +571,7 @@ def character_selection(character):  # меню выбора персонаже�
                         con.commit()
                         buttons[-1] = selected_btn
                         selected = True
+                        flag = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()

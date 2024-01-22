@@ -702,6 +702,7 @@ def level_displayer(level_number, labirint, sprites, camera, hero, character=Non
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+                    left = right = up = False
                     if draw_new_graffiti:
                         draw_new_graffiti = False
                         drawing = True
@@ -723,7 +724,6 @@ def level_displayer(level_number, labirint, sprites, camera, hero, character=Non
                             draw_new_graffiti = True
                             drawing = False
                     if drawing:
-                        # pygame.mouse.set_visible(False)
                         if (keys[pygame.K_w] and control_settings['WASD']) or \
                                 (keys[pygame.K_UP] and control_settings['ARROWS']):
                             graffiti_list[-1].change_direction('UP')

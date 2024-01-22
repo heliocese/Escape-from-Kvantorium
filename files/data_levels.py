@@ -27,21 +27,21 @@ students = {
 students_lst = list(students.keys())
 
 # номер уровня, карта, спавн игрока, кол-во звезд, если уровень спасене то спавн второго персонажа
-level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 30, 'two': 40, 'one': 50},
+level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 12, 'two': 24, 'one': 30},
          1: {'level_map': 'level2.tmx', 'spawn': (50, 240), 'dop_character': 'Ярик',
-             'spawn_dop': (665, 150), 'three': 32, 'two': 50, 'one': 60},
-         2: {'level_map': 'level3.tmx', 'spawn': (85, 728), 'three': 15, 'two': 30, 'one': 40},
-         3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'three': 30, 'two': 45, 'one': 60},
+             'spawn_dop': (665, 150), 'three': 24, 'two': 35, 'one': 43},
+         2: {'level_map': 'level3.tmx', 'spawn': (85, 728), 'three': 20, 'two': 30, 'one': 40},
+         3: {'level_map': 'level4.tmx', 'spawn': (30, 155), 'three': 28, 'two': 35, 'one': 43},
          4: {'level_map': 'level5.tmx', 'spawn': (40, 1250), 'dop_character': 'Саша',
-             'spawn_dop': (47, 440), 'three': 63, 'two': 70, 'one': 75},
-         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 60, 'two': 100, 'one': 120},
+             'spawn_dop': (47, 440), 'three': 55, 'two': 65, 'one': 75},
+         5: {'level_map': 'level6.tmx', 'spawn': (20, 255), 'three': 65, 'two': 75, 'one': 90},
          6: {'level_map': 'level7.tmx', 'spawn': (175, 65), 'dop_character': 'Влад',
-             'spawn_dop': (327, 1400), 'three': 170, 'two': 190, 'one': 220},
-         7: {'level_map': 'level8.tmx', 'spawn': (40, 1021), 'three': 130, 'two': 150, 'one': 180},
+             'spawn_dop': (327, 1400), 'three': 53, 'two': 68, 'one': 74},
+         7: {'level_map': 'level8.tmx', 'spawn': (40, 1021), 'three': 63, 'two': 78, 'one': 90},
          8: {'level_map': 'level9.tmx', 'spawn': (40, 270), 'dop_character': 'Ваня',
-             'spawn_dop': (1286, 1300), 'three': 420, 'two': 480, 'one': 540},
+             'spawn_dop': (1286, 1300), 'three': 110, 'two': 125, 'one': 135},
          9: {'level_map': 'level10.tmx', 'spawn': (180, 60), 'dop_character': 'Иван',
-             'spawn_dop': (576, 40), 'three': 160, 'two': 200, 'one': 240}}
+             'spawn_dop': (576, 40), 'three': 93, 'two': 120, 'one': 240}}
 
 spawn_teachers = [(275, 150), (1591, 534), (2496, 1014), (1345, 1014), (1394, 1590), (856, 1974)]
 

@@ -46,7 +46,7 @@ level = {0: {'level_map': 'level1.tmx', 'spawn': (780, 445), 'three': 30, 'two':
 spawn_teachers = [(275, 150), (1591, 534), (2496, 1014), (1345, 1014), (1394, 1590), (856, 1974)]
 
 
-# словарь со всеми всех студентами с номером уровня, на котором они открыты, и с информацией о них
+# анимация персонажей
 def get_animation(person, scale=(19, 40)):
     data = 'data/characters/animation/'
 
@@ -59,28 +59,28 @@ def get_animation(person, scale=(19, 40)):
     jump_right = [(data + person + '_rr1.png', 80)]
     stay = [(data + person + '_0.png', 80)]
     anim = []
-
+    # Анимация движения вправо
     for a in right:
         anim.append((a, delay))
     anim_right = pyganim.PygAnimation(anim)
     anim_right.scale(scale)
     anim_right.play()
-    #        Анимация движения влево
+    #Анимация движения влево
     anim = []
     for a in left:
         anim.append((a, delay))
     anim_left = pyganim.PygAnimation(anim)
     anim_left.scale(scale)
     anim_left.play()
-
+    # стоим
     anim_stay = pyganim.PygAnimation(stay)
     anim_stay.play()
     anim_stay.scale(scale)
-
+    # Анимация прыжка влево
     anim_jump_left = pyganim.PygAnimation(jump_left)
     anim_jump_left.scale(scale)
     anim_jump_left.play()
-
+    # Анимация прыжка вправо
     anim_jump_right = pyganim.PygAnimation(jump_right)
     anim_jump_right.scale(scale)
     anim_jump_right.play()

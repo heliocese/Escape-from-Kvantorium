@@ -16,29 +16,31 @@ class Labirint:
         self.finish_tile = b
         self.platform = pygame.sprite.Group()
         self.sprites = pygame.sprite.Group()
-        for i in range(2):  # слои
+        for i in range(2):  # генерируется уровень по слоям
             for y in range(self.height):
                 for x in range(self.width):
                     image = self.map.get_tile_image(x, y, i)
-                    if image:
-                        sprite = Sprite(image, x, y, self.tile_size)
+                    if image:  # если есть тайл в клетке
+                        sprite = Sprite(image, x, y, self.tile_size)  # то добавляем в группу спрайтов
                         self.sprites.add(sprite)
                         if self.map.tiledgidmap[self.map.get_tile_gid(x, y, i)] == 18:
-                            self.platform.add(sprite)
+                            self.platform.add(sprite)  # отслеживаюся спрайты, по которым игрок ходит
 
     def size(self):  # размер карты в блоках
         return self.height, self.width
 
-    def render(self, screen):
+    def render(self, screen):  # отрисовывается уровень
         self.sprites.draw(screen)
 
-    def get_tile_id(self, pos):
+    def get_tile_id(self, pos):  # получаем id тайла по координатам
         try:
-            return self.map.tiledgidmap[self.map.get_tile_gid(pos[0] / self.tile_size, pos[1] / self.tile_size,0)]
+            x, y = pos[0] / self.tile_size, pos[1] / self.tile_size  # делим на размер клетки, тк у нас
+            # масштабированная карта
+            return self.map.tiledgidmap[self.map.get_tile_gid(x, y,0)]
         except Exception:
             return False
 
-    def is_free(self, pos):
+    def is_free(self, pos):  # получаем ответ куда можно ходить
         x1, x2 = pos[0], pos[0] + pos[2] - 1
         y = pos[1] + pos[3]
         if self.get_tile_id((x1, y)) in self.free_tiles and self.get_tile_id((x2, y)) in self.free_tiles:
@@ -46,7 +48,7 @@ class Labirint:
         return False
 
 
-class Sprite(pygame.sprite.Sprite):
+class Sprite(pygame.sprite.Sprite):  # используем для блоков уровня(стены, пол)
     def __init__(self, image, x, y, size):
         super().__init__()
         self.image = image

@@ -2,7 +2,7 @@ import pygame
 from files.settings import WIDTH, HEIGHT
 
 
-class Camera(object):
+class Camera(object):  # для передвижения поля за персонажем
     def __init__(self, camera_func, width, height):
         self.camera_func = camera_func
         self.state = pygame.Rect(0, 0, width, height)

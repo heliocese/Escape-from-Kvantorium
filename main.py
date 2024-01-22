@@ -974,7 +974,7 @@ def end(time):  # окончание уровня победой
                         WHERE number = ?""", (str(int(number) + 2),)).fetchall()
             con.commit()
         stars_update()
-        # изменение кол-ва звезд для окна выбера уровня
+        # изменение кол-ва звезд для окна выбoра уровня
         if int(number) != 9:
             level_btns[int(number) + 1] = Button(WIDTH // 6 * 5 if ((int(number) + 2) % 5) == 0 else
                                                  WIDTH // 6 * ((int(number) + 2) % 5), HEIGHT // 3
